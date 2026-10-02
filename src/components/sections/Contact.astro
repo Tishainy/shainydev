@@ -18,7 +18,14 @@ const { intro, bio, languagesLabel, languages, photo, photoAlt } = site.about;
 
     <div class="contact-me" data-reveal>
       <span class="contact-photo">
-        {photo ? <img src={photo} alt={photoAlt} loading="lazy" decoding="async" /> : <span class="contact-mono" aria-hidden="true">S</span>}
+        {photo ? (
+          <picture>
+            <source srcset={photo.replace(/\.jpe?g$/, '.webp')} type="image/webp" />
+            <img src={photo} alt={photoAlt} width="480" height="480" loading="lazy" decoding="async" />
+          </picture>
+        ) : (
+          <span class="contact-mono" aria-hidden="true">S</span>
+        )}
       </span>
       <div class="contact-me-copy">
         <p class="contact-hi" data-about-intro>{intro}</p>
@@ -50,17 +57,6 @@ const { intro, bio, languagesLabel, languages, photo, photoAlt } = site.about;
         <input id="contact-email" name="email" type="email" autocomplete="email" required maxlength="200" />
       </div>
 
-      <fieldset class="field picker">
-        <legend>{form.needLabel}</legend>
-        <div class="picker-options">
-          {form.needOptions.map((option, i) => (
-            <label class="picker-option">
-              <input type="radio" name="need" value={option.value} id={`contact-need-${option.value}`} checked={i === form.needOptions.length - 1} />
-              <span>{option.label}</span>
-            </label>
-          ))}
-        </div>
-      </fieldset>
 
       <div class="field">
         <label for="contact-message">{form.messageLabel}</label>
@@ -140,12 +136,15 @@ const { intro, bio, languagesLabel, languages, photo, photoAlt } = site.about;
     flex: none;
     display: grid;
     place-items: center;
-    width: 6.5rem;
-    height: 6.5rem;
+    width: 7.5rem;
+    height: 7.5rem;
     border-radius: 50%;
     overflow: hidden;
     border: 1px solid var(--color-line);
     background: color-mix(in srgb, var(--color-fg) 3%, transparent);
+  }
+  .contact-photo picture {
+    display: contents;
   }
   .contact-photo img {
     width: 100%;
@@ -272,42 +271,6 @@ const { intro, bio, languagesLabel, languages, photo, photoAlt } = site.about;
     color: color-mix(in srgb, var(--color-muted) 70%, transparent);
   }
 
-  .picker-options {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.6rem;
-    margin-top: 0.5rem;
-  }
-  .picker-option {
-    position: relative;
-    cursor: pointer;
-  }
-  .picker-option input {
-    position: absolute;
-    opacity: 0;
-    width: 1px;
-    height: 1px;
-  }
-  .picker-option span {
-    display: inline-block;
-    padding: 0.6rem 1.1rem;
-    border: 1.5px solid var(--color-line);
-    border-radius: 999px;
-    font-size: 1rem;
-    transition: background-color 0.2s, border-color 0.2s, color 0.2s;
-  }
-  .picker-option:hover span {
-    border-color: color-mix(in srgb, var(--color-fg) 45%, transparent);
-  }
-  .picker-option input:checked + span {
-    background: var(--color-accent);
-    border-color: var(--color-accent);
-    color: var(--color-on-accent);
-  }
-  .picker-option input:focus-visible + span {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 3px;
-  }
 
   .trap {
     position: absolute;

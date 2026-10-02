@@ -3,12 +3,6 @@ import type { APIRoute } from 'astro';
 // This route runs as a Vercel Function; the rest of the site stays static.
 export const prerender = false;
 
-const NEEDS: Record<string, string> = {
-  build: 'A website or app',
-  automate: 'Automation or email',
-  ai: 'Something with AI',
-  unsure: 'Not sure yet',
-};
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 // Submissions faster than this after the page loaded are almost certainly bots.
 const MIN_FILL_MS = 2500;
@@ -34,7 +28,6 @@ export const POST: APIRoute = async ({ request, redirect }) => {
   const name = (data.name ?? '').trim().slice(0, 120);
   const email = (data.email ?? '').trim().slice(0, 200);
   const message = (data.message ?? '').trim().slice(0, 5000);
-  const need = NEEDS[data.need ?? ''] ?? NEEDS.unsure;
 
   // Spam: a filled-in trap field, or a form "filled in" impossibly fast. Pretend it worked.
   const started = Number(data.started);
@@ -60,8 +53,8 @@ export const POST: APIRoute = async ({ request, redirect }) => {
       from,
       to: [to],
       reply_to: email,
-      subject: `New enquiry from ${name}: ${need}`,
-      text: [`Name: ${name}`, `Email: ${email}`, `Needs: ${need}`, '', message].join('\n'),
+      subject: `New enquiry from ${name}`,
+      text: [`Name: ${name}`, `Email: ${email}`, '', message].join('\n'),
     }),
   });
 

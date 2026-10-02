@@ -179,8 +179,8 @@ export const site = {
     ],
     languagesLabel: 'I speak',
     languages: ['English', 'Dutch', 'Papiamentu', 'a bit of Spanish'],
-    // Path to the portrait once it exists (ticket 04); until then a lit monogram shows.
-    photo: '',
+    // The portrait (a WebP sits next to it with the same name); empty shows a lit monogram instead.
+    photo: '/images/shainy.jpg',
     photoAlt: 'Portrait of Shainy',
   },
 
@@ -193,13 +193,6 @@ export const site = {
     form: {
       nameLabel: 'Your name',
       emailLabel: 'Email',
-      needLabel: 'What do you need?',
-      needOptions: [
-        { value: 'build', label: 'A website or app' },
-        { value: 'automate', label: 'Automation or email' },
-        { value: 'ai', label: 'Something with AI' },
-        { value: 'unsure', label: 'Not sure yet' },
-      ],
       messageLabel: 'Tell me about it',
       messagePlaceholder: 'What does your business do, and what would you like help with?',
       submit: 'Send message',

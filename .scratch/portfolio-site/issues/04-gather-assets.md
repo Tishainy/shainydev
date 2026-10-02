@@ -6,6 +6,10 @@
 
 **Status:** ready-for-human
 
-- [ ] Portrait photo added and optimised for the web
+- [x] Portrait photo added and optimised for the web
 - [ ] Jarvis clip recorded per the shot list, compressed for the web, with a poster frame
 - [ ] Placeholders in About and Work replaced with the real assets
+
+## Comments
+
+- 2026-10-02: Portrait added (cropped square, 480px WebP + JPG in `public/images/`; original kept in `assets-raw/`). It appears in the Contact section. Still to come: the Jarvis clip.
