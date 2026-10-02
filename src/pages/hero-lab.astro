@@ -8,6 +8,7 @@ const nav = ['Services', 'Work', 'Process', 'About'];
 const variants = [
   { id: 'k', name: 'K. Glass orb as the dot of the i', fill: 'fill-light', italics: 'it-solid', detail: 'orb' },
   { id: 'l', name: 'L. Glass lens over the name', fill: 'fill-light', italics: 'it-solid', detail: 'lens' },
+  { id: 'm', name: 'M. Square glass tile as the dot of the i', fill: 'fill-light', italics: 'it-solid', detail: 'tile' },
 ];
 ---
 
@@ -43,8 +44,8 @@ const variants = [
           <span class="l l4"><span class="it">for you.</span><a class="pill" href="#">Let's talk</a></span>
         </h1>
 
-        {variant.detail === 'orb' ? (
-          <p class={`giant ${variant.fill}`} aria-hidden="true">Sha<span class="i-wrap">ı<span class="orb"><span class="orb-ball"></span></span></span>ny</p>
+        {variant.detail === 'orb' || variant.detail === 'tile' ? (
+          <p class={`giant ${variant.fill}`} aria-hidden="true">Sha<span class="i-wrap">ı<span class={variant.detail === 'tile' ? 'orb orb-tile' : 'orb'}><span class="orb-ball"></span></span></span>ny</p>
         ) : (
           <>
             <p class={`giant ${variant.fill}`} aria-hidden="true">Shainy</p>
@@ -58,7 +59,7 @@ const variants = [
 
     <script is:inline>
       const only = location.hash.slice(1);
-      if (['k', 'l'].includes(only)) {
+      if (['k', 'l', 'm'].includes(only)) {
         document.querySelectorAll('.sketch').forEach((el) => { if (el.id !== only) el.hidden = true; });
       }
     </script>
@@ -101,6 +102,9 @@ const variants = [
         gsap.to(ball, { y: -5, duration: 2.2, ease: 'sine.inOut', yoyo: true, repeat: -1, delay: 1.8 });
 
         const leanX = gsap.quickTo(orb, 'x', { duration: 0.8, ease: 'power3' });
+        const isTile = orb.classList.contains('orb-tile');
+        const tiltX = gsap.quickTo(ball, 'rotationX', { duration: 0.9, ease: 'power3' });
+        const tiltY = gsap.quickTo(ball, 'rotationY', { duration: 0.9, ease: 'power3' });
         const shine = { x: 34, y: 28 };
         gsap.ticker.add(() => {
           const rect = ball.getBoundingClientRect();
@@ -110,6 +114,11 @@ const variants = [
           const dy = pointer.y - cy;
           const dist = Math.hypot(dx, dy) || 1;
           if (pointer.active) leanX(gsap.utils.clamp(-14, 14, dx * 0.03));
+          // The square tile also tilts toward the cursor, like a small glass cube.
+          if (isTile && pointer.active) {
+            tiltY(gsap.utils.clamp(-28, 28, dx * 0.05));
+            tiltX(gsap.utils.clamp(-28, 28, -dy * 0.05));
+          }
           // The highlight slides toward the cursor, like glass catching a light.
           const tx = pointer.active ? 50 + (dx / dist) * 22 : 34;
           const ty = pointer.active ? 50 + (dy / dist) * 22 : 28;
@@ -293,6 +302,25 @@ const variants = [
           inset -0.012em -0.016em 0.03em rgb(0 0 40 / 0.55),
           inset 0.01em 0.01em 0.02em rgb(255 255 255 / 0.5),
           0 0 0.08em rgb(142 176 255 / 0.55);
+      }
+
+      /* M. The same idea as a square glass tile, the exact size and place of the font's dot:
+         the dotless i's stem runs 0.049–0.199em, the original dot 0.552–0.67em above the baseline. */
+      .orb-tile {
+        left: 0.049em; top: 0.22em;
+        width: 0.15em; height: 0.118em;
+        perspective: 0.6em;
+      }
+      .orb-tile .orb-ball {
+        border-radius: 0.012em;
+        background:
+          radial-gradient(circle at var(--sx) var(--sy), rgb(255 255 255 / 0.95) 0 5%, rgb(255 255 255 / 0.45) 14%, transparent 34%),
+          linear-gradient(145deg, rgb(255 255 255 / 0.35), transparent 40%),
+          linear-gradient(160deg, #a9c3ff 0%, #709bff 35%, #2f5be0 70%, #16309c 100%);
+        box-shadow:
+          inset 0 0 0 0.004em rgb(255 255 255 / 0.55),
+          inset -0.01em -0.014em 0.022em rgb(0 0 40 / 0.5),
+          0 0 0.07em rgb(142 176 255 / 0.5);
       }
 
       /* L. A round glass lens resting on the name. */
