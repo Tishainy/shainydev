@@ -308,6 +308,17 @@ const { build, automate, ai } = site.interludes;
     align-items: center;
     font-size: 0.85rem;
   }
+  /* Wireframe cover bars (added by the script): grey blocks over each element until the scroll reveals it. */
+  .mock [data-wire] {
+    position: relative;
+  }
+  .mock :global(.wire-bar) {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: 0.3rem;
+    background: color-mix(in srgb, var(--color-fg) 14%, var(--color-bg));
+  }
   .mock-logo {
     font-family: var(--font-serif);
     font-style: italic;

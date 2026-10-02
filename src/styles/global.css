@@ -22,15 +22,17 @@
   color-scheme: dark;
 }
 
+/* Light: a soft off-white (not glaring paper-white) with firm text, checked against WCAG:
+   text 15.8:1, muted 7.1:1, accent 5.7:1 on the background. */
 :root[data-theme="light"] {
-  --color-bg: #f4f5f8;
-  --color-fg: #14161c;
-  --color-muted: #5e6475;
-  --color-line: #dde0e8;
-  --color-accent: #2f5be0;
+  --color-bg: #e9ebf0;
+  --color-fg: #0e1117;
+  --color-muted: #474d5e;
+  --color-line: #c8cdd9;
+  --color-accent: #2a50c8;
   --color-on-accent: #ffffff;
-  --wave-line: rgb(47 91 224 / 0.16);
-  --wave-line-glow: rgb(47 91 224 / 0.6);
+  --wave-line: rgb(42 80 200 / 0.2);
+  --wave-line-glow: rgb(42 80 200 / 0.65);
   --light-fill:
     radial-gradient(28% 70% at 16% 35%, #7aa2ff 0%, #3d6bff 30%, transparent 70%),
     radial-gradient(24% 70% at 78% 55%, #1fb6e0 0%, #2f6bff 38%, transparent 72%),

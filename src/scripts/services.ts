@@ -83,22 +83,24 @@ export function initServices() {
   });
 }
 
-/** Build: a grey wireframe turns into the finished, styled page. */
+/**
+ * Build: a grey wireframe turns into the finished, styled page. Each element gets a grey cover bar
+ * that fades away; nothing is recoloured, so the page always uses the current theme's colours.
+ */
 function buildDemo(frame: HTMLElement) {
   const tl = gsap.timeline({ defaults: { ease: 'power2.out' } });
   const wires = gsap.utils.toArray<HTMLElement>('[data-wire]', frame);
   const fills = gsap.utils.toArray<HTMLElement>('[data-wire-fill]', frame);
-  const grey = getComputedStyle(frame).getPropertyValue('--color-line').trim() || 'rgb(128 128 128 / 0.3)';
+  const bars = wires.map((el) => {
+    const bar = document.createElement('span');
+    bar.className = 'wire-bar';
+    bar.setAttribute('aria-hidden', 'true');
+    el.append(bar);
+    return bar;
+  });
 
-  wires.forEach((el, i) => {
-    const cs = getComputedStyle(el);
-    // Wireframe: text hidden behind a grey bar; finished: the element's real colours.
-    tl.fromTo(
-      el,
-      { color: 'rgba(0,0,0,0)', backgroundColor: grey, borderRadius: '0.3rem' },
-      { color: cs.color, backgroundColor: cs.backgroundColor, borderRadius: cs.borderRadius, duration: 0.25 },
-      0.1 + i * 0.07,
-    );
+  bars.forEach((bar, i) => {
+    tl.fromTo(bar, { autoAlpha: 1 }, { autoAlpha: 0, duration: 0.25 }, 0.1 + i * 0.07);
   });
   tl.fromTo(fills, { autoAlpha: 0 }, { autoAlpha: (i) => (i === 0 ? 1 : 0.7), duration: 0.3, stagger: 0.08 }, 0.35);
   return tl;
