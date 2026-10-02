@@ -21,14 +21,16 @@ export const site = {
   },
 
   hero: {
-    greeting: "Hi, I'm Shainy.",
-    offer: 'I build websites, automations and AI tools for small businesses.',
-    sub: "Tell me what's slowing you down. I'll build the thing that fixes it.",
-    cta: 'Start a project',
-    // Words the hero animation can split, move and reposition.
-    kinetic: ['Websites', 'Automation', 'AI'],
-    kineticLabel: 'What I build',
-    scrollHint: 'Scroll',
+    // The headline, line by line. Italic lines use the serif voice.
+    lines: [
+      { text: 'Websites, apps', italic: false },
+      { text: '& automations', italic: true },
+      { text: 'that do the work', italic: false },
+      { text: 'for you.', italic: true },
+    ],
+    cta: "Let's talk",
+    // The giant name under the headline; its i carries the glass orb.
+    name: 'Shainy',
   },
 
   services: {

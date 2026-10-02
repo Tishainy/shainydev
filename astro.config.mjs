@@ -28,6 +28,16 @@ export default defineConfig({
       fallbacks: ['sans-serif'],
     },
     {
+      // The italic voice in the hero headline.
+      provider: fontProviders.google(),
+      name: 'Instrument Serif',
+      cssVariable: '--font-instrument',
+      weights: [400],
+      styles: ['italic'],
+      subsets: ['latin'],
+      fallbacks: ['serif'],
+    },
+    {
       // Playful moments only: kinetic type where words move and stretch.
       provider: fontProviders.google(),
       name: 'Unbounded',

@@ -10,20 +10,6 @@
   --color-line: #262a35;
   --color-accent: #709bff;
   --color-on-accent: #0e1015;
-  /* Hero atmosphere: glow colours, the "Dev" gradient and frosted glass. */
-  --blob-1: #3d63ff;
-  --blob-2: #7a4dff;
-  --blob-3: #19c2e6;
-  --blob-4: #709bff;
-  --blob-opacity: 0.5;
-  --grad-a: #709bff;
-  --grad-b: #5fd8f5;
-  --grad-c: #b48cff;
-  --glass-bg: rgb(22 26 38 / 0.42);
-  --glass-border: rgb(255 255 255 / 0.12);
-  --glass-shine: rgb(255 255 255 / 0.08);
-  --glass-shadow: 0 20px 60px rgb(0 0 0 / 0.35);
-  --grain-opacity: 0.09;
   color-scheme: dark;
 }
 
@@ -34,19 +20,6 @@
   --color-line: #dde0e8;
   --color-accent: #2f5be0;
   --color-on-accent: #ffffff;
-  --blob-1: #8fb0ff;
-  --blob-2: #c3a8ff;
-  --blob-3: #8de6f5;
-  --blob-4: #b8ccff;
-  --blob-opacity: 0.75;
-  --grad-a: #2f5be0;
-  --grad-b: #0b8fb3;
-  --grad-c: #6b3fd6;
-  --glass-bg: rgb(255 255 255 / 0.45);
-  --glass-border: rgb(255 255 255 / 0.75);
-  --glass-shine: rgb(255 255 255 / 0.5);
-  --glass-shadow: 0 20px 60px rgb(40 60 120 / 0.12);
-  --grain-opacity: 0.06;
   color-scheme: light;
 }
 
@@ -61,6 +34,7 @@
   --font-display: var(--font-clash);
   --font-body: var(--font-hanken);
   --font-playful: var(--font-unbounded);
+  --font-serif: var(--font-instrument);
 }
 
 html {
@@ -84,4 +58,20 @@ h1, h2, h3 {
 :focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 3px;
+}
+
+/* Header: transparent over the hero, solid once you scroll past it. */
+.site-header {
+  transition: background-color 0.4s, border-color 0.4s, backdrop-filter 0.4s;
+  border-bottom: 1px solid transparent;
+}
+.site-header.is-scrolled {
+  background: color-mix(in srgb, var(--color-bg) 82%, transparent);
+  border-bottom-color: var(--color-line);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+/* Over the (always dark) hero, the header text stays light in both themes. */
+.site-header:not(.is-scrolled) :is(a, button) {
+  color: #f3f6ff;
 }

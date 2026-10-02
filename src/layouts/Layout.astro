@@ -18,7 +18,15 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <link rel="icon" href="/favicon.ico" />
     <Font cssVariable="--font-clash" preload />
     <Font cssVariable="--font-hanken" preload />
+    <Font cssVariable="--font-instrument" preload />
     <Font cssVariable="--font-unbounded" />
+    <!-- The hero waits (hidden) for fonts before its intro plays; never longer than 3s. -->
+    <script is:inline>
+      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.documentElement.classList.add('hero-pending');
+        setTimeout(() => document.documentElement.classList.remove('hero-pending'), 3000);
+      }
+    </script>
     <!-- Apply the saved theme before first paint so there's no flash. Dark is the default. -->
     <script is:inline>
       try {
@@ -28,7 +36,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     </script>
   </head>
   <body class="bg-bg text-fg antialiased">
-    <header class="fixed inset-x-0 top-0 z-50 border-b border-line bg-bg/80 backdrop-blur">
+    <header class="site-header fixed inset-x-0 top-0 z-50" data-site-header>
       <nav class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
         <a href="#top" class="font-display text-lg font-bold tracking-tight">{site.brand}</a>
         <div class="flex items-center gap-4">
