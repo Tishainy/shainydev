@@ -5,10 +5,10 @@ import { site } from '../data/content';
 
 const pairings = [
   {
-    id: 'studio',
+    id: 'satoshi',
     wordmarkSize: '14cqi',
-    name: 'Studio',
-    note: 'Clash Display + Satoshi. Sharp, confident, modern studio.',
+    name: 'Clash Display + Satoshi',
+    note: 'The original Studio pairing. Geometric, clean body text.',
     display: "'Clash Display', sans-serif",
     displayWeight: 600,
     displayTracking: '-0.02em',
@@ -16,41 +16,23 @@ const pairings = [
     source: 'Fontshare',
   },
   {
-    id: 'wide',
-    wordmarkSize: '11.5cqi',
-    name: 'Wide',
-    note: 'Unbounded + Hanken Grotesk. Wide letters that fill the screen; techy.',
-    display: "'Unbounded', sans-serif",
+    id: 'hanken',
+    wordmarkSize: '14cqi',
+    name: 'Clash Display + Hanken Grotesk',
+    note: 'Same headlines, slightly softer and more traditional body text.',
+    display: "'Clash Display', sans-serif",
     displayWeight: 600,
-    displayTracking: '-0.03em',
+    displayTracking: '-0.02em',
     body: "'Hanken Grotesk', sans-serif",
-    source: 'Google Fonts',
-  },
-  {
-    id: 'mix',
-    wordmarkSize: '11.5cqi',
-    name: 'Mix',
-    note: 'Unbounded headlines + Satoshi body. Wide drama up top, Studio calm underneath.',
-    display: "'Unbounded', sans-serif",
-    displayWeight: 600,
-    displayTracking: '-0.03em',
-    body: "'Satoshi', sans-serif",
-    source: 'Google Fonts + Fontshare',
+    source: 'Fontshare + Google Fonts',
   },
 ];
 
-// Each accent has a bright shade for dark mode and a deeper shade for light mode,
-// so text in the accent stays readable on both backgrounds.
-// "None" uses the text colour itself: a sleek, colourless look.
+// Shainy's cobalt: rgb(112, 155, 255) on dark; a deeper shade on light that passes
+// WCAG AA (5.2:1 on the light background, 5.7:1 under white button text).
 const accents = [
-  { id: 'lilac', name: 'Lilac', dark: '#BBA8FF', light: '#5A3FD0' },
-  { id: 'cobalt', name: 'Cobalt', dark: '#7D95FF', light: '#2343C8' },
-  { id: 'sky', name: 'Sky', dark: '#7CCBFF', light: '#06679F' },
-  { id: 'teal', name: 'Teal', dark: '#5FD8CF', light: '#06736C' },
-  { id: 'mint', name: 'Mint', dark: '#86E3B8', light: '#0E7650' },
-  { id: 'rose', name: 'Rose', dark: '#FF94B8', light: '#B02658' },
-  { id: 'gold', name: 'Gold', dark: '#F4C553', light: '#835D00' },
-  { id: 'none', name: 'None', dark: '#F3ECE8', light: '#1B1617' },
+  { id: 'cobalt', name: 'Your cobalt', dark: '#709BFF', light: '#2F5BE0' },
+  { id: 'cobalt-classic', name: 'Original cobalt', dark: '#7D95FF', light: '#2343C8' },
 ];
 
 const service = site.services.items[0];
@@ -66,7 +48,7 @@ const service = site.services.items[0];
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500&family=Unbounded:wght@500;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500&display=swap"
     />
     <link
       rel="stylesheet"
@@ -78,7 +60,7 @@ const service = site.services.items[0];
       <div class="controls-inner">
         <div>
           <h1 class="lab-title">Type lab</h1>
-          <p class="lab-help">Pick one pairing and one accent colour. Each pairing is shown in dark and light.</p>
+          <p class="lab-help">Round 3: which body font goes with Clash Display? Backgrounds are now tuned to cobalt.</p>
         </div>
         <div class="control-groups">
           <fieldset>
@@ -102,7 +84,7 @@ const service = site.services.items[0];
             </div>
           </fieldset>
           <label class="custom">
-            <input type="color" id="accent-custom" value="#9F7AEA" />
+            <input type="color" id="accent-custom" value="#709BFF" />
             Pick your own
           </label>
         </div>
@@ -146,11 +128,11 @@ const service = site.services.items[0];
 
     <style is:global>
       :root {
-        --lab-bg: #1b1819;
-        --lab-fg: #f3ece8;
-        --lab-muted: #a39892;
-        --accent-dark: #bba8ff;
-        --accent-light: #5a3fd0;
+        --lab-bg: #171920;
+        --lab-fg: #eef0f6;
+        --lab-muted: #9096a8;
+        --accent-dark: #709bff;
+        --accent-light: #2f5be0;
         color-scheme: dark;
       }
 
@@ -169,7 +151,7 @@ const service = site.services.items[0];
         z-index: 10;
         background: color-mix(in srgb, var(--lab-bg) 92%, transparent);
         backdrop-filter: blur(8px);
-        border-bottom: 1px solid #2e2826;
+        border-bottom: 1px solid #262a35;
       }
 
       .controls-inner {
@@ -214,12 +196,12 @@ const service = site.services.items[0];
       .panels { margin-top: 1.25rem; display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 32rem), 1fr)); }
 
       .panel {
-        --bg: #121011;
-        --fg: #f3ece8;
-        --muted: #a39892;
-        --line: #2e2826;
+        --bg: #0e1015;
+        --fg: #eef0f6;
+        --muted: #9096a8;
+        --line: #262a35;
         --accent: var(--accent-dark);
-        --on-accent: #1b1617;
+        --on-accent: #0e1015;
         min-width: 0;
         background: var(--bg);
         color: var(--fg);
@@ -234,10 +216,10 @@ const service = site.services.items[0];
       }
 
       .panel-light {
-        --bg: #f7f2ef;
-        --fg: #1b1617;
-        --muted: #6b605b;
-        --line: #e2d8d3;
+        --bg: #f4f5f8;
+        --fg: #14161c;
+        --muted: #5e6475;
+        --line: #dde0e8;
         --accent: var(--accent-light);
         --on-accent: #ffffff;
       }
