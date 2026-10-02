@@ -46,8 +46,8 @@ Lead offer: websites (the site itself is the proof). Draft one-liner: *"Websites
 ## Look
 
 - **Dark by default**, with a light/dark toggle.
-- **One accent colour**, used sparingly (CTAs, service names, interlude highlights). Everything else near-black, off-white, greys tuned to the accent. Peach/coral/apricot were tried and rejected (2026-10-02); final colour chosen in ticket 02.
-- **Type-driven.** Shortlist after round 1: **Studio** (Clash Display + Satoshi) or **Wide** (Unbounded + a sans body). **No monospace accent.** Final pick in ticket 02.
+- **Accent: Shainy's cobalt**, rgb(112 155 255) / `#709BFF` on dark; `#2F5BE0` on light (deepened to pass WCAG AA). Used sparingly (CTAs, service names, interlude highlights). Neutrals are cool, blue-leaning near-black and off-white. Peach/coral/apricot were tried and rejected.
+- **Typography (chosen 2026-10-02):** **Clash Display** for headlines, **Hanken Grotesk** for body text, and **Unbounded** as a playful display face reserved for kinetic-type moments (words moving, stretching, repositioning). **No monospace accent.** All self-hosted via Astro's fonts API.
 
 ## Brand & domain
 
@@ -84,7 +84,6 @@ Lead offer: websites (the site itself is the proof). Draft one-liner: *"Websites
 
 ## Open items
 
-- Font pairing (step 2)
 - Contact form delivery mechanism
 - Domain purchase (leaning shainydev.com)
 - Portrait photo and Jarvis clip (Shainy)

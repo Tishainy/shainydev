@@ -4,10 +4,14 @@
 
 **Blocked by:** 01 — Walking skeleton, deployed
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] The comparison page is reachable by URL but not linked from navigation
-- [ ] Shows 3–4 distinct pairings, each at hero size and body size, in dark and light
-- [ ] Shows 2–3 candidate peach/coral accent shades on dark and light backgrounds
-- [ ] **Checkpoint:** Shainy has picked a pairing and an accent shade
-- [ ] The chosen fonts and accent are applied site-wide as tokens; fonts load efficiently
+- [x] The comparison page is reachable by URL but not linked from navigation
+- [x] Shows 3–4 distinct pairings, each at hero size and body size, in dark and light
+- [x] Shows 2–3 candidate peach/coral accent shades on dark and light backgrounds
+- [x] **Checkpoint:** Shainy has picked a pairing and an accent shade
+- [x] The chosen fonts and accent are applied site-wide as tokens; fonts load efficiently
+
+## Comments
+
+- 2026-10-02: Three rounds at /type-lab. Picked **Clash Display + Hanken Grotesk**, with **Unbounded** kept for playful kinetic type. Accent: Shainy's own cobalt rgb(112 155 255) (`#709BFF`), light-mode shade `#2F5BE0`. Neutrals retuned cool to suit it. Rejected: warm accents (peach/coral/apricot), the monospace accent, the Character and Contrast pairings. The lab page stays up (noindex) until launch polish.

@@ -2,22 +2,24 @@
 @import "lenis/dist/lenis.css";
 
 /* Theme tokens. Dark is the default; light applies when the toggle sets data-theme="light".
-   Fonts and the final accent shade are placeholders until ticket 02. */
+   Accent is Shainy's cobalt, rgb(112 155 255); the light-mode shade is deepened to pass WCAG AA. */
 :root {
-  --color-bg: #121011;
-  --color-fg: #f3ece8;
-  --color-muted: #a39892;
-  --color-line: #2e2826;
-  --color-accent: #ff9a7a;
+  --color-bg: #0e1015;
+  --color-fg: #eef0f6;
+  --color-muted: #9096a8;
+  --color-line: #262a35;
+  --color-accent: #709bff;
+  --color-on-accent: #0e1015;
   color-scheme: dark;
 }
 
 :root[data-theme="light"] {
-  --color-bg: #f7f2ef;
-  --color-fg: #1b1617;
-  --color-muted: #6b605b;
-  --color-line: #e2d8d3;
-  --color-accent: #d9583a;
+  --color-bg: #f4f5f8;
+  --color-fg: #14161c;
+  --color-muted: #5e6475;
+  --color-line: #dde0e8;
+  --color-accent: #2f5be0;
+  --color-on-accent: #ffffff;
   color-scheme: light;
 }
 
@@ -27,8 +29,11 @@
   --color-muted: var(--color-muted);
   --color-line: var(--color-line);
   --color-accent: var(--color-accent);
-  --font-display: ui-sans-serif, system-ui, sans-serif;
-  --font-body: ui-sans-serif, system-ui, sans-serif;
+  --color-on-accent: var(--color-on-accent);
+  /* Clash Display for headlines, Hanken Grotesk for reading, Unbounded for playful kinetic type. */
+  --font-display: var(--font-clash);
+  --font-body: var(--font-hanken);
+  --font-playful: var(--font-unbounded);
 }
 
 html {
@@ -44,6 +49,8 @@ section[id] {
 
 h1, h2, h3 {
   font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.02em;
   text-wrap: balance;
 }
 
