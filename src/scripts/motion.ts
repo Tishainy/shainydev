@@ -7,6 +7,9 @@ gsap.registerPlugin(ScrollTrigger, SplitText);
 
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
+// Height of the fixed header, so in-page jumps don't hide headings beneath it.
+const HEADER_OFFSET = 64;
+
 // Smooth scroll, driven by GSAP's ticker so ScrollTrigger and Lenis share one clock.
 // Skipped entirely for reduced-motion visitors (native scrolling instead).
 function startSmoothScroll() {
@@ -22,7 +25,7 @@ function startSmoothScroll() {
       const target = link.hash && document.querySelector(link.hash);
       if (!target) return;
       event.preventDefault();
-      lenis.scrollTo(target as HTMLElement);
+      lenis.scrollTo(target as HTMLElement, { offset: -HEADER_OFFSET });
     });
   });
 }

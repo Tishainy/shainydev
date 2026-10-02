@@ -37,6 +37,11 @@ html {
   font-family: var(--font-body);
 }
 
+/* Native anchor jumps (reduced motion, no JS) also clear the fixed header. */
+section[id] {
+  scroll-margin-top: 4rem;
+}
+
 h1, h2, h3 {
   font-family: var(--font-display);
   text-wrap: balance;
