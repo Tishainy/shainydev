@@ -49,7 +49,7 @@ const variants = [
           <>
             <p class={`giant ${variant.fill}`} aria-hidden="true">Shainy</p>
             <div class="lens" aria-hidden="true">
-              <div class="lens-stage"><p class={`giant ${variant.fill}`}>Shainy</p></div>
+              <div class="lens-stage"></div>
             </div>
           </>
         )}
@@ -77,8 +77,9 @@ const variants = [
 
       // ---- Both: the light inside the name drifts toward the cursor ----
       document.querySelectorAll<HTMLElement>('.sketch').forEach((section) => {
-        const fills = section.querySelectorAll<HTMLElement>('.giant');
-        fills.forEach((el) => (el.style.backgroundSize = '130% 130%'));
+        // Queried per frame so the lens's magnified copy follows the light too.
+        const fills = () => section.querySelectorAll<HTMLElement>('.giant');
+        fills().forEach((el) => (el.style.backgroundSize = '130% 130%'));
         const light = { x: 50, y: 50 };
         gsap.ticker.add(() => {
           if (reduce) return;
@@ -87,20 +88,17 @@ const variants = [
           const ty = pointer.active ? 100 - ((pointer.y - rect.top) / rect.height) * 100 : 50;
           light.x += (tx - light.x) * 0.04;
           light.y += (ty - light.y) * 0.04;
-          fills.forEach((el) => (el.style.backgroundPosition = `${light.x}% ${light.y}%`));
+          fills().forEach((el) => (el.style.backgroundPosition = `${light.x}% ${light.y}%`));
         });
       });
 
       // ---- K: the orb drops in, floats, leans toward the cursor and catches its light ----
       document.querySelectorAll<HTMLElement>('.orb').forEach((orb) => {
         const ball = orb.querySelector<HTMLElement>('.orb-ball')!;
-        const giant = orb.closest<HTMLElement>('.giant')!;
         if (reduce) return;
 
-        const drop = () =>
-          gsap.fromTo(orb, { y: -window.innerHeight * 0.75 }, { y: 0, duration: 1.5, ease: 'bounce.out', overwrite: true });
-        drop();
-        gsap.to(ball, { y: -5, duration: 2.2, ease: 'sine.inOut', yoyo: true, repeat: -1, delay: 1.6 });
+        gsap.from(ball, { scale: 0.3, autoAlpha: 0, filter: 'brightness(2.2)', duration: 1.4, ease: 'expo.out', delay: 0.4 });
+        gsap.to(ball, { y: -5, duration: 2.2, ease: 'sine.inOut', yoyo: true, repeat: -1, delay: 1.8 });
 
         const leanX = gsap.quickTo(orb, 'x', { duration: 0.8, ease: 'power3' });
         const shine = { x: 34, y: 28 };
@@ -121,8 +119,6 @@ const variants = [
           ball.style.setProperty('--sy', shine.y + '%');
         });
 
-        giant.style.cursor = 'pointer';
-        giant.addEventListener('click', drop);
       });
 
       // ---- L: a lens that glides along the name, magnifying what's under it ----
@@ -130,7 +126,8 @@ const variants = [
       document.querySelectorAll<HTMLElement>('.lens').forEach((lens) => {
         const section = lens.closest<HTMLElement>('.sketch')!;
         const stage = lens.querySelector<HTMLElement>('.lens-stage')!;
-        const giant = section.querySelector<HTMLElement>('.giant')!;
+        // The lens shows a magnified copy of the whole hero.
+        section.querySelectorAll('.top, .headline, .giant').forEach((el) => stage.append(el.cloneNode(true)));
         const pos = { x: 0, y: 0 };
         let t = 0;
 
@@ -149,27 +146,28 @@ const variants = [
 
         gsap.ticker.add((_, delta) => {
           const s = section.getBoundingClientRect();
-          const g = giant.getBoundingClientRect();
           const r = lens.offsetWidth / 2;
-          // Keep the lens within the band of the name.
-          const minX = g.left - s.left - lens.offsetLeft + r * 0.2;
-          const maxX = Math.min(g.right, s.right) - s.left - lens.offsetLeft - r * 2.2;
-          const bandTop = g.top - s.top - lens.offsetTop + r * 0.6;
+          // Anywhere inside the hero.
+          const minX = -lens.offsetLeft;
+          const maxX = s.width - lens.offsetLeft - r * 2;
+          const minY = -lens.offsetTop;
+          const maxY = s.height - lens.offsetTop - r * 2;
           let tx: number;
           let ty: number;
           if (finePointer && pointer.active && !reduce) {
             tx = pointer.x - s.left - lens.offsetLeft - r;
             ty = pointer.y - s.top - lens.offsetTop - r;
           } else if (!reduce) {
+            // No mouse: wander slowly over the headline and the name.
             t += delta / 1000;
-            tx = minX + ((Math.sin(t * 0.35) + 1) / 2) * (maxX - minX);
-            ty = bandTop + 10 + Math.sin(t * 0.7) * 12;
+            tx = minX + ((Math.sin(t * 0.3) + 1) / 2) * (maxX - minX);
+            ty = minY + (0.25 + ((Math.sin(t * 0.47) + 1) / 2) * 0.55) * (maxY - minY);
           } else {
             tx = 0;
             ty = 0;
           }
           tx = gsap.utils.clamp(minX, maxX, tx);
-          ty = gsap.utils.clamp(bandTop - 20, bandTop + 60, ty);
+          ty = gsap.utils.clamp(minY, maxY, ty);
           pos.x += (tx - pos.x) * 0.08;
           pos.y += (ty - pos.y) * 0.08;
           render();
@@ -278,9 +276,12 @@ const variants = [
 
       /* K. The dot of the i becomes a small glowing glass sphere. */
       .i-wrap { position: relative; }
+      /* Placed from Clash Display Semibold's own metrics: the dotless i's stem centre is
+         0.124em from its left edge, and the original dot's centre sits 0.611em above the
+         baseline, i.e. 0.279em below the top of the 0.89em ascent. Orb is 0.14em wide. */
       .orb {
-        position: absolute; left: 54%; top: 0.175em; translate: -50% 0;
-        width: 0.145em; height: 0.145em;
+        position: absolute; left: 0.054em; top: 0.209em;
+        width: 0.14em; height: 0.14em;
       }
       .orb-ball {
         position: absolute; inset: 0; border-radius: 50%;
@@ -296,7 +297,7 @@ const variants = [
 
       /* L. A round glass lens resting on the name. */
       .lens {
-        position: absolute; left: 37%; top: 71%; z-index: 3; will-change: transform;
+        position: absolute; left: 37%; top: 71%; z-index: 3; will-change: transform; pointer-events: none;
         width: clamp(9rem, 17vw, 17rem); aspect-ratio: 1; border-radius: 50%;
         overflow: hidden; background: var(--ink);
         border: 1px solid rgb(255 255 255 / 0.35);
@@ -311,7 +312,7 @@ const variants = [
           radial-gradient(circle at 30% 24%, rgb(255 255 255 / 0.35), transparent 26%),
           radial-gradient(circle at 70% 82%, rgb(142 240 255 / 0.18), transparent 30%);
       }
-      .lens-stage { position: absolute; }
+      .lens-stage { position: absolute; pointer-events: none; }
 
       @media (max-width: 767px) {
         .top-nav { display: none; }
