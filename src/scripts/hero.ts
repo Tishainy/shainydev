@@ -1,14 +1,8 @@
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { startWaveLines } from './wave-lines';
 
 gsap.registerPlugin(ScrollTrigger);
-
-// Wave lines are drawn a little larger than the hero so they can drift without showing edges.
-const BLEED = 64;
-// How far the lines' fade reaches out from each letter, in px.
-const HALO = 34;
-
-const reduce = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /** Hero: load intro, pinned scroll sequence, the glass orb, and the wave-line background. */
 export function initHero() {
@@ -32,7 +26,8 @@ export function initHero() {
     pointer.active = true;
   });
 
-  startWaveLines(hero, base, glow);
+  // Measure at rest: once the visitor has scrolled, the scroll animation has moved the letters.
+  startWaveLines(hero, base, glow, { canDraw: () => window.scrollY < hero.offsetHeight * 0.1 });
   startHeaderState(hero);
 
   const mm = gsap.matchMedia();
@@ -160,134 +155,4 @@ function startHeaderState(hero: HTMLElement) {
     onEnter: () => header.classList.add('is-scrolled'),
     onLeaveBack: () => header.classList.remove('is-scrolled'),
   });
-}
-
-/**
- * Faint flowing wave lines behind the hero. They fade out just before every letter
- * (traced from each character in its real font), and two soft spotlights roam across them.
- */
-function startWaveLines(hero: HTMLElement, base: HTMLCanvasElement, glow: HTMLCanvasElement) {
-  const mask = document.createElement('canvas');
-  const mctx = mask.getContext('2d')!;
-  // Line colours come from the hero's CSS, so they follow the theme.
-  const colours = () => {
-    const cs = getComputedStyle(hero);
-    return [cs.getPropertyValue('--hero-line').trim(), cs.getPropertyValue('--hero-line-glow').trim()];
-  };
-
-  function drawMask(w: number, h: number, dpr: number) {
-    mask.width = w * dpr;
-    mask.height = h * dpr;
-    mctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    mctx.filter = 'blur(18px)';
-    mctx.fillStyle = '#000';
-    mctx.strokeStyle = '#000';
-    mctx.lineJoin = 'round';
-    mctx.lineWidth = HALO * 2;
-
-    const origin = hero.getBoundingClientRect();
-    const ox = BLEED - origin.left;
-    const oy = BLEED - origin.top;
-    const walker = document.createTreeWalker(hero, NodeFilter.SHOW_TEXT);
-    const range = document.createRange();
-    let node: Node | null;
-    while ((node = walker.nextNode())) {
-      const parent = node.parentElement!;
-      const text = node.textContent ?? '';
-      const cs = getComputedStyle(parent);
-      mctx.font = `${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
-      for (let i = 0; i < text.length; i++) {
-        const ch = text[i];
-        if (!ch.trim()) continue;
-        range.setStart(node, i);
-        range.setEnd(node, i + 1);
-        const r = range.getBoundingClientRect();
-        if (!r.width) continue;
-        const ascent = mctx.measureText(ch).fontBoundingBoxAscent;
-        mctx.strokeText(ch, r.left + ox, r.top + oy + ascent);
-        mctx.fillText(ch, r.left + ox, r.top + oy + ascent);
-      }
-    }
-    // Shapes that aren't text: the button and the orb.
-    hero.querySelectorAll<HTMLElement>('[data-hero-pill], [data-hero-orb]').forEach((el) => {
-      const r = el.getBoundingClientRect();
-      mctx.beginPath();
-      mctx.roundRect(
-        r.left + ox - HALO,
-        r.top + oy - HALO,
-        r.width + HALO * 2,
-        r.height + HALO * 2,
-        Math.min(r.width, r.height) / 2 + HALO,
-      );
-      mctx.fill();
-    });
-    mctx.filter = 'none';
-  }
-
-  function draw() {
-    // Measure at rest: once the visitor has scrolled, the scroll animation has moved the letters.
-    if (window.scrollY > hero.offsetHeight * 0.1) return;
-    const dpr = Math.min(devicePixelRatio || 1, 2);
-    const w = hero.clientWidth + BLEED * 2;
-    const h = hero.clientHeight + BLEED * 2;
-    drawMask(w, h, dpr);
-
-    const [line, lineGlow] = colours();
-    for (const [canvas, colour] of [[base, line], [glow, lineGlow]] as const) {
-      const ctx = canvas.getContext('2d')!;
-      canvas.width = w * dpr;
-      canvas.height = h * dpr;
-      canvas.style.width = `${w}px`;
-      canvas.style.height = `${h}px`;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      ctx.strokeStyle = colour;
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      // Gently undulating lines, each a little out of phase with the next.
-      for (let y = 0, row = 0; y < h + 40; y += 34, row++) {
-        for (let x = 0; x <= w; x += 8) {
-          const yy = y + Math.sin(x * 0.0042 + row * 0.38) * 18 + Math.sin(x * 0.0011 - row * 0.21) * 26;
-          if (x === 0) ctx.moveTo(x, yy);
-          else ctx.lineTo(x, yy);
-        }
-      }
-      ctx.stroke();
-      ctx.globalCompositeOperation = 'destination-out';
-      ctx.drawImage(mask, 0, 0, w, h);
-      ctx.globalCompositeOperation = 'source-over';
-    }
-  }
-
-  // Letter positions are only final once the fonts are in, and before the intro moves them.
-  // The intro starts from the same fonts-ready moment, so measure in the same frame, first.
-  const fonts = document.fonts?.ready ?? Promise.resolve();
-  fonts.then(draw);
-  addEventListener('resize', () => requestAnimationFrame(draw));
-  // Redraw in the other theme's colours when the theme is switched.
-  new MutationObserver(() => requestAnimationFrame(draw)).observe(document.documentElement, {
-    attributes: true,
-    attributeFilter: ['data-theme'],
-  });
-
-  // Two spotlights wander across the lines on their own.
-  let t = Math.random() * 100;
-  gsap.ticker.add((_, delta) => {
-    if (!reduce()) t += delta / 1000;
-    const w = hero.clientWidth;
-    const h = hero.clientHeight;
-    glow.style.setProperty('--sp1x', `${w * (0.5 + 0.44 * Math.sin(t * 0.21) * Math.cos(t * 0.09)) + BLEED}px`);
-    glow.style.setProperty('--sp1y', `${h * (0.5 + 0.4 * Math.sin(t * 0.16 + 1.3)) + BLEED}px`);
-    glow.style.setProperty('--sp2x', `${w * (0.5 + 0.44 * Math.cos(t * 0.17 + 2.1)) + BLEED}px`);
-    glow.style.setProperty('--sp2y', `${h * (0.5 + 0.4 * Math.sin(t * 0.13 + 4.2) * Math.cos(t * 0.07)) + BLEED}px`);
-  });
-
-  // A little depth: the lines drift against the cursor.
-  if (!reduce()) {
-    const gx = gsap.quickTo([base, glow], 'x', { duration: 1.2, ease: 'power3' });
-    const gy = gsap.quickTo([base, glow], 'y', { duration: 1.2, ease: 'power3' });
-    addEventListener('pointermove', (e) => {
-      gx(-(e.clientX / innerWidth - 0.5) * 16);
-      gy(-(e.clientY / innerHeight - 0.5) * 16);
-    });
-  }
 }

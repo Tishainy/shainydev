@@ -12,8 +12,8 @@ const nameEnd = name.slice(iIndex + 1);
 ---
 
 <section id="hero" class="hero" data-hero>
-  <canvas class="hero-lines" aria-hidden="true" data-hero-lines></canvas>
-  <canvas class="hero-lines hero-lines-glow" aria-hidden="true" data-hero-glow></canvas>
+  <canvas class="wave-lines" aria-hidden="true" data-hero-lines></canvas>
+  <canvas class="wave-lines wave-lines-glow" aria-hidden="true" data-hero-glow></canvas>
 
   <h1 class="hero-headline">
     {lines.map((line, index) => (
@@ -21,7 +21,7 @@ const nameEnd = name.slice(iIndex + 1);
         <span class="hero-l-inner" data-hero-line-inner>
           {line.text}
           {index === lines.length - 1 && (
-            <a href="#contact" class="hero-pill" data-hero-pill>{cta}</a>
+            <a href="#contact" class="hero-pill" data-hero-pill data-lines-avoid>{cta}</a>
           )}
         </span>
       </span>
@@ -29,7 +29,7 @@ const nameEnd = name.slice(iIndex + 1);
   </h1>
 
   <p class="hero-giant" aria-hidden="true" data-hero-giant>
-    {nameStart}<span class="hero-i">ı<span class="hero-orb" data-hero-orb><span class="hero-orb-ball glass-orb" data-hero-orb-ball></span></span></span>{nameEnd}
+    {nameStart}<span class="hero-i">ı<span class="hero-orb" data-hero-orb data-lines-avoid><span class="hero-orb-ball glass-orb" data-hero-orb-ball></span></span></span>{nameEnd}
   </p>
 </section>
 
@@ -39,9 +39,6 @@ const nameEnd = name.slice(iIndex + 1);
     --hero-fg: var(--color-fg);
     --hero-on-fg: var(--color-bg);
     --hero-pill-line: color-mix(in srgb, var(--color-fg) 55%, transparent);
-    /* Read by hero.ts when it draws the wave lines. */
-    --hero-line: rgb(143 176 255 / 0.13);
-    --hero-line-glow: rgb(196 214 255 / 0.8);
     --hero-giant-fill: var(--light-fill);
     position: relative;
     height: 100svh;
@@ -57,25 +54,6 @@ const nameEnd = name.slice(iIndex + 1);
     visibility: hidden;
   }
 
-  .hero-lines {
-    position: absolute;
-    left: -64px;
-    top: -64px;
-    pointer-events: none;
-    will-change: transform;
-  }
-  .hero-lines-glow {
-    --sp1x: 30%;
-    --sp1y: 40%;
-    --sp2x: 70%;
-    --sp2y: 60%;
-    -webkit-mask-image:
-      radial-gradient(circle 380px at var(--sp1x) var(--sp1y), #000 0%, rgb(0 0 0 / 0.45) 45%, transparent 100%),
-      radial-gradient(circle 340px at var(--sp2x) var(--sp2y), #000 0%, rgb(0 0 0 / 0.45) 45%, transparent 100%);
-    mask-image:
-      radial-gradient(circle 380px at var(--sp1x) var(--sp1y), #000 0%, rgb(0 0 0 / 0.45) 45%, transparent 100%),
-      radial-gradient(circle 340px at var(--sp2x) var(--sp2y), #000 0%, rgb(0 0 0 / 0.45) 45%, transparent 100%);
-  }
 
   /* A centred block, each line pushed to its own spot. */
   .hero-headline {
@@ -180,12 +158,6 @@ const nameEnd = name.slice(iIndex + 1);
   .hero-orb-ball {
     position: absolute;
     inset: 0;
-  }
-
-  /* Light theme: off-white page, dark type, deeper cobalt light so the name stays strong. */
-  :global(:root[data-theme='light']) .hero {
-    --hero-line: rgb(47 91 224 / 0.16);
-    --hero-line-glow: rgb(47 91 224 / 0.6);
   }
 
   @media (max-width: 767px) {

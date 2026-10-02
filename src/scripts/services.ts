@@ -1,12 +1,9 @@
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText } from 'gsap/SplitText';
+import { startWaveLines } from './wave-lines';
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
-
-// Clash Display's ascent and descent, as fractions of the font size (from the font's own metrics).
-const ASCENT = 0.89;
-const DESCENT = 0.25;
 
 /**
  * Services: on desktop with motion, a pinned full-screen scene. Scrolling plays the services
@@ -42,20 +39,14 @@ export function initServices() {
       });
     }
 
-    // Where the orb sits as each word's full stop: just after the last letter, resting on the baseline.
-    function orbSpot(i: number) {
+    // How far along the orb sits as each word's full stop: just after the last letter.
+    // (Its height is fixed in CSS, on the words' shared baseline.)
+    function orbX(i: number) {
       const stageBox = stage.getBoundingClientRect();
       const wordBox = words[i].getBoundingClientRect();
       const last = chars[i][chars[i].length - 1];
-      const cs = getComputedStyle(words[i]);
-      const fontSize = parseFloat(cs.fontSize);
-      const lineHeight = parseFloat(cs.lineHeight);
-      // Within a line box, the baseline sits half the leading plus the ascent below its top.
-      const baseline = wordBox.top + last.offsetTop + (lineHeight + (ASCENT - DESCENT) * fontSize) / 2;
-      return {
-        x: wordBox.left - stageBox.left + last.offsetLeft + last.offsetWidth + fontSize * 0.05,
-        y: baseline - stageBox.top - fontSize * 0.16,
-      };
+      const fontSize = parseFloat(getComputedStyle(words[i]).fontSize);
+      return wordBox.left - stageBox.left + last.offsetLeft + last.offsetWidth + fontSize * 0.05;
     }
 
     // Starting state: only the first service shows.
@@ -81,7 +72,7 @@ export function initServices() {
       },
     });
 
-    tl.set(orb, { x: () => orbSpot(0).x, y: () => orbSpot(0).y }, 0);
+    tl.set(orb, { x: () => orbX(0) }, 0);
     tl.addLabel('s0', 0);
 
     // Each change: hold the current service for a moment, then play the swap.
@@ -93,7 +84,7 @@ export function initServices() {
       tl.to(lines[from], { xPercent: (k) => (k % 2 === 0 ? -16 : 16), autoAlpha: 0, duration: 0.5, stagger: 0.08 }, at)
         .to(fades[from], { y: -30, autoAlpha: 0, duration: 0.45, stagger: 0.05 }, at)
         .to(chars[from], { yPercent: -110, duration: 0.5, stagger: 0.03, ease: 'power2.in' }, at + 0.05)
-        .to(orb, { x: () => orbSpot(i).x, y: () => orbSpot(i).y, duration: 0.9 }, at + 0.1)
+        .to(orb, { x: () => orbX(i), duration: 0.9 }, at + 0.1)
         .fromTo(chars[i], { yPercent: 110 }, { yPercent: 0, duration: 0.55, stagger: 0.035, ease: 'power3.out' }, at + 0.4)
         .fromTo(
           lines[i],
@@ -106,6 +97,14 @@ export function initServices() {
     });
     // A last moment on the final service before the scene lets go.
     tl.to({}, { duration: 0.6 });
+
+    // The hero's wave lines continue here, fading around every service's text (traced at rest).
+    const base = section.querySelector<HTMLCanvasElement>('[data-svc-lines]')!;
+    const glow = section.querySelector<HTMLCanvasElement>('[data-svc-glow]')!;
+    startWaveLines(stage, base, glow, {
+      canDraw: () => section.classList.contains('is-staged'),
+      atRest: () => [...lines.flat(), ...fades.flat(), ...chars.flat()],
+    });
 
     paintLetters();
     document.fonts?.ready.then(() => {

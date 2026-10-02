@@ -10,6 +10,9 @@
   --color-line: #262a35;
   --color-accent: #709bff;
   --color-on-accent: #0e1015;
+  /* Faint flowing wave lines behind the hero and services (see wave-lines.ts). */
+  --wave-line: rgb(143 176 255 / 0.13);
+  --wave-line-glow: rgb(196 214 255 / 0.8);
   /* The cobalt light that fills the big words (hero name, service words). */
   --light-fill:
     radial-gradient(28% 70% at 16% 35%, #dbe6ff 0%, #7aa2ff 28%, transparent 70%),
@@ -26,6 +29,8 @@
   --color-line: #dde0e8;
   --color-accent: #2f5be0;
   --color-on-accent: #ffffff;
+  --wave-line: rgb(47 91 224 / 0.16);
+  --wave-line-glow: rgb(47 91 224 / 0.6);
   --light-fill:
     radial-gradient(28% 70% at 16% 35%, #7aa2ff 0%, #3d6bff 30%, transparent 70%),
     radial-gradient(24% 70% at 78% 55%, #1fb6e0 0%, #2f6bff 38%, transparent 72%),
@@ -97,4 +102,25 @@ h1, h2, h3 {
     inset -0.012em -0.016em 0.03em rgb(0 0 40 / 0.55),
     inset 0.01em 0.01em 0.02em rgb(255 255 255 / 0.5),
     0 0 0.08em rgb(142 176 255 / 0.55);
+}
+
+/* Wave-line canvases (drawn by wave-lines.ts); the glow layer only shows under two roaming spotlights. */
+.wave-lines {
+  position: absolute;
+  left: -64px;
+  top: -64px;
+  pointer-events: none;
+  will-change: transform;
+}
+.wave-lines-glow {
+  --sp1x: 30%;
+  --sp1y: 40%;
+  --sp2x: 70%;
+  --sp2y: 60%;
+  -webkit-mask-image:
+    radial-gradient(circle 380px at var(--sp1x) var(--sp1y), #000 0%, rgb(0 0 0 / 0.45) 45%, transparent 100%),
+    radial-gradient(circle 340px at var(--sp2x) var(--sp2y), #000 0%, rgb(0 0 0 / 0.45) 45%, transparent 100%);
+  mask-image:
+    radial-gradient(circle 380px at var(--sp1x) var(--sp1y), #000 0%, rgb(0 0 0 / 0.45) 45%, transparent 100%),
+    radial-gradient(circle 340px at var(--sp2x) var(--sp2y), #000 0%, rgb(0 0 0 / 0.45) 45%, transparent 100%);
 }
