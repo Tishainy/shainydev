@@ -5,7 +5,8 @@ import { site } from '../../data/content';
 // Without JS or with reduced motion, this markup is the full, readable composition.
 
 const { lines, cta, name } = site.hero;
-// The name's "i" is drawn dotless so the glass orb can be its dot.
+// The glass orb sits exactly over the dot of the name's "i", covering it. (A plain "i", not the
+// dotless "ı": some phone browsers render that character in a fallback font, or not at all.)
 const iIndex = name.indexOf('i');
 const nameStart = name.slice(0, iIndex);
 const nameEnd = name.slice(iIndex + 1);
@@ -29,7 +30,7 @@ const nameEnd = name.slice(iIndex + 1);
   </h1>
 
   <p class="hero-giant" aria-hidden="true" data-hero-giant>
-    {nameStart}<span class="hero-i">ı<span class="hero-orb" data-hero-orb data-lines-avoid><span class="hero-orb-ball glass-orb" data-hero-orb-ball></span></span></span>{nameEnd}
+    {nameStart}<span class="hero-i">i<span class="hero-orb" data-hero-orb data-lines-avoid><span class="hero-orb-ball glass-orb" data-hero-orb-ball></span></span></span>{nameEnd}
   </p>
 </section>
 
@@ -142,15 +143,24 @@ const nameEnd = name.slice(iIndex + 1);
     transform-origin: 50% 100%;
   }
 
-  /* Placed from Clash Display Semibold's own metrics: the dotless i's stem centre is
-     0.124em from its left edge; the original dot's centre is 0.279em below the top of
-     the 0.89em ascent. The orb is 0.14em wide. */
+  /* Placed from Clash Display Semibold's own metrics: the i's square dot spans 0.04–0.19em across and
+     0.552–0.67em above the baseline (centre 0.115em in, 0.279em below the top of the 0.89em ascent).
+     A patch in the page colour hides the square dot; the round orb sits centred on top of it. */
   .hero-i {
     position: relative;
   }
+  .hero-i::before {
+    content: '';
+    position: absolute;
+    left: 0.03em;
+    top: 0.21em;
+    width: 0.17em;
+    height: 0.14em;
+    background: var(--hero-bg);
+  }
   .hero-orb {
     position: absolute;
-    left: 0.054em;
+    left: 0.045em;
     top: 0.209em;
     width: 0.14em;
     height: 0.14em;
