@@ -4,14 +4,23 @@ import { site } from '../../data/content';
 ---
 
 <section id="process" class="mx-auto max-w-6xl px-4 py-24 sm:px-6">
-  <h2 class="text-3xl font-bold" data-reveal>{site.process.heading}</h2>
-  <ol class="mt-10 grid gap-6 sm:grid-cols-2 md:grid-cols-4">
+  <h2 class="text-3xl" data-reveal>{site.process.heading}</h2>
+  <ol class="mt-10 grid gap-8 sm:grid-cols-2 md:grid-cols-4">
     {site.process.steps.map((step) => (
-      <li class="border-t border-line pt-4 text-xl font-bold" data-reveal>{step}</li>
+      <li class="min-w-0 border-t border-line pt-4" data-reveal>
+        <h3 class="text-xl">{step.name}</h3>
+        <p class="mt-2 text-muted">{step.description}</p>
+      </li>
     ))}
   </ol>
-  <ul class="mt-12 flex flex-wrap gap-x-6 gap-y-2 text-muted" data-reveal>
-    {site.process.formats.map((format) => <li>{format}</li>)}
+  <h3 class="mt-16 text-2xl" data-reveal>{site.process.formatsHeading}</h3>
+  <ul class="mt-6 grid gap-6 sm:grid-cols-3">
+    {site.process.formats.map((format) => (
+      <li class="min-w-0" data-reveal>
+        <p class="font-medium">{format.name}</p>
+        <p class="mt-1 text-muted">{format.description}</p>
+      </li>
+    ))}
   </ul>
-  <p class="mt-4" data-reveal>{site.process.quoteNote}</p>
+  <p class="mt-8 text-lg" data-reveal>{site.process.quoteNote}</p>
 </section>

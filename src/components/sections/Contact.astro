@@ -4,6 +4,12 @@ import { site } from '../../data/content';
 ---
 
 <section id="contact" class="mx-auto max-w-6xl px-4 py-32 sm:px-6">
-  <h2 class="text-4xl font-bold sm:text-6xl" data-reveal>{site.contact.heading}</h2>
-  <p class="mt-4 text-xl text-muted" data-reveal>{site.contact.lead}</p>
+  <h2 class="text-4xl sm:text-6xl" data-reveal>{site.contact.heading}</h2>
+  <p class="mt-4 max-w-prose text-xl text-muted" data-reveal>{site.contact.lead}</p>
+  <h3 class="mt-12 text-xl" data-reveal>{site.contact.altHeading}</h3>
+  <ul class="mt-4 flex flex-wrap gap-x-6 gap-y-2" data-reveal>
+    <li><a class="underline decoration-accent underline-offset-4" href={`mailto:${site.links.email}`}>{site.contact.emailLabel}</a></li>
+    <li><a class="underline decoration-accent underline-offset-4" href={site.links.linkedin}>{site.contact.linkedinLabel}</a></li>
+    <li><a class="underline decoration-accent underline-offset-4" href={site.links.bookCall}>{site.contact.bookCallLabel}</a></li>
+  </ul>
 </section>

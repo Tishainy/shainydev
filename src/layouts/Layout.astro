@@ -44,6 +44,12 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <main id="top">
       <slot />
     </main>
+    <footer class="border-t border-line">
+      <div class="mx-auto flex max-w-6xl flex-wrap justify-between gap-2 px-4 py-6 text-sm text-muted sm:px-6">
+        <p>{site.footer.note}</p>
+        <p>{site.footer.copyright}</p>
+      </div>
+    </footer>
     <script>
       import '../scripts/motion';
     </script>

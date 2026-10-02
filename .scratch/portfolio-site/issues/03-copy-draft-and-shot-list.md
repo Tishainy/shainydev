@@ -6,7 +6,11 @@
 
 **Status:** ready-for-agent
 
-- [ ] Every section's text comes from the content file; no hard-coded copy in components
-- [ ] No stats, testimonials, client logos or prices appear anywhere
-- [ ] Jarvis shot list exists (what to say, what to show on screen, 20–40s)
+- [x] Every section's text comes from the content file; no hard-coded copy in components
+- [x] No stats, testimonials, client logos or prices appear anywhere
+- [x] Jarvis shot list exists (what to say, what to show on screen, 20–40s)
 - [ ] **Checkpoint:** Shainy has reviewed and edited the copy (especially About)
+
+## Comments
+
+- 2026-10-02: Copy drafted in a casual, warm voice in the content file and live on the site. Shot list at `.scratch/portfolio-site/jarvis-shot-list.md`. Open TODOs in the content file: business email, LinkedIn URL, Cal.com link. Waiting on Shainy's edits.

@@ -4,13 +4,24 @@ import { site } from '../../data/content';
 ---
 
 <section id="work" class="mx-auto max-w-6xl px-4 py-24 sm:px-6">
-  <h2 class="text-3xl font-bold" data-reveal>{site.work.heading}</h2>
-  <div class="mt-10 grid gap-8 md:grid-cols-2">
+  <h2 class="text-3xl" data-reveal>{site.work.heading}</h2>
+  <p class="mt-3 max-w-prose text-muted" data-reveal>{site.work.intro}</p>
+  <div class="mt-10 grid gap-10 md:grid-cols-2">
     {site.work.projects.map((project) => (
       <article class="min-w-0 border-t border-line pt-6" data-reveal>
         <p class="text-sm text-muted">{project.status}</p>
-        <h3 class="mt-1 text-2xl font-bold">{project.name}</h3>
-        <p class="mt-2 text-muted">{project.summary}</p>
+        <h3 class="mt-1 text-3xl">{project.name}</h3>
+        <p class="mt-3">{project.summary}</p>
+        {project.highlights.length > 0 && (
+          <ul class="mt-4 list-disc space-y-1 pl-5 text-muted">
+            {project.highlights.map((highlight) => <li>{highlight}</li>)}
+          </ul>
+        )}
+        {project.tools.length > 0 && (
+          <ul class="mt-4 flex flex-wrap gap-2 text-sm">
+            {project.tools.map((tool) => <li class="rounded-full border border-line px-3 py-1">{tool}</li>)}
+          </ul>
+        )}
       </article>
     ))}
   </div>

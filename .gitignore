@@ -31,3 +31,6 @@ pnpm-debug.log*
 
 .vercel
 .env*
+
+# raw media drops (portrait, Jarvis recording) before they are processed
+assets-raw/
