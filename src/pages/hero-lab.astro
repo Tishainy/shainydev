@@ -8,7 +8,7 @@ const nav = ['Services', 'Work', 'Process', 'About'];
 // The orb won. The lens (detail: 'lens') is kept in the code for possible later use.
 // Line styles 'ripple' and 'diagonal' remain in drawLines() if needed later.
 const variants = [
-  { id: 'w', name: 'W. Flowing waves', fill: 'fill-light', italics: 'it-solid', detail: 'orb', lines: 'waves', layout: 'classic' },
+  { id: 'w', name: 'W. Water caustics', fill: 'fill-light', italics: 'it-white', detail: 'orb', lines: 'caustics', layout: 'classic' },
   { id: 'x', name: 'X. Woven name', fill: 'fill-light', italics: 'it-solid', detail: 'orb', lines: 'waves', layout: 'woven' },
   { id: 'y', name: 'Y. Spine', fill: 'fill-light', italics: 'it-solid', detail: 'orb', lines: 'waves', layout: 'spine' },
 ];
@@ -29,8 +29,14 @@ const variants = [
   <body>
     {variants.map((variant) => (
       <section class={`sketch layout-${variant.layout}`} id={variant.id}>
-        <canvas class="lines" data-lines={variant.lines} aria-hidden="true"></canvas>
-        <canvas class="lines lines-glow" data-lines={variant.lines} aria-hidden="true"></canvas>
+        {variant.lines === 'caustics' ? (
+          <canvas class="caustics" aria-hidden="true"></canvas>
+        ) : (
+          <>
+            <canvas class="lines" data-lines={variant.lines} aria-hidden="true"></canvas>
+            <canvas class="lines lines-glow" data-lines={variant.lines} aria-hidden="true"></canvas>
+          </>
+        )}
         {variant.layout === 'woven' && <canvas class="lines lines-name" aria-hidden="true"></canvas>}
         <p class="tag">{variant.name}</p>
 
@@ -331,6 +337,99 @@ const variants = [
         }
       });
 
+      // ---- W: water caustics behind everything, fading out around the text ----
+      document.querySelectorAll<HTMLElement>('.sketch').forEach((section) => {
+        const found = section.querySelector<HTMLCanvasElement>('canvas.caustics');
+        if (!found || section.hidden) return;
+        const canvas = found;
+        const gl = canvas.getContext('webgl');
+        if (!gl) return;
+
+        const vert = `attribute vec2 p; void main(){ gl_Position = vec4(p, 0.0, 1.0); }`;
+        // A domain-warped field whose zero-crossings become thin, shifting filaments of light.
+        const frag = `
+          precision highp float;
+          uniform vec2 res;
+          uniform float t;
+          void main(){
+            vec2 p = gl_FragCoord.xy / res.y * 3.2;
+            float v = 0.0;
+            for (int k = 0; k < 4; k++) {
+              float fk = float(k);
+              p += 0.42 * vec2(sin(p.y * 1.3 + t * 0.35 + fk * 1.1), cos(p.x * 1.1 - t * 0.28 + fk * 1.7));
+              float f = sin(p.x + p.y * 0.6 + t * 0.2) + 0.7 * cos(p.y * 1.2 - p.x * 0.4 - t * 0.15);
+              v += 0.022 / (abs(f) + 0.035);
+            }
+            v = clamp(v, 0.0, 1.6);
+            vec3 col = mix(vec3(0.016, 0.04, 0.14), vec3(0.17, 0.33, 0.95), clamp(v * 0.55, 0.0, 1.0));
+            col = mix(col, vec3(0.6, 0.9, 1.0), clamp((v - 0.9) * 0.6, 0.0, 1.0));
+            col *= 0.7 + 0.35 * smoothstep(0.0, 1.0, gl_FragCoord.y / res.y * 0.6 + 0.2);
+            gl_FragColor = vec4(col, 1.0);
+          }`;
+        const compile = (type: number, src: string) => {
+          const sh = gl.createShader(type)!;
+          gl.shaderSource(sh, src);
+          gl.compileShader(sh);
+          return sh;
+        };
+        const prog = gl.createProgram()!;
+        gl.attachShader(prog, compile(gl.VERTEX_SHADER, vert));
+        gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, frag));
+        gl.linkProgram(prog);
+        gl.useProgram(prog);
+        gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+        const loc = gl.getAttribLocation(prog, 'p');
+        gl.enableVertexAttribArray(loc);
+        gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+        const resLoc = gl.getUniformLocation(prog, 'res');
+        const tLoc = gl.getUniformLocation(prog, 't');
+
+        // The fade around the text: same letter-shaped halo as the lines had,
+        // turned into a CSS mask so the caustics stop just short of every glyph.
+        function buildMask() {
+          const w = section.clientWidth;
+          const h = section.clientHeight;
+          const halo = document.createElement('canvas');
+          halo.width = w;
+          halo.height = h;
+          const hctx = halo.getContext('2d')!;
+          hctx.filter = 'blur(18px)';
+          textMask(section, hctx, 0);
+          const mask = document.createElement('canvas');
+          mask.width = w;
+          mask.height = h;
+          const mctx = mask.getContext('2d')!;
+          mctx.fillStyle = '#fff';
+          mctx.fillRect(0, 0, w, h);
+          mctx.globalCompositeOperation = 'destination-out';
+          mctx.drawImage(halo, 0, 0);
+          const url = `url(${mask.toDataURL()})`;
+          canvas.style.maskImage = url;
+          canvas.style.webkitMaskImage = url;
+        }
+
+        const resize = () => {
+          const dpr = Math.min(devicePixelRatio || 1, 2);
+          canvas.width = section.clientWidth * dpr;
+          canvas.height = section.clientHeight * dpr;
+          buildMask();
+        };
+        resize();
+        document.fonts?.ready.then(resize);
+        addEventListener('resize', resize);
+
+        const t0 = performance.now();
+        const frame = (now: number) => {
+          gl.viewport(0, 0, canvas.width, canvas.height);
+          gl.uniform2f(resLoc, canvas.width, canvas.height);
+          gl.uniform1f(tLoc, reduce ? 8 : (now - t0) / 1000 + 8);
+          gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+          if (!reduce) requestAnimationFrame(frame);
+        };
+        requestAnimationFrame(frame);
+      });
+
       // ---- K: the orb drops in, floats, leans toward the cursor and catches its light ----
       document.querySelectorAll<HTMLElement>('.orb').forEach((orb) => {
         const ball = orb.querySelector<HTMLElement>('.orb-ball')!;
@@ -473,6 +572,10 @@ const variants = [
       .l4 .pill { margin-left: 0.9em; }
 
       .it-solid .it { color: #8fb0ff; }
+      .it-white .it { color: #f3f6ff; }
+
+      .caustics { position: absolute; inset: 0; z-index: 0; pointer-events: none;
+        -webkit-mask-size: 100% 100%; mask-size: 100% 100%; }
       /* The italic words carry the same light as the giant name. */
       .it-lit .it {
         background:

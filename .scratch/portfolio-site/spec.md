@@ -87,10 +87,10 @@ Lead offer: websites (the site itself is the proof). Draft one-liner: *"Websites
 The first animated hero (colour blobs, glass pills, giant gradient name) was rejected as "AI-looking". After still sketches in `/hero-lab`, the agreed direction is:
 
 - Calm navy page; nothing boxed.
-- Headline (kstoimenov-style placement, own words): "Websites, apps / *& automations* / that do the work / *for you.*" with a "Let's talk" pill at the end of the last line. Sans lines in Clash Display, italic lines in **Instrument Serif Italic** (light cobalt) — a 4th font, added for these words.
+- Headline (kstoimenov-style placement, own words): "Websites, apps / *& automations* / that do the work / *for you.*" with a "Let's talk" pill at the end of the last line. Sans lines in Clash Display, italic lines in **Instrument Serif Italic** (white) — a 4th font, added for these words.
 - Giant "Shainy" bleeding off the bottom, letters filled with cobalt/cyan/violet light that follows the cursor.
 - **The dot of the i is a glowing glass orb** (placed from the font's own metrics); fades in, floats, leans toward the cursor, its shine turns to face it. No drop/bounce.
-- Faint background lines that fade out ~34px before every glyph, with two roaming spotlights brightening them. Line style still being chosen (a square grid read as "blueprints" and was rejected).
+- Background: slowly moving **water caustics** in cobalt (own WebGL shader), fading out ~34px before every glyph. Rejected along the way: square grid ("blueprints"), and straight vertical reeds (too close to kstoimenov.com, whose design must not be reused).
 - **Saved for later:** a glass magnifying lens that follows the cursor and magnifies what's under it (code kept in `hero-lab.astro`, `detail: 'lens'`).
 
 ## Open items
