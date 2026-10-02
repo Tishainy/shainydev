@@ -1,8 +1,7 @@
 ---
 import { site } from '../../data/content';
 // Services (ticket 06, with the showcases from tickets 07–09): a film strip. Scrolling down slides
-// the services sideways, one full-screen frame each: the lit word across the top (bleeding off the
-// edge, with the orb as its full stop), the details around a live demo that the scroll plays.
+// the services sideways, one full-screen frame each: the lit word across the top, the details around a live demo that the scroll plays.
 // Animation lives in src/scripts/services.ts. Phones, reduced motion and no-JS get the frames
 // stacked, with each demo shown complete.
 
@@ -16,7 +15,7 @@ const { build, automate, ai } = site.interludes;
       {items.map((item, index) => (
         <article class="svc-frame" data-svc-frame={index}>
           <p class="svc-word" aria-hidden="true" data-svc-word>
-            {item.name}<span class="svc-word-orb glass-orb"></span>
+            {item.name}
           </p>
 
           <h3 class="svc-sum" data-svc-part>
@@ -140,12 +139,6 @@ const { build, automate, ai } = site.interludes;
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-  }
-  .svc-word-orb {
-    display: inline-block;
-    width: 0.16em;
-    height: 0.16em;
-    margin-left: 0.05em;
   }
 
   .svc-sum {
