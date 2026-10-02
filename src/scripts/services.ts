@@ -14,9 +14,7 @@ export function initServices() {
   if (!section) return;
 
   const mm = gsap.matchMedia();
-  mm.add({ desktop: '(min-width: 768px)', motion: '(prefers-reduced-motion: no-preference)' }, (context) => {
-    const { desktop, motion } = context.conditions as { desktop: boolean; motion: boolean };
-    if (!motion) return;
+  mm.add('(min-width: 768px) and (prefers-reduced-motion: no-preference)', () => {
     section.classList.add('is-strip');
 
     const strip = section.querySelector<HTMLElement>('[data-svc-strip]')!;
@@ -31,8 +29,7 @@ export function initServices() {
       scrollTrigger: {
         trigger: section,
         start: 'top top',
-        // Phones get more scroll room per step, so a flick plays a step instead of skipping it.
-        end: () => `+=${(count * 2 - 1) * (desktop ? 55 : 80)}%`,
+        end: () => `+=${(count * 2 - 1) * 55}%`,
         scrub: 1,
         pin: true,
         anticipatePin: 1,
@@ -77,6 +74,35 @@ export function initServices() {
       section.classList.remove('is-strip');
       gsap.set(strip, { clearProps: 'transform' });
     };
+  });
+
+  // Phones: stacking cards. Each service card sticks to the top (CSS); as the next one slides up
+  // over it, the card underneath shrinks back and dims. Each demo plays by itself as its card settles.
+  mm.add('(max-width: 767px) and (prefers-reduced-motion: no-preference)', () => {
+    section.classList.add('is-cards');
+    const frames = gsap.utils.toArray<HTMLElement>('[data-svc-frame]', section);
+
+    frames.forEach((frame, i) => {
+      const next = frames[i + 1];
+      if (next) {
+        gsap.to(frame, {
+          scale: 0.9,
+          filter: 'brightness(0.55)',
+          ease: 'none',
+          scrollTrigger: { trigger: next, start: 'top bottom', end: 'top top', scrub: true },
+        });
+      }
+
+      const demo = demoFor(frame).pause().duration(2.6);
+      ScrollTrigger.create({
+        trigger: frame,
+        start: 'top 35%',
+        onEnter: () => demo.play(0),
+        onLeaveBack: () => demo.pause(0),
+      });
+    });
+
+    return () => section.classList.remove('is-cards');
   });
 }
 

@@ -298,11 +298,40 @@ const [jarvis, ...others] = projects;
     transform-origin: 0 50%;
   }
 
+  /* Phones: the Jarvis conversation comes first and fills the screen, staying put while the
+     details slide up over it as a panel. */
   @media (max-width: 767px) {
     .work { padding: 12svh 5vw 10svh; }
-    .work-head, .work-feature, .work-next { grid-template-columns: minmax(0, 1fr); }
-    .work-head { margin-bottom: 8svh; }
-    .work-voice { min-height: 33rem; }
+    .work-head, .work-next { grid-template-columns: minmax(0, 1fr); }
+    .work-head { margin-bottom: 4svh; }
+
+    .work-feature {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .work-demo {
+      order: -1;
+      position: sticky;
+      top: 0;
+      height: 100svh;
+      display: grid;
+      align-content: center;
+      z-index: 0;
+    }
+    .work-voice { min-height: 31rem; }
     .work-orb, .work-ring { width: 6.5rem; height: 6.5rem; margin-left: -3.25rem; top: 1rem; }
+
+    .work-copy {
+      position: relative;
+      z-index: 1;
+      margin: 0 -5vw;
+      padding: 2.2rem 5vw 3rem;
+      background: var(--color-bg);
+      border-top: 1px solid var(--color-line);
+      border-radius: 1.6rem 1.6rem 0 0;
+      box-shadow: 0 -18px 40px rgb(0 0 0 / 0.25);
+    }
+    .work-title { font-size: 3.6rem; }
   }
 </style>
