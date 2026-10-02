@@ -14,12 +14,13 @@ export function initWork() {
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   // The progress line fills partway as the row passes: the site is still in progress.
-  const progress = section.querySelector<HTMLElement>('[data-work-progress]');
-  if (progress && !reduce) {
-    gsap.from(progress, {
-      scaleX: 0,
-      ease: 'none',
-      scrollTrigger: { trigger: progress, start: 'top 90%', end: 'top 45%', scrub: 1 },
+  if (!reduce) {
+    gsap.utils.toArray<HTMLElement>('[data-work-progress]', section).forEach((progress) => {
+      gsap.from(progress, {
+        scaleX: 0,
+        ease: 'none',
+        scrollTrigger: { trigger: progress, start: 'top 90%', end: 'top 45%', scrub: 1 },
+      });
     });
   }
 

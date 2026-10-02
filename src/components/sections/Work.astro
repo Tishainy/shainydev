@@ -5,7 +5,8 @@ import { site } from '../../data/content';
 // agency site sits below as an "in progress" row. Animation lives in src/scripts/work.ts.
 
 const { heading, intro, projects, statusLabel } = site.work;
-const [jarvis, travel] = projects;
+// The first project is the featured case study; every one after it gets its own row.
+const [jarvis, ...others] = projects;
 ---
 
 <section id="work" class="work" data-work>
@@ -50,14 +51,16 @@ const [jarvis, travel] = projects;
     </div>
   </article>
 
-  <article class="work-next" data-work-next>
-    <h3 class="work-next-title" data-reveal>{travel.name}</h3>
-    <div class="work-next-meta" data-reveal>
-      <p class="work-next-status">{statusLabel}</p>
-      <p class="work-next-summary">{travel.summary}</p>
-    </div>
-    <span class="work-progress" aria-hidden="true"><span class="work-progress-fill" data-work-progress></span></span>
-  </article>
+  {others.map((project) => (
+    <article class="work-next" data-work-next>
+      <h3 class="work-next-title" data-reveal>{project.name}</h3>
+      <div class="work-next-meta" data-reveal>
+        <p class="work-next-status">{project.status === 'In progress' ? statusLabel : project.status}</p>
+        <p class="work-next-summary">{project.summary}</p>
+      </div>
+      <span class="work-progress" aria-hidden="true"><span class="work-progress-fill" data-work-progress></span></span>
+    </article>
+  ))}
 </section>
 
 <style>
