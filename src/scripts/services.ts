@@ -1,165 +1,146 @@
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { SplitText } from 'gsap/SplitText';
 
-gsap.registerPlugin(ScrollTrigger);
-
-// Where the baseline sits below the top of a word's box, in em (measured on screen for
-// Clash Display at line-height 0.84).
-const BASELINE = 0.81;
-// How small the inactive words are in the mini index, relative to the big word.
-const INDEX_SCALE = 0.2;
+gsap.registerPlugin(ScrollTrigger, SplitText);
 
 /**
- * Services, "grow & shrink": a pinned scene. One service word is huge, lit and finished with the
- * glass orb; the other two sit small in a mini index top-right. Scrolling grows the next word out
- * of the index into the big spot while the current one shrinks into the index, and that
- * service's details slide in. Snaps to each service; reverses on the way back up.
+ * Services, the film strip: a pinned scene whose frames slide sideways as you scroll down.
+ * One master timeline alternates "play this frame's demo" with "slide to the next frame",
+ * so scrolling plays the demos forward and back. Snaps to each frame with its demo complete.
  */
 export function initServices() {
   const section = document.querySelector<HTMLElement>('[data-services]');
   if (!section) return;
-  const scene = section.querySelector<HTMLElement>('[data-svc-scene]')!;
-  const orb = section.querySelector<HTMLElement>('[data-svc-orb]')!;
 
   const mm = gsap.matchMedia();
   mm.add('(min-width: 768px) and (prefers-reduced-motion: no-preference)', () => {
-    section.classList.add('is-staged');
+    section.classList.add('is-strip');
 
-    const words = gsap.utils.toArray<HTMLElement>('[data-svc-w]', section);
-    const solids = gsap.utils.toArray<HTMLElement>('[data-svc-solid]', section);
-    const fills = gsap.utils.toArray<HTMLElement>('[data-svc-fill]', section);
-    const sums = gsap.utils.toArray<HTMLElement>('[data-svc-sum]', section);
-    const sumLines = sums.map((s) => gsap.utils.toArray<HTMLElement>('[data-svc-sum-line]', s));
-    const descs = gsap.utils.toArray<HTMLElement>('[data-svc-desc]', section);
-    const incs = gsap.utils.toArray<HTMLElement>('[data-svc-inc]', section);
-    const count = words.length;
+    const strip = section.querySelector<HTMLElement>('[data-svc-strip]')!;
+    const frames = gsap.utils.toArray<HTMLElement>('[data-svc-frame]', section);
+    const dots = gsap.utils.toArray<HTMLElement>('[data-svc-dot]', section);
+    const count = frames.length;
 
-    // Where word `i` sits when service `active` is showing: the big spot, or a line in the index.
-    function pose(i: number, active: number) {
-      if (i === active) return { x: 0, y: 0, scale: 1 };
-      const slot = [...Array(count).keys()].filter((k) => k !== active).indexOf(i);
-      const word = words[i];
-      const w = scene.clientWidth;
-      const h = scene.clientHeight;
-      const lineHeight = word.offsetHeight * INDEX_SCALE;
-      return {
-        x: w * 0.95 - word.offsetWidth * INDEX_SCALE - word.offsetLeft,
-        y: h * 0.1 + slot * (lineHeight + 6) - word.offsetTop,
-        scale: INDEX_SCALE,
-      };
-    }
-
-    // The orb's spot as the big word's full stop: just after it, resting on its baseline.
-    function orbSpot(i: number) {
-      const word = words[i];
-      const size = parseFloat(getComputedStyle(word).fontSize);
-      return {
-        x: word.offsetLeft + word.offsetWidth + size * 0.06,
-        y: word.offsetTop + size * BASELINE - size * 0.16,
-      };
-    }
-
-    // Starting state: Build big and lit, the others in the index, only Build's details showing.
-    words.forEach((word, i) => {
-      gsap.set(word, { x: () => pose(i, 0).x, y: () => pose(i, 0).y, scale: pose(i, 0).scale });
-      gsap.set(fills[i], { autoAlpha: i === 0 ? 1 : 0 });
-      gsap.set(solids[i], { autoAlpha: i === 0 ? 0 : 0.6 });
-      gsap.set([sums[i], descs[i], incs[i]], { autoAlpha: i === 0 ? 1 : 0 });
+    const demos = frames.map((frame) => {
+      const kind = frame.querySelector<HTMLElement>('[data-svc-demo]')?.dataset.svcDemo;
+      if (kind === 'build') return buildDemo(frame);
+      if (kind === 'automate') return automateDemo(frame);
+      if (kind === 'ai') return aiDemo(frame);
+      return gsap.timeline();
     });
-
-    // Entering: the big word rises in, the details and index follow.
-    const enter = gsap.timeline({
-      scrollTrigger: { trigger: section, start: 'top 85%', end: 'top 10%', scrub: 1 },
-    });
-    enter
-      .from(words, { yPercent: 40, autoAlpha: 0, stagger: 0.1, ease: 'power2.out' }, 0)
-      .from(orb, { scale: 0, ease: 'back.out(2)' }, 0.3)
-      .from([sums[0], descs[0], incs[0]], { y: 40, autoAlpha: 0, stagger: 0.1, ease: 'power2.out' }, 0.2);
 
     const tl = gsap.timeline({
-      defaults: { ease: 'power3.inOut' },
+      defaults: { ease: 'none' },
       scrollTrigger: {
         trigger: section,
         start: 'top top',
-        end: () => `+=${(count - 1) * 110 + 50}%`,
+        end: () => `+=${(count * 2 - 1) * 55}%`,
         scrub: 1,
         pin: true,
         anticipatePin: 1,
         invalidateOnRefresh: true,
-        snap: { snapTo: 'labelsDirectional', duration: { min: 0.3, max: 0.9 }, delay: 0.15, ease: 'power1.inOut' },
+        snap: { snapTo: 'labelsDirectional', duration: { min: 0.3, max: 1 }, delay: 0.1, ease: 'power1.inOut' },
+        onUpdate: (self) => {
+          const active = Math.min(count - 1, Math.floor(self.progress * (count * 2 - 1) / 2 + 0.25));
+          dots.forEach((dot, i) => dot.classList.toggle('is-on', i === active));
+        },
       },
     });
 
-    // Starting poses live in the timeline too, so they're recalculated when the window resizes.
-    words.forEach((word, i) => tl.set(word, { x: () => pose(i, 0).x, y: () => pose(i, 0).y, scale: pose(i, 0).scale }, 0));
-    tl.set(orb, { x: () => orbSpot(0).x, y: () => orbSpot(0).y }, 0).addLabel('s0', 0);
+    tl.addLabel('f0-start', 0);
+    frames.forEach((frame, i) => {
+      // Play this frame's demo.
+      tl.add(demos[i].duration(1), '>');
+      tl.addLabel(`f${i}`);
+      if (i === count - 1) return;
 
-    for (let next = 1; next < count; next++) {
-      const prev = next - 1;
-      const at = (next - 1) * 2 + 0.8;
+      // Slide to the next frame. Its word drifts a little slower than the strip for depth,
+      // and its details rise in as it arrives.
+      const next = frames[i + 1];
+      const at = tl.duration();
+      tl.to(strip, { x: () => -next.offsetLeft, duration: 1, ease: 'power2.inOut' }, at);
+      tl.fromTo(
+        next.querySelector('[data-svc-word]'),
+        { xPercent: 18 },
+        { xPercent: 0, duration: 1, ease: 'power2.out' },
+        at,
+      );
+      tl.fromTo(
+        next.querySelectorAll('[data-svc-part], [data-svc-demo]'),
+        { y: 40, autoAlpha: 0 },
+        { y: 0, autoAlpha: 1, duration: 0.5, stagger: 0.08, ease: 'power2.out' },
+        at + 0.45,
+      );
+    });
 
-      // Every word moves to its new pose: the next one grows out of the index, the current one shrinks into it.
-      words.forEach((word, i) => {
-        tl.to(
-          word,
-          { x: () => pose(i, next).x, y: () => pose(i, next).y, scale: pose(i, next).scale, duration: 1.1 },
-          at,
-        );
-      });
-      tl
-        // The light leaves the shrinking word and fills the growing one.
-        .to(fills[prev], { autoAlpha: 0, duration: 0.5, ease: 'power1.inOut' }, at)
-        .to(solids[prev], { autoAlpha: 0.6, duration: 0.5, ease: 'power1.inOut' }, at)
-        .to(solids[next], { autoAlpha: 0, duration: 0.5, ease: 'power1.inOut' }, at + 0.5)
-        .to(fills[next], { autoAlpha: 1, duration: 0.6, ease: 'power1.inOut' }, at + 0.4)
-        // The orb dips out and lands on the new word's end.
-        .to(orb, { x: () => orbSpot(next).x, y: () => orbSpot(next).y, duration: 1.1 }, at)
-        .to(orb, { scale: 0.4, duration: 0.45, ease: 'power2.in' }, at)
-        .to(orb, { scale: 1, duration: 0.55, ease: 'back.out(2)' }, at + 0.6)
-        // The details trade places.
-        .to(sumLines[prev], { xPercent: (k) => (k === 0 ? -14 : 14), autoAlpha: 0, duration: 0.45, stagger: 0.06 }, at)
-        .to([descs[prev], incs[prev]], { y: -24, autoAlpha: 0, duration: 0.45, stagger: 0.05 }, at)
-        .set(sums[next], { autoAlpha: 1 }, at + 0.5)
-        .fromTo(
-          sumLines[next],
-          { xPercent: (k) => (k === 0 ? 14 : -14), autoAlpha: 0 },
-          { xPercent: 0, autoAlpha: 1, duration: 0.55, stagger: 0.07 },
-          at + 0.6,
-        )
-        .fromTo([descs[next], incs[next]], { y: 24, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.55, stagger: 0.06 }, at + 0.7)
-        .addLabel(`s${next}`, at + 1.35);
-    }
-    // A last moment on the final service before the scene lets go.
-    tl.to({}, { duration: 0.7 });
-
-    document.fonts?.ready.then(() => ScrollTrigger.refresh());
+    dots[0]?.classList.add('is-on');
 
     return () => {
-      enter.scrollTrigger?.kill();
-      section.classList.remove('is-staged');
+      section.classList.remove('is-strip');
+      gsap.set(strip, { clearProps: 'transform' });
     };
   });
+}
 
-  // The orb's highlight turns to face the cursor, like the one in the hero.
-  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    const shine = { x: 34, y: 28 };
-    const pointer = { x: 0, y: 0, active: false };
-    addEventListener('pointermove', (e) => {
-      pointer.x = e.clientX;
-      pointer.y = e.clientY;
-      pointer.active = true;
-    });
-    gsap.ticker.add(() => {
-      if (!pointer.active) return;
-      const r = orb.getBoundingClientRect();
-      if (!r.width || r.bottom < 0 || r.top > innerHeight) return;
-      const dx = pointer.x - (r.left + r.width / 2);
-      const dy = pointer.y - (r.top + r.height / 2);
-      const dist = Math.hypot(dx, dy) || 1;
-      shine.x += (50 + (dx / dist) * 22 - shine.x) * 0.12;
-      shine.y += (50 + (dy / dist) * 22 - shine.y) * 0.12;
-      orb.style.setProperty('--sx', `${shine.x}%`);
-      orb.style.setProperty('--sy', `${shine.y}%`);
-    });
-  }
+/** Build: a grey wireframe turns into the finished, styled page. */
+function buildDemo(frame: HTMLElement) {
+  const tl = gsap.timeline({ defaults: { ease: 'power2.out' } });
+  const wires = gsap.utils.toArray<HTMLElement>('[data-wire]', frame);
+  const fills = gsap.utils.toArray<HTMLElement>('[data-wire-fill]', frame);
+  const grey = getComputedStyle(frame).getPropertyValue('--color-line').trim() || 'rgb(128 128 128 / 0.3)';
+
+  wires.forEach((el, i) => {
+    const cs = getComputedStyle(el);
+    // Wireframe: text hidden behind a grey bar; finished: the element's real colours.
+    tl.fromTo(
+      el,
+      { color: 'rgba(0,0,0,0)', backgroundColor: grey, borderRadius: '0.3rem' },
+      { color: cs.color, backgroundColor: cs.backgroundColor, borderRadius: cs.borderRadius, duration: 0.25 },
+      0.1 + i * 0.07,
+    );
+  });
+  tl.fromTo(fills, { autoAlpha: 0 }, { autoAlpha: (i) => (i === 0 ? 1 : 0.7), duration: 0.3, stagger: 0.08 }, 0.35);
+  return tl;
+}
+
+/** Automate: a glowing dot travels down the steps, lighting each one; the email builds itself. */
+function automateDemo(frame: HTMLElement) {
+  const tl = gsap.timeline({ defaults: { ease: 'power1.inOut' } });
+  const track = frame.querySelector<HTMLElement>('[data-flow-track]')!;
+  const fill = frame.querySelector<HTMLElement>('[data-flow-fill]')!;
+  const orb = frame.querySelector<HTMLElement>('[data-flow-orb]')!;
+  const steps = gsap.utils.toArray<HTMLElement>('[data-flow-step]', frame);
+  const mail = frame.querySelector<HTMLElement>('[data-flow-mail]')!;
+
+  tl.set(steps, { opacity: 0.35 }, 0)
+    .fromTo(fill, { scaleY: 0 }, { scaleY: 1, duration: 0.8 }, 0.1)
+    .fromTo(orb, { y: 0 }, { y: () => track.offsetHeight - orb.offsetHeight / 2, duration: 0.8 }, 0.1);
+  steps.forEach((step, i) => tl.to(step, { opacity: 1, duration: 0.08 }, 0.1 + (i / (steps.length - 1)) * 0.78));
+  // The confirmation email builds itself as the dot passes step two.
+  tl.fromTo(
+    mail.children,
+    { y: 14, autoAlpha: 0 },
+    { y: 0, autoAlpha: 1, duration: 0.12, stagger: 0.05, ease: 'power2.out' },
+    0.3,
+  );
+  return tl;
+}
+
+/** AI: the customer's question pops in, the assistant types, then answers. */
+function aiDemo(frame: HTMLElement) {
+  const tl = gsap.timeline({ defaults: { ease: 'power2.out' } });
+  const question = frame.querySelector<HTMLElement>('[data-chat-q]')!;
+  const typing = frame.querySelector<HTMLElement>('[data-chat-typing]')!;
+  const answer = frame.querySelector<HTMLElement>('[data-chat-a]')!;
+  const letters = SplitText.create(answer, { type: 'words,chars' }).chars;
+
+  tl.fromTo(question, { y: 16, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.12 }, 0.05)
+    .fromTo(typing, { autoAlpha: 0, scale: 0.8 }, { autoAlpha: 1, scale: 1, duration: 0.08 }, 0.22)
+    .to(typing.children, { y: -4, duration: 0.05, stagger: 0.03, yoyo: true, repeat: 3 }, 0.3)
+    .to(typing, { autoAlpha: 0, duration: 0.05 }, 0.55)
+    .set(typing, { display: 'none' }, 0.6)
+    .fromTo(answer, { y: 16, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.08 }, 0.6)
+    .fromTo(letters, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.01, stagger: 0.32 / letters.length }, 0.62);
+  return tl;
 }

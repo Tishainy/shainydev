@@ -1,101 +1,159 @@
 ---
 import { site } from '../../data/content';
-// Services (ticket 06): "grow & shrink". One service word at a time is huge, lit with the cobalt
-// light and finished with the glass orb; the other two sit small in a mini index in the corner.
-// Scrolling grows the next word out of the index while the current one shrinks into it.
-// On desktop with motion this is a pinned scene (src/scripts/services.ts). Elsewhere, and without
-// JS, the simple stack below it is shown instead.
+// Services (ticket 06, with the showcases from tickets 07–09): a film strip. Scrolling down slides
+// the services sideways, one full-screen frame each: the lit word across the top (bleeding off the
+// edge, with the orb as its full stop), the details around a live demo that the scroll plays.
+// Animation lives in src/scripts/services.ts. Phones, reduced motion and no-JS get the frames
+// stacked, with each demo shown complete.
 
 const { heading, includesLabel, items } = site.services;
+const { build, automate, ai } = site.interludes;
 ---
 
 <section id="services" class="svc" data-services>
-  <!-- ================= The scene (desktop, with motion) ================= -->
-  <div class="svc-scene" data-svc-scene>
-    <h2 class="svc-kicker">{heading}</h2>
+  <div class="svc-viewport">
+    <div class="svc-strip" data-svc-strip>
+      {items.map((item, index) => (
+        <article class="svc-frame" data-svc-frame={index}>
+          <p class="svc-word" aria-hidden="true" data-svc-word>
+            {item.name}<span class="svc-word-orb glass-orb"></span>
+          </p>
 
-    {items.map((item) => (
-      <p class="svc-w" aria-hidden="true" data-svc-w>
-        <span class="svc-w-solid" data-svc-solid>{item.name}</span>
-        <span class="svc-w-fill" data-svc-fill>{item.name}</span>
-      </p>
-    ))}
-    <span class="svc-orb glass-orb" aria-hidden="true" data-svc-orb></span>
+          <h3 class="svc-sum" data-svc-part>
+            <span class="svc-sr">{item.name}: </span>
+            {item.summaryLines.map((line, lineIndex) => (
+              <span class:list={['svc-sum-line', { 'svc-sum-indent': lineIndex > 0 }]}>{line}</span>
+            ))}
+          </h3>
 
-    <div class="svc-slot svc-slot-sum">
-      {items.map((item) => (
-        <h3 class="svc-sum" data-svc-sum>
-          <span class="svc-sr">{item.name}: </span>
-          {item.summaryLines.map((line, lineIndex) => (
-            <span class:list={['svc-sum-line', { 'svc-sum-indent': lineIndex > 0 }]} data-svc-sum-line>
-              {line}
-            </span>
-          ))}
-        </h3>
+          <p class="svc-desc" data-svc-part>{item.description}</p>
+
+          <div class="svc-inc" data-svc-part>
+            <p class="svc-inc-label">{includesLabel}</p>
+            <ul class="svc-list">
+              {item.list.map((entry) => <li>{entry}</li>)}
+            </ul>
+          </div>
+
+          <!-- ---------- The live demo for this service ---------- -->
+          <figure class="svc-demo" data-svc-demo={item.interlude}>
+            {item.interlude === 'build' && (
+              <div class="mock" data-demo-build>
+                <div class="mock-nav">
+                  <span class="mock-logo" data-wire>{build.demoBusiness}</span>
+                  <span class="mock-links"><span data-wire>Services</span><span data-wire>Prices</span><span data-wire>Book</span></span>
+                </div>
+                <div class="mock-hero">
+                  <p class="mock-h" data-wire>{build.demoHeadline}</p>
+                  <span class="mock-btn" data-wire data-wire-button>{build.demoButton}</span>
+                </div>
+                <div class="mock-img" data-wire-img><span class="mock-img-fill" data-wire-fill></span></div>
+                <div class="mock-row">
+                  <span data-wire-card><span class="mock-card-fill" data-wire-fill></span></span>
+                  <span data-wire-card><span class="mock-card-fill" data-wire-fill></span></span>
+                  <span data-wire-card><span class="mock-card-fill" data-wire-fill></span></span>
+                </div>
+              </div>
+            )}
+
+            {item.interlude === 'automate' && (
+              <div class="flow" data-demo-automate>
+                <div class="flow-steps">
+                  <span class="flow-track" aria-hidden="true" data-flow-track><span class="flow-track-fill" data-flow-fill></span></span>
+                  <span class="flow-orb glass-orb" aria-hidden="true" data-flow-orb></span>
+                  <ol class="flow-list">
+                    {automate.steps.map((step) => (
+                      <li class="flow-step" data-flow-step>
+                        <span class="flow-dot" aria-hidden="true"></span>
+                        <span class="flow-label">{step}</span>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+                <div class="mail" data-flow-mail>
+                  <p class="mail-from">{automate.email.from}</p>
+                  <p class="mail-subject">{automate.email.subject}</p>
+                  <p class="mail-body">{automate.email.greeting} {automate.email.body}</p>
+                  <span class="mail-btn">{automate.email.button}</span>
+                </div>
+              </div>
+            )}
+
+            {item.interlude === 'ai' && (
+              <div class="chat" data-demo-ai>
+                <p class="chat-head"><span class="chat-avatar glass-orb" aria-hidden="true"></span>{ai.assistantName}</p>
+                <p class="chat-bubble chat-them" data-chat-q>{ai.question}</p>
+                <p class="chat-typing" aria-hidden="true" data-chat-typing><span></span><span></span><span></span></p>
+                <p class="chat-bubble chat-bot" data-chat-a>{ai.answer}</p>
+              </div>
+            )}
+
+            <figcaption class="svc-demo-caption">
+              {site.interludes[item.interlude as keyof typeof site.interludes].caption}
+            </figcaption>
+          </figure>
+        </article>
       ))}
     </div>
 
-    <div class="svc-slot svc-slot-desc">
-      {items.map((item) => <p class="svc-desc" data-svc-desc>{item.description}</p>)}
+    <div class="svc-hud" aria-hidden="true">
+      <p class="svc-kicker">{heading}</p>
+      <span class="svc-dots">
+        {items.map((_, index) => <span class="svc-dot" data-svc-dot={index}></span>)}
+      </span>
     </div>
-
-    <div class="svc-slot svc-slot-inc">
-      {items.map((item) => (
-        <div class="svc-inc" data-svc-inc>
-          <p class="svc-inc-label">{includesLabel}</p>
-          <ul class="svc-list">
-            {item.list.map((entry) => <li>{entry}</li>)}
-          </ul>
-        </div>
-      ))}
-    </div>
-  </div>
-
-  <!-- ================= The stack (phones, reduced motion, no JS) ================= -->
-  <div class="svc-stack">
-    <h2 class="svc-kicker">{heading}</h2>
-    {items.map((item) => (
-      <article class="svc-card">
-        <p class="svc-stack-word" aria-hidden="true">{item.name}<span class="svc-stack-orb glass-orb"></span></p>
-        <h3 class="svc-sum">
-          <span class="svc-sr">{item.name}: </span>
-          {item.summaryLines.map((line, lineIndex) => (
-            <span class:list={['svc-sum-line', { 'svc-sum-indent': lineIndex > 0 }]}>{line}</span>
-          ))}
-        </h3>
-        <p class="svc-desc">{item.description}</p>
-        <div class="svc-inc">
-          <p class="svc-inc-label">{includesLabel}</p>
-          <ul class="svc-list">
-            {item.list.map((entry) => <li>{entry}</li>)}
-          </ul>
-        </div>
-      </article>
-    ))}
   </div>
 </section>
 
 <style>
   .svc {
     position: relative;
-    --word-size: 14.5vw;
+    --word-size: 18vw;
   }
 
-  /* ---------- Shared type ---------- */
-  .svc-kicker {
-    margin: 0;
-    font-family: var(--font-serif);
-    font-style: italic;
-    font-weight: 400;
-    font-size: clamp(1.4rem, 2.1vw, 2rem);
-    color: var(--color-muted);
+  /* ================= Base: frames stacked (phones, reduced motion, no JS) ================= */
+  .svc-viewport {
+    position: relative;
   }
+  .svc-strip {
+    display: grid;
+  }
+  .svc-frame {
+    position: relative;
+    display: grid;
+    gap: 1.5rem;
+    padding: 4rem 5vw 5rem;
+  }
+  .svc-hud {
+    display: none;
+  }
+
+  .svc-word {
+    margin: 0;
+    white-space: nowrap;
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.055em;
+    line-height: 0.8;
+    font-size: min(18vw, 10rem);
+    background: var(--light-fill);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .svc-word-orb {
+    display: inline-block;
+    width: 0.16em;
+    height: 0.16em;
+    margin-left: 0.05em;
+  }
+
   .svc-sum {
     margin: 0;
     font-family: var(--font-serif);
     font-style: italic;
     font-weight: 400;
-    font-size: clamp(2.6rem, 4.6vw, 4.6rem);
+    font-size: clamp(2.4rem, 4.3vw, 4.3rem);
     line-height: 1;
     letter-spacing: -0.01em;
   }
@@ -116,7 +174,8 @@ const { heading, includesLabel, items } = site.services;
   }
   .svc-desc {
     margin: 0;
-    font-size: clamp(1.1rem, 1.5vw, 1.5rem);
+    max-width: 30rem;
+    font-size: clamp(1.1rem, 1.4vw, 1.4rem);
     line-height: 1.5;
   }
   .svc-inc-label {
@@ -135,130 +194,346 @@ const { heading, includesLabel, items } = site.services;
     border-top: 1px solid var(--color-line);
     font-family: var(--font-display);
     font-weight: 500;
-    font-size: clamp(1.1rem, 1.5vw, 1.5rem);
+    font-size: clamp(1.05rem, 1.35vw, 1.35rem);
     letter-spacing: -0.01em;
   }
 
-  /* ================= The scene ================= */
-  .svc-scene {
-    display: none;
-  }
-  .svc:global(.is-staged) .svc-scene {
-    display: block;
-    position: relative;
+  /* ================= Film strip (desktop + motion, set by JS) ================= */
+  .svc:global(.is-strip) .svc-viewport {
     height: 100svh;
     overflow: clip;
   }
-  .svc:global(.is-staged) .svc-stack {
-    display: none;
+  .svc:global(.is-strip) .svc-strip {
+    display: flex;
+    height: 100%;
+    width: max-content;
+    will-change: transform;
   }
-
-  .svc-scene .svc-kicker {
+  .svc:global(.is-strip) .svc-frame {
+    display: block;
+    flex: none;
+    width: 100vw;
+    height: 100%;
+    padding: 0;
+  }
+  .svc:global(.is-strip) .svc-word {
+    position: absolute;
+    left: 4vw;
+    /* Starts just below the fixed menu bar, so the bar never covers the word. */
+    top: 3.6rem;
+    font-size: var(--word-size);
+  }
+  .svc:global(.is-strip) .svc-sum {
     position: absolute;
     left: 5vw;
-    top: 10svh;
+    top: 36svh;
   }
-
-  /* Every word lives at the big spot; the script scales and moves the inactive ones into the index. */
-  .svc-w {
+  .svc:global(.is-strip) .svc-desc {
     position: absolute;
-    left: 4.5vw;
-    top: 22svh;
-    margin: 0;
-    white-space: nowrap;
-    font-family: var(--font-display);
-    font-weight: 600;
-    letter-spacing: -0.055em;
-    line-height: 0.84;
-    font-size: var(--word-size);
-    transform-origin: 0 0;
-    will-change: transform;
+    left: 5vw;
+    top: 60svh;
+    width: 28vw;
   }
-  .svc-w-solid {
-    color: var(--color-fg);
-  }
-  .svc-w-fill {
+  .svc:global(.is-strip) .svc-demo {
     position: absolute;
-    left: 0;
-    top: 0;
-    padding-right: 0.06em;
-    background: var(--light-fill);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    left: 38vw;
+    top: 30svh;
+    width: 36vw;
+    height: 56svh;
   }
-
-  .svc-orb {
+  .svc:global(.is-strip) .svc-inc {
     position: absolute;
-    left: 0;
-    top: 0;
-    width: calc(var(--word-size) * 0.16);
-    height: calc(var(--word-size) * 0.16);
-    z-index: 2;
-    will-change: transform;
+    right: 4vw;
+    top: 36svh;
+    width: 19vw;
   }
-
-  /* Each service's details stack in the same cell and trade places. */
-  .svc-slot {
-    position: absolute;
-    display: grid;
-    align-items: start;
-  }
-  .svc-slot > * {
-    grid-area: 1 / 1;
-  }
-  .svc-slot-sum {
-    left: 8vw;
-    top: 54svh;
-  }
-  .svc-slot-desc {
-    left: 44vw;
-    top: 57svh;
-    width: 25vw;
-  }
-  .svc-slot-inc {
-    right: 5vw;
-    top: 57svh;
-    width: 22vw;
-  }
-
-  /* ================= The stack ================= */
-  .svc-stack {
-    max-width: 90rem;
-    margin: 0 auto;
-    padding: 6rem 6vw 2rem;
-    display: grid;
-    gap: 2.5rem;
-  }
-  .svc-card {
-    display: grid;
+  .svc:global(.is-strip) .svc-hud {
+    display: flex;
+    align-items: center;
     gap: 1.25rem;
-    padding-bottom: 3rem;
+    position: absolute;
+    left: 5vw;
+    bottom: 5svh;
+    z-index: 3;
   }
-  .svc-stack-word {
+  .svc-kicker {
     margin: 0;
-    white-space: nowrap;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: clamp(1.1rem, 1.5vw, 1.4rem);
+    color: var(--color-muted);
+  }
+  .svc-dots {
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+  }
+  .svc-dot {
+    width: 0.65rem;
+    height: 0.65rem;
+    border-radius: 50%;
+    border: 1px solid var(--color-muted);
+    transition: background 0.3s, border-color 0.3s, transform 0.3s;
+  }
+  .svc-dot.is-on {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    transform: scale(1.35);
+  }
+
+  /* ================= Demos ================= */
+  .svc-demo {
+    margin: 0;
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+    gap: 0.8rem;
+    min-height: 22rem;
+  }
+  .svc-demo-caption {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: clamp(1.05rem, 1.3vw, 1.3rem);
+    color: var(--color-muted);
+  }
+
+  /* --- Build: a small website mockup (wireframe until the scroll styles it) --- */
+  .mock {
+    position: relative;
+    display: grid;
+    grid-template-rows: auto auto 1fr auto;
+    gap: 0.9rem;
+    padding: 1.1rem;
+    border: 1px solid var(--color-line);
+    border-radius: 0.9rem;
+    background: color-mix(in srgb, var(--color-fg) 3%, transparent);
+    overflow: hidden;
+  }
+  .mock-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+  }
+  .mock-logo {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 1.05rem;
+  }
+  .mock-links {
+    display: flex;
+    gap: 0.8rem;
+  }
+  .mock-hero {
+    display: grid;
+    gap: 0.7rem;
+    justify-items: start;
+    padding-top: 0.6rem;
+  }
+  .mock-h {
+    margin: 0;
     font-family: var(--font-display);
     font-weight: 600;
-    letter-spacing: -0.055em;
-    line-height: 0.85;
-    font-size: min(18vw, 10rem);
+    letter-spacing: -0.03em;
+    font-size: clamp(1.4rem, 2.2vw, 2.1rem);
+    line-height: 1;
+  }
+  .mock-btn {
+    padding: 0.45rem 0.9rem;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    background: var(--color-accent);
+    color: var(--color-on-accent);
+  }
+  .mock-img,
+  .mock-row > span {
+    position: relative;
+    border-radius: 0.5rem;
+    background: color-mix(in srgb, var(--color-fg) 10%, transparent);
+    overflow: hidden;
+  }
+  .mock-img {
+    min-height: 5rem;
+  }
+  .mock-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.6rem;
+  }
+  .mock-row > span {
+    height: 3.2rem;
+  }
+  .mock-img-fill,
+  .mock-card-fill {
+    position: absolute;
+    inset: 0;
     background: var(--light-fill);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
   }
-  .svc-stack-orb {
-    display: inline-block;
-    width: 0.16em;
-    height: 0.16em;
-    margin-left: 0.05em;
+  .mock-card-fill {
+    opacity: 0.7;
   }
-  .svc-stack .svc-desc {
-    max-width: 34rem;
-    color: color-mix(in srgb, var(--color-fg) 82%, transparent);
+
+  /* --- Automate: a booking flowing through the steps --- */
+  .flow {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: 1.5rem;
+    align-items: center;
   }
-  .svc-stack .svc-inc {
-    max-width: 26rem;
+  .flow-steps {
+    position: relative;
+    padding-left: 2.4rem;
+  }
+  .flow-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 2.4rem;
+  }
+  .flow-track {
+    position: absolute;
+    left: 0.55rem;
+    top: 0.6rem;
+    bottom: 0.6rem;
+    width: 2px;
+    background: var(--color-line);
+  }
+  .flow-track-fill {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(#709bff, #8ef0ff);
+    transform-origin: 50% 0;
+  }
+  .flow-orb {
+    position: absolute;
+    left: 0.05rem;
+    top: 0.1rem;
+    width: 1.1rem;
+    height: 1.1rem;
+    font-size: 7rem;
+    z-index: 1;
+  }
+  .flow-step {
+    position: relative;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(1rem, 1.3vw, 1.25rem);
+    letter-spacing: -0.01em;
+  }
+  .flow-dot {
+    position: absolute;
+    left: -2.15rem;
+    top: 0.35rem;
+    width: 0.7rem;
+    height: 0.7rem;
+    border-radius: 50%;
+    background: var(--color-bg);
+    border: 2px solid var(--color-accent);
+  }
+  .mail {
+    display: grid;
+    gap: 0.45rem;
+    padding: 1.1rem;
+    border: 1px solid var(--color-line);
+    border-radius: 0.9rem;
+    background: color-mix(in srgb, var(--color-fg) 3%, transparent);
+  }
+  .mail p {
+    margin: 0;
+  }
+  .mail-from {
+    font-size: 0.8rem;
+    color: var(--color-muted);
+  }
+  .mail-subject {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.1rem;
+    letter-spacing: -0.01em;
+  }
+  .mail-body {
+    font-size: 0.9rem;
+    line-height: 1.45;
+    color: color-mix(in srgb, var(--color-fg) 80%, transparent);
+  }
+  .mail-btn {
+    justify-self: start;
+    margin-top: 0.3rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    background: var(--color-accent);
+    color: var(--color-on-accent);
+  }
+
+  /* --- AI: a customer chat --- */
+  .chat {
+    display: grid;
+    align-content: start;
+    gap: 0.9rem;
+    padding: 1.1rem;
+    border: 1px solid var(--color-line);
+    border-radius: 0.9rem;
+    background: color-mix(in srgb, var(--color-fg) 3%, transparent);
+  }
+  .chat-head {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 0 0 0.4rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid var(--color-line);
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+  .chat-avatar {
+    width: 1.5rem;
+    height: 1.5rem;
+    font-size: 9rem;
+  }
+  .chat-bubble {
+    margin: 0;
+    max-width: 80%;
+    padding: 0.75rem 1rem;
+    border-radius: 1.1rem;
+    font-size: clamp(0.95rem, 1.15vw, 1.1rem);
+    line-height: 1.4;
+  }
+  .chat-them {
+    justify-self: end;
+    border-bottom-right-radius: 0.3rem;
+    background: var(--color-accent);
+    color: var(--color-on-accent);
+  }
+  .chat-bot {
+    justify-self: start;
+    border-bottom-left-radius: 0.3rem;
+    background: color-mix(in srgb, var(--color-fg) 9%, transparent);
+  }
+  .chat-typing {
+    display: none;
+    gap: 0.3rem;
+    margin: 0;
+    padding: 0.75rem 1rem;
+    justify-self: start;
+    border-radius: 1.1rem;
+    background: color-mix(in srgb, var(--color-fg) 9%, transparent);
+  }
+  .chat-typing span {
+    width: 0.4rem;
+    height: 0.4rem;
+    border-radius: 50%;
+    background: var(--color-muted);
+  }
+  .svc:global(.is-strip) .chat-typing {
+    display: flex;
+  }
+
+  @media (max-width: 767px) {
+    .flow {
+      grid-template-columns: minmax(0, 1fr);
+    }
   }
 </style>
