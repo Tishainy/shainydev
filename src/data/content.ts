@@ -35,9 +35,13 @@ export const site = {
 
   services: {
     heading: 'What I can do for you',
+    includesLabel: "What's included",
+    // Shown in each service's showcase space until its interactive demo is built.
+    demoSoon: 'Interactive demo coming soon',
     items: [
       {
         name: 'Build',
+        interlude: 'build',
         summary: 'Websites & apps',
         description:
           'A website that looks like you and works on every phone. Or a web app that handles the one job your business keeps doing by hand.',
@@ -45,6 +49,7 @@ export const site = {
       },
       {
         name: 'Automate',
+        interlude: 'automate',
         summary: 'Workflows, data & email',
         description:
           "If you do the same task every week, a computer can probably do it for you. I set that up, from booking confirmations to monthly reports, so you get your hours back.",
@@ -52,6 +57,7 @@ export const site = {
       },
       {
         name: 'AI',
+        interlude: 'ai',
         summary: 'Assistants & smart features',
         description:
           'AI that actually helps: an assistant that answers your customers, or a tool that reads and sorts the paperwork for you.',

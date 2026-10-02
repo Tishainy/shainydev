@@ -1,20 +1,239 @@
 ---
 import { site } from '../../data/content';
-// Stub. The pinned services set piece replaces this in ticket 06.
+// Services (ticket 06). A big sticky word on the left (Build / Automate / AI, with the glass
+// orb as its full stop) changes as each service scrolls past on the right.
+// Animation lives in src/scripts/services.ts. Each panel keeps an open space for its
+// showcase (tickets 07–09).
+
+const { heading, includesLabel, demoSoon, items } = site.services;
+const interludes = site.interludes;
 ---
 
-<section id="services" class="mx-auto max-w-6xl px-4 py-24 sm:px-6">
-  <h2 class="text-3xl" data-reveal>{site.services.heading}</h2>
-  <div class="mt-10 grid gap-10 md:grid-cols-3">
-    {site.services.items.map((item) => (
-      <article class="min-w-0" data-reveal>
-        <h3 class="text-4xl text-accent">{item.name}</h3>
-        <p class="mt-1 text-lg">{item.summary}</p>
-        <p class="mt-3 text-muted">{item.description}</p>
-        <ul class="mt-4 space-y-1">
+<section id="services" class="services" data-services>
+  <div class="svc-stick">
+    <div class="svc-stick-inner">
+      <h2 class="svc-heading">{heading}</h2>
+      <p class="svc-title" aria-hidden="true">
+        <span class="svc-words" data-svc-words>
+          <span class="svc-ghost" data-svc-ghost>{items[0].name}</span>
+          {items.map((item, index) => (
+            <span class:list={['svc-word', { 'is-active': index === 0 }]} data-svc-word={index}>
+              {item.name}
+            </span>
+          ))}
+        </span>
+        <span class="svc-orb glass-orb" data-svc-orb></span>
+      </p>
+    </div>
+  </div>
+
+  <div class="svc-panels">
+    {items.map((item, index) => (
+      <article class="svc-panel" data-svc-panel={index}>
+        <h3 class="svc-summary">
+          <span class="sr-only">{item.name}: </span>{item.summary}
+        </h3>
+        <p class="svc-description">{item.description}</p>
+        <p class="svc-includes">{includesLabel}</p>
+        <ul class="svc-list">
           {item.list.map((entry) => <li>{entry}</li>)}
         </ul>
+
+        <div class="svc-showcase" data-interlude={item.interlude}>
+          <p class="svc-showcase-caption">{interludes[item.interlude as keyof typeof interludes].caption}</p>
+          <p class="svc-showcase-soon">{demoSoon}</p>
+        </div>
       </article>
     ))}
   </div>
 </section>
+
+<style>
+  .services {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+    gap: 0 4vw;
+    max-width: 90rem;
+    margin: 0 auto;
+    padding: 0 6vw;
+  }
+
+  /* ---------- The sticky word ---------- */
+  .svc-stick {
+    position: relative;
+  }
+  .svc-stick-inner {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2rem;
+  }
+
+  .svc-heading {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 400;
+    font-size: clamp(1.5rem, 2.2vw, 2.1rem);
+    letter-spacing: -0.01em;
+    color: var(--color-muted);
+  }
+
+  .svc-title {
+    display: flex;
+    align-items: baseline;
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.05em;
+    line-height: 0.9;
+    font-size: clamp(4.5rem, 11vw, 11rem);
+    white-space: nowrap;
+  }
+
+  /* The ghost (invisible, in flow) gives the active word's width and baseline;
+     the visible words sit on top of it and swap letter by letter. */
+  .svc-words {
+    position: relative;
+    display: inline-block;
+    padding-bottom: 0.08em;
+    overflow: clip;
+  }
+  .svc-ghost {
+    visibility: hidden;
+  }
+  .svc-word {
+    position: absolute;
+    left: 0;
+    top: 0;
+    visibility: hidden;
+  }
+  .svc-word.is-active {
+    visibility: visible;
+  }
+
+  .svc-orb {
+    flex: none;
+    width: 0.16em;
+    height: 0.16em;
+    margin-left: 0.06em;
+    will-change: transform;
+  }
+
+  /* ---------- The panels that scroll past ---------- */
+  .svc-panels {
+    display: grid;
+    padding-block: 30svh 20svh;
+    gap: 34svh;
+  }
+
+  .svc-panel {
+    min-width: 0;
+    display: grid;
+    align-content: start;
+    gap: 1.25rem;
+  }
+
+  .svc-summary {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 400;
+    font-size: clamp(2.2rem, 3.6vw, 3.4rem);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+  }
+
+  .svc-description {
+    margin: 0;
+    max-width: 34rem;
+    font-size: clamp(1.05rem, 1.3vw, 1.2rem);
+    line-height: 1.6;
+    color: var(--color-muted);
+  }
+
+  .svc-includes {
+    margin: 1rem 0 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+
+  .svc-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-width: 34rem;
+  }
+  .svc-list li {
+    padding: 0.85rem 0;
+    border-top: 1px solid var(--color-line);
+    font-size: 1.05rem;
+  }
+  .svc-list li:last-child {
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  /* Open space reserved for each service's showcase (tickets 07–09). */
+  .svc-showcase {
+    margin-top: 3rem;
+    min-height: 42svh;
+    display: grid;
+    align-content: center;
+    gap: 0.5rem;
+    padding-left: 1.5rem;
+    border-left: 1px solid var(--color-line);
+  }
+  .svc-showcase-caption {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: clamp(1.4rem, 2vw, 1.9rem);
+    line-height: 1.2;
+    max-width: 22ch;
+  }
+  .svc-showcase-soon {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--color-muted);
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  /* ---------- Phones: the word sticks to the top, the details scroll beneath ---------- */
+  @media (max-width: 767px) {
+    .services {
+      grid-template-columns: minmax(0, 1fr);
+      padding: 0 5vw;
+    }
+    .svc-stick {
+      position: sticky;
+      top: 3.5rem;
+      z-index: 2;
+      background: var(--color-bg);
+      padding-block: 1.25rem 0.75rem;
+    }
+    .svc-stick-inner {
+      position: static;
+      height: auto;
+      gap: 0.5rem;
+    }
+    .svc-heading { font-size: 1.15rem; }
+    .svc-title { font-size: 17vw; }
+    .svc-panels {
+      padding-block: 3rem 6rem;
+      gap: 6rem;
+    }
+    .svc-showcase { min-height: 30svh; }
+  }
+</style>

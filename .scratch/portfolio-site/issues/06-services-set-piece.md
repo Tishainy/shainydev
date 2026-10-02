@@ -11,3 +11,7 @@
 - [ ] The pinned distance is short enough on phones that no scene drags
 - [ ] Reduced-motion visitors see the three services as a readable static list
 - [ ] There is a defined place for each of the three interludes
+
+## Comments
+
+- 2026-10-02: Built as a sticky-word layout instead of a single pinned scrub: the big word (Build / Automate / AI) sticks on the left with the glass orb as its full stop; as each service panel scrolls past on the right, the old word's letters slide out, the new word's rise in and the orb glides to the new word's end. Each panel has an open showcase space for tickets 07–09. On phones the word sticks to the top. Awaiting Shainy's review.

@@ -3,6 +3,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText } from 'gsap/SplitText';
 import Lenis from 'lenis';
 import { initHero } from './hero';
+import { initServices } from './services';
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
 
@@ -67,6 +68,7 @@ function startReveals() {
 startSmoothScroll();
 // ScrollTriggers are created top to bottom so pin spacing is measured in page order.
 initHero();
+initServices();
 startReveals();
 
 // Web fonts change text metrics; recalculate trigger positions once they're in.
