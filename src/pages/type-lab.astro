@@ -27,35 +27,30 @@ const pairings = [
     source: 'Google Fonts',
   },
   {
-    id: 'character',
-    wordmarkSize: '16cqi',
-    name: 'Character',
-    note: 'Bricolage Grotesque + Instrument Sans. Quirky, warm, a bit playful.',
-    display: "'Bricolage Grotesque', sans-serif",
-    displayWeight: 700,
-    displayTracking: '-0.035em',
-    body: "'Instrument Sans', sans-serif",
-    source: 'Google Fonts',
-  },
-  {
-    id: 'contrast',
-    wordmarkSize: '17.5cqi',
-    name: 'Contrast',
-    note: 'Instrument Serif + Switzer. Elegant serif headlines, crisp body.',
-    display: "'Instrument Serif', serif",
-    displayWeight: 400,
-    displayTracking: '-0.01em',
-    body: "'Switzer', sans-serif",
+    id: 'mix',
+    wordmarkSize: '11.5cqi',
+    name: 'Mix',
+    note: 'Unbounded headlines + Satoshi body. Wide drama up top, Studio calm underneath.',
+    display: "'Unbounded', sans-serif",
+    displayWeight: 600,
+    displayTracking: '-0.03em',
+    body: "'Satoshi', sans-serif",
     source: 'Google Fonts + Fontshare',
   },
 ];
 
 // Each accent has a bright shade for dark mode and a deeper shade for light mode,
 // so text in the accent stays readable on both backgrounds.
+// "None" uses the text colour itself: a sleek, colourless look.
 const accents = [
-  { id: 'peach', name: 'Peach', dark: '#FFB899', light: '#A8482A' },
-  { id: 'coral', name: 'Coral', dark: '#FF7F61', light: '#BD3A20' },
-  { id: 'apricot', name: 'Apricot', dark: '#FFA766', light: '#99500C' },
+  { id: 'lilac', name: 'Lilac', dark: '#BBA8FF', light: '#5A3FD0' },
+  { id: 'cobalt', name: 'Cobalt', dark: '#7D95FF', light: '#2343C8' },
+  { id: 'sky', name: 'Sky', dark: '#7CCBFF', light: '#06679F' },
+  { id: 'teal', name: 'Teal', dark: '#5FD8CF', light: '#06736C' },
+  { id: 'mint', name: 'Mint', dark: '#86E3B8', light: '#0E7650' },
+  { id: 'rose', name: 'Rose', dark: '#FF94B8', light: '#B02658' },
+  { id: 'gold', name: 'Gold', dark: '#F4C553', light: '#835D00' },
+  { id: 'none', name: 'None', dark: '#F3ECE8', light: '#1B1617' },
 ];
 
 const service = site.services.items[0];
@@ -71,11 +66,11 @@ const service = site.services.items[0];
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Hanken+Grotesk:wght@400;500&family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500&family=Instrument+Serif:ital@0;1&family=Unbounded:wght@500;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500&family=Unbounded:wght@500;600&display=swap"
     />
     <link
       rel="stylesheet"
-      href="https://api.fontshare.com/v2/css?f[]=clash-display@500,600&f[]=satoshi@400,500,700&f[]=switzer@400,500&display=swap"
+      href="https://api.fontshare.com/v2/css?f[]=clash-display@500,600&f[]=satoshi@400,500,700&display=swap"
     />
   </head>
   <body>
@@ -83,7 +78,7 @@ const service = site.services.items[0];
       <div class="controls-inner">
         <div>
           <h1 class="lab-title">Type lab</h1>
-          <p class="lab-help">Pick one pairing and one accent. Each pairing is shown in dark and light.</p>
+          <p class="lab-help">Pick one pairing and one accent colour. Each pairing is shown in dark and light.</p>
         </div>
         <div class="control-groups">
           <fieldset>
@@ -106,9 +101,9 @@ const service = site.services.items[0];
               ))}
             </div>
           </fieldset>
-          <label class="toggle">
-            <input type="checkbox" id="mono-toggle" checked />
-            Mono details (IBM Plex Mono)
+          <label class="custom">
+            <input type="color" id="accent-custom" value="#9F7AEA" />
+            Pick your own
           </label>
         </div>
       </div>
@@ -127,13 +122,13 @@ const service = site.services.items[0];
           <div class="panels">
             {['dark', 'light'].map((mode) => (
               <article class={`panel panel-${mode}`}>
-                <p class="greeting detail">{site.hero.greeting}</p>
+                <p class="greeting">{site.hero.greeting}</p>
                 <p class="wordmark">{site.brand}</p>
                 <p class="offer">{site.hero.offer}</p>
                 <div class="service">
                   <p class="service-name">{service.name}</p>
                   <p class="service-summary">{service.summary}</p>
-                  <ul class="service-list detail">
+                  <ul class="service-list">
                     {service.list.map((entry) => <li>{entry}</li>)}
                   </ul>
                 </div>
@@ -154,9 +149,8 @@ const service = site.services.items[0];
         --lab-bg: #1b1819;
         --lab-fg: #f3ece8;
         --lab-muted: #a39892;
-        --accent-dark: #ffb899;
-        --accent-light: #a8482a;
-        --mono: 'IBM Plex Mono', ui-monospace, monospace;
+        --accent-dark: #bba8ff;
+        --accent-light: #5a3fd0;
         color-scheme: dark;
       }
 
@@ -198,7 +192,7 @@ const service = site.services.items[0];
       legend { float: left; margin-right: 0.75rem; color: var(--lab-muted); font-size: 0.9rem; }
       .swatches { display: flex; flex-wrap: wrap; gap: 0.75rem; }
 
-      .swatch, .toggle { display: inline-flex; align-items: center; gap: 0.4rem; cursor: pointer; font-size: 0.95rem; }
+      .swatch { display: inline-flex; align-items: center; gap: 0.4rem; cursor: pointer; font-size: 0.95rem; }
       .swatch input { position: absolute; opacity: 0; pointer-events: none; }
       .chip {
         width: 1.5rem;
@@ -296,22 +290,29 @@ const service = site.services.items[0];
         border-radius: 999px;
       }
 
-      body.mono-on .detail { font-family: var(--mono); font-size: 0.85rem; letter-spacing: 0.01em; }
+      .custom { display: inline-flex; align-items: center; gap: 0.4rem; cursor: pointer; font-size: 0.95rem; }
+      .custom input { width: 1.75rem; height: 1.75rem; padding: 0; border: 0; background: none; cursor: pointer; }
     </style>
 
     <script>
       const root = document.documentElement;
       const radios = document.querySelectorAll<HTMLInputElement>('input[name="accent"]');
-      const monoToggle = document.getElementById('mono-toggle') as HTMLInputElement;
+      const custom = document.getElementById('accent-custom') as HTMLInputElement;
 
-      function applyAccent(input: HTMLInputElement) {
-        root.style.setProperty('--accent-dark', input.dataset.dark ?? '');
-        root.style.setProperty('--accent-light', input.dataset.light ?? '');
+      function setAccent(dark: string, light: string) {
+        root.style.setProperty('--accent-dark', dark);
+        root.style.setProperty('--accent-light', light);
       }
 
-      radios.forEach((radio) => radio.addEventListener('change', () => applyAccent(radio)));
-      monoToggle.addEventListener('change', () => document.body.classList.toggle('mono-on', monoToggle.checked));
-      document.body.classList.toggle('mono-on', monoToggle.checked);
+      radios.forEach((radio) =>
+        radio.addEventListener('change', () => setAccent(radio.dataset.dark ?? '', radio.dataset.light ?? '')),
+      );
+
+      // A custom colour is used as-is on dark, and deepened for light so text stays readable.
+      custom.addEventListener('input', () => {
+        radios.forEach((radio) => (radio.checked = false));
+        setAccent(custom.value, `color-mix(in oklch, ${custom.value} 62%, black)`);
+      });
     </script>
   </body>
 </html>

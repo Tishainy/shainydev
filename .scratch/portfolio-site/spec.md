@@ -46,8 +46,8 @@ Lead offer: websites (the site itself is the proof). Draft one-liner: *"Websites
 ## Look
 
 - **Dark by default**, with a light/dark toggle.
-- **One accent colour:** warm peach/coral, a punchier screen version of the peach on Shainy's CV. Used sparingly (hero key words, CTAs, interlude highlights). Everything else near-black, off-white, greys.
-- **Type-driven.** Typography is **open**: decided from a comparison page of 3–4 pairings (display + body + optional mono accent), rendered with real copy in dark and light.
+- **One accent colour**, used sparingly (CTAs, service names, interlude highlights). Everything else near-black, off-white, greys tuned to the accent. Peach/coral/apricot were tried and rejected (2026-10-02); final colour chosen in ticket 02.
+- **Type-driven.** Shortlist after round 1: **Studio** (Clash Display + Satoshi) or **Wide** (Unbounded + a sans body). **No monospace accent.** Final pick in ticket 02.
 
 ## Brand & domain
 
