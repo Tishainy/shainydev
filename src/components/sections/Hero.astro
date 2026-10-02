@@ -1,12 +1,278 @@
 ---
 import { site } from '../../data/content';
-// Stub. The scrubbed set piece replaces this in ticket 05.
+// Hero set piece (ticket 05). Animation lives in src/scripts/hero.ts.
+// The markup is the readable resting composition: without JS or with reduced motion,
+// this is exactly what visitors see.
 ---
 
-<section id="hero" class="mx-auto flex min-h-svh max-w-6xl flex-col justify-center gap-6 px-4 pt-20 sm:px-6">
-  <p class="text-muted">{site.hero.greeting}</p>
-  <h1 class="text-5xl font-bold tracking-tight sm:text-7xl">{site.brand}</h1>
-  <p class="max-w-2xl text-2xl">{site.hero.offer}</p>
-  <p class="max-w-xl text-lg text-muted">{site.hero.sub}</p>
-  <a href="#contact" class="self-start rounded-full bg-accent px-6 py-3 font-medium text-on-accent">{site.hero.cta}</a>
+<section id="hero" class="hero" data-hero>
+  <div class="hero-bg" aria-hidden="true" data-hero-bg>
+    <div class="hero-blobs" data-hero-blobs>
+      <span class="blob blob-1"></span>
+      <span class="blob blob-2"></span>
+      <span class="blob blob-3"></span>
+      <span class="blob blob-4"></span>
+    </div>
+    <span class="hero-glow" data-hero-glow></span>
+    <span class="hero-grain"></span>
+  </div>
+
+  <div class="hero-stage" data-hero-stage>
+    <p class="hero-greeting" data-hero-greeting>{site.hero.greeting}</p>
+
+    <h1 class="hero-title" data-hero-parallax>
+      <span class="hero-line hero-shainy" data-hero-shainy>Shainy</span><span class="hero-line hero-dev" data-hero-dev
+        >Dev</span
+      >
+    </h1>
+
+    <ul class="hero-chips" aria-label={site.hero.kineticLabel}>
+      {site.hero.kinetic.map((word, index) => (
+        <li class={`hero-chip hero-chip-${index + 1}`} data-hero-chip>
+          <span class="glass hero-chip-inner" data-hero-chip-inner>{word}</span>
+        </li>
+      ))}
+    </ul>
+
+    <div class="glass hero-card" data-hero-card>
+      <div class="hero-card-inner" data-hero-card-inner>
+        <p class="hero-offer">{site.hero.offer}</p>
+        <p class="hero-sub">{site.hero.sub}</p>
+        <a href="#contact" class="hero-cta">{site.hero.cta}</a>
+      </div>
+    </div>
+
+    <p class="hero-hint" aria-hidden="true" data-hero-hint>{site.hero.scrollHint}</p>
+  </div>
 </section>
+
+<style>
+  .hero {
+    position: relative;
+    height: 100svh;
+    min-height: 34rem;
+    overflow: clip;
+    isolation: isolate;
+  }
+
+  /* ---------- Atmosphere ---------- */
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  .hero-blobs {
+    position: absolute;
+    inset: -15%;
+    will-change: transform;
+  }
+
+  .blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: var(--blob-opacity);
+    animation: drift 22s ease-in-out infinite alternate;
+  }
+
+  .blob-1 { width: 46vmax; height: 46vmax; left: 52%; top: 2%; background: var(--blob-1); }
+  .blob-2 { width: 38vmax; height: 38vmax; left: 4%; top: 40%; background: var(--blob-2); animation-duration: 28s; animation-delay: -6s; }
+  .blob-3 { width: 30vmax; height: 30vmax; left: 34%; top: 58%; background: var(--blob-3); animation-duration: 25s; animation-delay: -12s; }
+  .blob-4 { width: 26vmax; height: 26vmax; left: 12%; top: 0%; background: var(--blob-4); animation-duration: 31s; animation-delay: -3s; }
+
+  @keyframes drift {
+    from { transform: translate3d(0, 0, 0) scale(1); }
+    50% { transform: translate3d(6vmax, -4vmax, 0) scale(1.12); }
+    to { transform: translate3d(-5vmax, 5vmax, 0) scale(0.92); }
+  }
+
+  .hero-glow {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 36vmax;
+    height: 36vmax;
+    margin: -18vmax 0 0 -18vmax;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--grad-b) 0%, transparent 65%);
+    opacity: 0;
+    transform: translate3d(50vw, 40vh, 0);
+    will-change: transform;
+  }
+
+  .hero-grain {
+    position: absolute;
+    inset: 0;
+    opacity: var(--grain-opacity);
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ---------- Stage: an asymmetric composition, nothing on one line ---------- */
+  .hero-stage {
+    position: relative;
+    height: 100%;
+    max-width: 90rem;
+    margin: 0 auto;
+  }
+
+  .hero-greeting {
+    position: absolute;
+    left: 6%;
+    top: 15%;
+    font-size: clamp(1rem, 1.4vw, 1.25rem);
+    color: var(--color-muted);
+  }
+
+  .hero-title {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    pointer-events: none;
+    font-weight: 600;
+    letter-spacing: -0.04em;
+    line-height: 0.85;
+  }
+
+  .hero-line {
+    position: absolute;
+    white-space: nowrap;
+    pointer-events: auto;
+  }
+
+  .hero-shainy {
+    left: 4%;
+    top: 17%;
+    font-size: clamp(4.5rem, 19vw, 19rem);
+  }
+
+  .hero-dev {
+    left: 30%;
+    top: 45%;
+    font-size: clamp(4.5rem, 14vw, 14rem);
+    transition: translate 0.35s cubic-bezier(0.2, 0.8, 0.2, 1.4);
+    background: linear-gradient(100deg, var(--grad-a), var(--grad-b), var(--grad-c), var(--grad-a));
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Letters lift on hover. `translate` is separate from the GSAP-driven `transform`. */
+  :global(.hero-char) {
+    transition: translate 0.35s cubic-bezier(0.2, 0.8, 0.2, 1.4), color 0.3s;
+  }
+  .hero-shainy :global(.hero-char:hover) {
+    translate: 0 -0.08em;
+    color: var(--color-accent);
+  }
+  .hero-dev:hover {
+    translate: 0 -0.06em;
+  }
+
+  .hero-chips {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .hero-chip {
+    position: absolute;
+    transform-origin: 0% 50%;
+    will-change: transform;
+  }
+
+  .glass {
+    background: linear-gradient(135deg, var(--glass-shine), transparent 60%), var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow), inset 0 1px 0 var(--glass-shine);
+    -webkit-backdrop-filter: blur(18px) saturate(160%);
+    backdrop-filter: blur(18px) saturate(160%);
+  }
+
+  .hero-chip-inner {
+    display: inline-block;
+    padding: 0.55em 1.1em;
+    border-radius: 999px;
+    font-family: var(--font-playful);
+    font-weight: 500;
+    font-size: clamp(0.9rem, 1.35vw, 1.25rem);
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+  }
+
+  .hero-chip-1 { right: 9%; top: 13%; rotate: 5deg; }
+  .hero-chip-2 { left: 7%; top: 72%; rotate: -6deg; }
+  .hero-chip-3 { right: 10%; top: 41%; rotate: 9deg; }
+
+  .hero-card {
+    position: absolute;
+    right: 6%;
+    bottom: 8%;
+    width: min(27rem, 88%);
+    border-radius: 1.5rem;
+    will-change: transform;
+  }
+
+  .hero-card-inner {
+    display: grid;
+    gap: 0.9rem;
+    padding: clamp(1.25rem, 2.4vw, 2rem);
+  }
+
+  .hero-offer {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(1.3rem, 1.9vw, 1.7rem);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+
+  .hero-sub {
+    color: var(--color-muted);
+    line-height: 1.5;
+  }
+
+  .hero-cta {
+    justify-self: start;
+    margin-top: 0.25rem;
+    padding: 0.8rem 1.4rem;
+    border-radius: 999px;
+    background: var(--color-accent);
+    color: var(--color-on-accent);
+    font-weight: 600;
+    text-decoration: none;
+    transition: translate 0.25s, box-shadow 0.25s;
+  }
+  .hero-cta:hover {
+    translate: 0 -2px;
+    box-shadow: 0 10px 30px color-mix(in srgb, var(--color-accent) 45%, transparent);
+  }
+
+  .hero-hint {
+    position: absolute;
+    left: 6%;
+    bottom: 8%;
+    font-size: 0.9rem;
+    color: var(--color-muted);
+  }
+
+  /* ---------- Phones: stack the composition vertically ---------- */
+  @media (max-width: 767px) {
+    .hero-greeting { top: 13%; left: 5%; }
+    .hero-shainy { left: 4%; top: 18%; font-size: clamp(4rem, 25vw, 9rem); }
+    .hero-dev { left: auto; right: 5%; top: 31%; font-size: clamp(4rem, 24vw, 9rem); }
+    .hero-chip-1 { right: 6%; top: 47%; }
+    .hero-chip-2 { left: 5%; top: 53%; }
+    .hero-chip-3 { right: auto; left: 52%; top: 58%; }
+    .hero-card { left: 4%; right: 4%; bottom: 5%; width: auto; }
+    .hero-hint { display: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .blob { animation: none; }
+  }
+</style>

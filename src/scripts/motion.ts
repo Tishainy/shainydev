@@ -2,8 +2,12 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText } from 'gsap/SplitText';
 import Lenis from 'lenis';
+import { initHero } from './hero';
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
+
+// Phone address bars resize the viewport while scrolling; don't recalculate pins for that.
+ScrollTrigger.config({ ignoreMobileResize: true });
 
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
@@ -61,6 +65,8 @@ function startReveals() {
 }
 
 startSmoothScroll();
+// ScrollTriggers are created top to bottom so pin spacing is measured in page order.
+initHero();
 startReveals();
 
 // Web fonts change text metrics; recalculate trigger positions once they're in.

@@ -27,6 +27,8 @@ export const site = {
     cta: 'Start a project',
     // Words the hero animation can split, move and reposition.
     kinetic: ['Websites', 'Automation', 'AI'],
+    kineticLabel: 'What I build',
+    scrollHint: 'Scroll',
   },
 
   services: {
