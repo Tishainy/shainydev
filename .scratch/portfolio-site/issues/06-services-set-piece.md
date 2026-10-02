@@ -4,13 +4,13 @@
 
 **Blocked by:** 05 — Hero set piece
 
-**Status:** ready-for-agent
+**Status:** done for now (Shainy may revisit the layout later)
 
-- [ ] The section pins and scrubs through the three services, forward and backward
-- [ ] Each service shows its headline and its specific service list
+- [x] The section pins and scrubs through the three services, forward and backward
+- [x] Each service shows its headline and its specific service list
 - [ ] The pinned distance is short enough on phones that no scene drags
-- [ ] Reduced-motion visitors see the three services as a readable static list
-- [ ] There is a defined place for each of the three interludes
+- [x] Reduced-motion visitors see the three services as a readable static list
+- [ ] There is a defined place for each of the three interludes — still open, decide with tickets 07–09
 
 ## Comments
 
@@ -18,3 +18,4 @@
 - 2026-10-02: Reworked after review (word too big for its column, clipped ends, AI appearing before its animation, too monochrome and predictable). Now a pinned full-screen scene like the hero: huge light-filled word along the bottom with the orb as full stop, staggered serif summary top-left, description top-right, list middle-left, showcase middle-right; scrubbed swaps with snapping to each service. Phones / reduced motion get a stacked layout. Verified by screenshot: the first state. Not verified by me: the scrolled states (headless screenshots of the pinned scene come out blank).
 - 2026-10-02: Second version rejected (reusing the hero's wave lines felt lazy; layout not strong). Three new still sketches in `/services-lab`; Shainy picked **B, the type index**: all three words stacked full-width, active one lit with the cobalt fill and the orb as full stop, others outlined; details fill the space beside the short words. Now built and animated: rows slide in on entry; pinned scrub sweeps the light word to word, the orb travels, details trade places; snaps per service. Open question: where the showcase demos (07–09) live in this layout.
 - 2026-10-02: Type index was 'not loved' (thin outlines looked low quality; three huge words at once too much). Shainy chose **grow & shrink**: one huge lit word with the orb, the other two small and solid in a mini index top-right; scrolling grows the next word out of the index while the current one shrinks into it. Built and deployed; awaiting review.
+- 2026-10-02: Shainy: 'better but not perfect, can't put my finger on it' — leaving as is for now, may come back to it. Phone pin length is checked in ticket 14.
