@@ -1,0 +1,317 @@
+---
+// Ticket 02: hidden font + accent comparison page. Not linked from navigation.
+// Fonts load from Google Fonts / Fontshare here only; the chosen pair gets self-hosted.
+import { site } from '../data/content';
+
+const pairings = [
+  {
+    id: 'studio',
+    wordmarkSize: '14cqi',
+    name: 'Studio',
+    note: 'Clash Display + Satoshi. Sharp, confident, modern studio.',
+    display: "'Clash Display', sans-serif",
+    displayWeight: 600,
+    displayTracking: '-0.02em',
+    body: "'Satoshi', sans-serif",
+    source: 'Fontshare',
+  },
+  {
+    id: 'wide',
+    wordmarkSize: '11.5cqi',
+    name: 'Wide',
+    note: 'Unbounded + Hanken Grotesk. Wide letters that fill the screen; techy.',
+    display: "'Unbounded', sans-serif",
+    displayWeight: 600,
+    displayTracking: '-0.03em',
+    body: "'Hanken Grotesk', sans-serif",
+    source: 'Google Fonts',
+  },
+  {
+    id: 'character',
+    wordmarkSize: '16cqi',
+    name: 'Character',
+    note: 'Bricolage Grotesque + Instrument Sans. Quirky, warm, a bit playful.',
+    display: "'Bricolage Grotesque', sans-serif",
+    displayWeight: 700,
+    displayTracking: '-0.035em',
+    body: "'Instrument Sans', sans-serif",
+    source: 'Google Fonts',
+  },
+  {
+    id: 'contrast',
+    wordmarkSize: '17.5cqi',
+    name: 'Contrast',
+    note: 'Instrument Serif + Switzer. Elegant serif headlines, crisp body.',
+    display: "'Instrument Serif', serif",
+    displayWeight: 400,
+    displayTracking: '-0.01em',
+    body: "'Switzer', sans-serif",
+    source: 'Google Fonts + Fontshare',
+  },
+];
+
+// Each accent has a bright shade for dark mode and a deeper shade for light mode,
+// so text in the accent stays readable on both backgrounds.
+const accents = [
+  { id: 'peach', name: 'Peach', dark: '#FFB899', light: '#A8482A' },
+  { id: 'coral', name: 'Coral', dark: '#FF7F61', light: '#BD3A20' },
+  { id: 'apricot', name: 'Apricot', dark: '#FFA766', light: '#99500C' },
+];
+
+const service = site.services.items[0];
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Type lab — {site.brand}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Hanken+Grotesk:wght@400;500&family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500&family=Instrument+Serif:ital@0;1&family=Unbounded:wght@500;600&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://api.fontshare.com/v2/css?f[]=clash-display@500,600&f[]=satoshi@400,500,700&f[]=switzer@400,500&display=swap"
+    />
+  </head>
+  <body>
+    <header class="controls">
+      <div class="controls-inner">
+        <div>
+          <h1 class="lab-title">Type lab</h1>
+          <p class="lab-help">Pick one pairing and one accent. Each pairing is shown in dark and light.</p>
+        </div>
+        <div class="control-groups">
+          <fieldset>
+            <legend>Accent</legend>
+            <div class="swatches">
+              {accents.map((accent, index) => (
+                <label class="swatch">
+                  <input
+                    type="radio"
+                    name="accent"
+                    id={`accent-${accent.id}`}
+                    value={accent.id}
+                    data-dark={accent.dark}
+                    data-light={accent.light}
+                    checked={index === 0}
+                  />
+                  <span class="chip" style={`--chip-dark:${accent.dark};--chip-light:${accent.light}`}></span>
+                  {accent.name}
+                </label>
+              ))}
+            </div>
+          </fieldset>
+          <label class="toggle">
+            <input type="checkbox" id="mono-toggle" checked />
+            Mono details (IBM Plex Mono)
+          </label>
+        </div>
+      </div>
+    </header>
+
+    <main class="pairings">
+      {pairings.map((pair, index) => (
+        <section
+          class="pairing"
+          style={`--display:${pair.display};--display-weight:${pair.displayWeight};--display-tracking:${pair.displayTracking};--body:${pair.body};--wordmark-size:${pair.wordmarkSize}`}
+        >
+          <div class="pairing-head">
+            <h2>{String.fromCharCode(65 + index)}. {pair.name}</h2>
+            <p>{pair.note} <span class="source">({pair.source})</span></p>
+          </div>
+          <div class="panels">
+            {['dark', 'light'].map((mode) => (
+              <article class={`panel panel-${mode}`}>
+                <p class="greeting detail">{site.hero.greeting}</p>
+                <p class="wordmark">{site.brand}</p>
+                <p class="offer">{site.hero.offer}</p>
+                <div class="service">
+                  <p class="service-name">{service.name}</p>
+                  <p class="service-summary">{service.summary}</p>
+                  <ul class="service-list detail">
+                    {service.list.map((entry) => <li>{entry}</li>)}
+                  </ul>
+                </div>
+                <p class="body-copy">
+                  I build websites, automations and AI tools for small businesses. You tell me what slows you down,
+                  and I build something that takes it off your plate.
+                </p>
+                <a class="cta" href="#top" tabindex="-1">Start a project</a>
+              </article>
+            ))}
+          </div>
+        </section>
+      ))}
+    </main>
+
+    <style is:global>
+      :root {
+        --lab-bg: #1b1819;
+        --lab-fg: #f3ece8;
+        --lab-muted: #a39892;
+        --accent-dark: #ffb899;
+        --accent-light: #a8482a;
+        --mono: 'IBM Plex Mono', ui-monospace, monospace;
+        color-scheme: dark;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        background: var(--lab-bg);
+        color: var(--lab-fg);
+        font-family: 'Satoshi', system-ui, sans-serif;
+      }
+
+      .controls {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: color-mix(in srgb, var(--lab-bg) 92%, transparent);
+        backdrop-filter: blur(8px);
+        border-bottom: 1px solid #2e2826;
+      }
+
+      .controls-inner {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem 2rem;
+        max-width: 90rem;
+        margin: 0 auto;
+        padding: 1rem;
+      }
+
+      .lab-title { margin: 0; font-size: 1.25rem; }
+      .lab-help { margin: 0.25rem 0 0; color: var(--lab-muted); font-size: 0.9rem; }
+
+      .control-groups { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 2rem; }
+
+      fieldset { border: 0; margin: 0; padding: 0; display: flex; align-items: center; gap: 0.75rem; }
+      legend { float: left; margin-right: 0.75rem; color: var(--lab-muted); font-size: 0.9rem; }
+      .swatches { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+
+      .swatch, .toggle { display: inline-flex; align-items: center; gap: 0.4rem; cursor: pointer; font-size: 0.95rem; }
+      .swatch input { position: absolute; opacity: 0; pointer-events: none; }
+      .chip {
+        width: 1.5rem;
+        height: 1.5rem;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--chip-dark) 50%, var(--chip-light) 50%);
+        outline: 2px solid transparent;
+        outline-offset: 2px;
+      }
+      .swatch input:checked + .chip { outline-color: var(--lab-fg); }
+      .swatch input:focus-visible + .chip { outline-color: var(--accent-dark); outline-style: dashed; }
+
+      .pairings { max-width: 90rem; margin: 0 auto; padding: 2rem 1rem 6rem; display: grid; gap: 5rem; }
+
+      .pairing-head h2 { margin: 0; font-size: 1.5rem; }
+      .pairing-head p { margin: 0.35rem 0 0; color: var(--lab-muted); max-width: 60ch; }
+      .source { opacity: 0.7; }
+
+      .panels { margin-top: 1.25rem; display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 32rem), 1fr)); }
+
+      .panel {
+        --bg: #121011;
+        --fg: #f3ece8;
+        --muted: #a39892;
+        --line: #2e2826;
+        --accent: var(--accent-dark);
+        --on-accent: #1b1617;
+        min-width: 0;
+        background: var(--bg);
+        color: var(--fg);
+        border: 1px solid var(--line);
+        border-radius: 1rem;
+        padding: clamp(1.25rem, 4vw, 3rem);
+        display: grid;
+        gap: 1.25rem;
+        align-content: start;
+        font-family: var(--body);
+        container-type: inline-size;
+      }
+
+      .panel-light {
+        --bg: #f7f2ef;
+        --fg: #1b1617;
+        --muted: #6b605b;
+        --line: #e2d8d3;
+        --accent: var(--accent-light);
+        --on-accent: #ffffff;
+      }
+
+      .panel p, .panel ul { margin: 0; }
+
+      .greeting { color: var(--muted); font-size: 1rem; }
+
+      .wordmark {
+        font-family: var(--display);
+        font-weight: var(--display-weight);
+        letter-spacing: var(--display-tracking);
+        /* Sized to the panel, not the window, so the name never breaks mid-word. */
+        font-size: min(var(--wordmark-size), 7.5rem);
+        line-height: 0.92;
+        white-space: nowrap;
+      }
+
+      .offer {
+        font-family: var(--display);
+        font-weight: var(--display-weight);
+        letter-spacing: calc(var(--display-tracking) / 2);
+        font-size: clamp(1.4rem, 2.6vw, 2.1rem);
+        line-height: 1.12;
+        max-width: 22ch;
+        text-wrap: balance;
+      }
+
+      .service { display: grid; gap: 0.35rem; padding-top: 1.25rem; border-top: 1px solid var(--line); }
+      .service-name {
+        font-family: var(--display);
+        font-weight: var(--display-weight);
+        letter-spacing: var(--display-tracking);
+        font-size: clamp(2.25rem, 5vw, 3.75rem);
+        line-height: 1;
+        color: var(--accent);
+      }
+      .service-summary { font-size: 1.15rem; }
+      .service-list { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 0.25rem 1.25rem; color: var(--muted); font-size: 0.95rem; }
+
+      .body-copy { font-size: 1.05rem; line-height: 1.6; max-width: 58ch; color: var(--fg); }
+
+      .cta {
+        justify-self: start;
+        background: var(--accent);
+        color: var(--on-accent);
+        font-weight: 500;
+        text-decoration: none;
+        padding: 0.8rem 1.4rem;
+        border-radius: 999px;
+      }
+
+      body.mono-on .detail { font-family: var(--mono); font-size: 0.85rem; letter-spacing: 0.01em; }
+    </style>
+
+    <script>
+      const root = document.documentElement;
+      const radios = document.querySelectorAll<HTMLInputElement>('input[name="accent"]');
+      const monoToggle = document.getElementById('mono-toggle') as HTMLInputElement;
+
+      function applyAccent(input: HTMLInputElement) {
+        root.style.setProperty('--accent-dark', input.dataset.dark ?? '');
+        root.style.setProperty('--accent-light', input.dataset.light ?? '');
+      }
+
+      radios.forEach((radio) => radio.addEventListener('change', () => applyAccent(radio)));
+      monoToggle.addEventListener('change', () => document.body.classList.toggle('mono-on', monoToggle.checked));
+      document.body.classList.toggle('mono-on', monoToggle.checked);
+    </script>
+  </body>
+</html>
