@@ -1,0 +1,17 @@
+---
+import { site } from '../../data/content';
+// Stub. Built out in ticket 10.
+---
+
+<section id="work" class="mx-auto max-w-6xl px-4 py-24 sm:px-6">
+  <h2 class="text-3xl font-bold" data-reveal>{site.work.heading}</h2>
+  <div class="mt-10 grid gap-8 md:grid-cols-2">
+    {site.work.projects.map((project) => (
+      <article class="min-w-0 border-t border-line pt-6" data-reveal>
+        <p class="text-sm text-muted">{project.status}</p>
+        <h3 class="mt-1 text-2xl font-bold">{project.name}</h3>
+        <p class="mt-2 text-muted">{project.summary}</p>
+      </article>
+    ))}
+  </div>
+</section>
