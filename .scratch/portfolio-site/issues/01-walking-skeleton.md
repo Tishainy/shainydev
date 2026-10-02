@@ -7,10 +7,14 @@
 **Status:** ready-for-agent
 
 - [ ] Repo is git-initialised and pushed to a public GitHub repo
-- [ ] Project-only skills installed: `anthropics/skills@frontend-design`, `greensock/gsap-skills@gsap-scrolltrigger`, `@gsap-timeline`, `@gsap-performance`
+- [x] Project-only skills installed: `anthropics/skills@frontend-design`, `greensock/gsap-skills@gsap-scrolltrigger`, `@gsap-timeline`, `@gsap-performance`
 - [ ] Every push to the main branch deploys to Vercel; the `*.vercel.app` URL loads
-- [ ] All six sections render in order, with text coming from one content file
-- [ ] Theme toggle switches dark/light, defaults to dark, and remembers the choice
-- [ ] Lenis smooth scroll is active; a stub element reveals via the shared reveal helper
-- [ ] With reduced motion enabled, smooth scroll and reveals are disabled or reduced to simple fades
-- [ ] The site URL is a single config value (so the domain can be swapped later)
+- [x] All six sections render in order, with text coming from one content file
+- [x] Theme toggle switches dark/light, defaults to dark, and remembers the choice
+- [x] Lenis smooth scroll is active; a stub element reveals via the shared reveal helper
+- [x] With reduced motion enabled, smooth scroll and reveals are disabled or reduced to simple fades
+- [x] The site URL is a single config value (so the domain can be swapped later)
+
+## Comments
+
+- 2026-10-02: Live at https://shainydev.vercel.app (Vercel project `shainydev`, deployed via CLI). Remaining: create the public GitHub repo, push, and connect it to the Vercel project so pushes auto-deploy. `gh` CLI isn't installed on this machine.
