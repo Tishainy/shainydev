@@ -9,3 +9,7 @@
 - [ ] Domain purchased
 - [ ] Domain connected in Vercel, with HTTPS working
 - [ ] Site-URL config value updated; share preview shows the new domain
+
+## Comments
+
+- 2026-10-02: Also finish ticket 12 here: provision Resend with the domain (`vercel integration add resend/resend-email -m domain=shainydev.com -m region=...`), add its DNS records, set `CONTACT_FROM` (e.g. hello@shainydev.com), and send a test message.

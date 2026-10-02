@@ -6,8 +6,13 @@
 
 **Status:** ready-for-agent
 
-- [ ] Delivery mechanism agreed with Shainy
-- [ ] A test submission arrives in Shainy's inbox, including the picker choice
-- [ ] Validation, clear success/error states, and basic spam protection
-- [ ] Email and LinkedIn links work
+- [x] Delivery mechanism agreed with Shainy (Resend via a Vercel Function)
+- [ ] A test submission arrives in Shainy's inbox, including the picker choice — blocked: Resend needs the domain (ticket 15)
+- [x] Validation, clear success/error states, and basic spam protection (honeypot + minimum fill time; Astro blocks cross-site posts)
+- [x] Email and LinkedIn links work
 - [ ] Usable by keyboard and screen reader, and on phone
+
+## Comments
+
+- 2026-10-02: Built. Contact now also carries the personal touch from the removed About section. Form posts to `/api/contact` (Astro Vercel adapter, one Vercel Function) which sends through Resend's REST API. Tested live: missing fields, bad email, honeypot, too-fast bot, no-JS same-origin post (303 back to #contact) all behave; valid input returns `not-configured` because there's no API key yet. Resend's marketplace integration is installed on the team (terms accepted) but provisioning needs a domain, so Shainy chose to connect it after buying shainydev.com (ticket 15). Until then the form tells visitors to email shainydev@gmail.com. To finish: provision Resend with `-m domain=shainydev.com`, verify DNS, set `CONTACT_FROM` to an address on the domain, and send a test.
+- Known: `npm audit` reports 3 high-severity advisories in `path-to-regexp` via `@astrojs/vercel` (build-time routing only, not reachable by visitors); the only automated fix downgrades the adapter. Revisit when the adapter updates.
