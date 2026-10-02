@@ -1,8 +1,8 @@
 ---
 import { site } from '../../data/content';
-// Services (ticket 06): "the type index". All three service words stacked full-width; the active
-// one fills with cobalt light and takes the glass orb as its full stop, the others are outlines.
-// The active service's details sit in the open space beside the shorter words.
+// Services (ticket 06): "grow & shrink". One service word at a time is huge, lit with the cobalt
+// light and finished with the glass orb; the other two sit small in a mini index in the corner.
+// Scrolling grows the next word out of the index while the current one shrinks into it.
 // On desktop with motion this is a pinned scene (src/scripts/services.ts). Elsewhere, and without
 // JS, the simple stack below it is shown instead.
 
@@ -10,53 +10,45 @@ const { heading, includesLabel, items } = site.services;
 ---
 
 <section id="services" class="svc" data-services>
-  <!-- ================= The index (desktop, with motion) ================= -->
-  <div class="svc-index" data-svc-index>
+  <!-- ================= The scene (desktop, with motion) ================= -->
+  <div class="svc-scene" data-svc-scene>
     <h2 class="svc-kicker">{heading}</h2>
 
-    <div class="svc-rows">
-      {items.map((item, index) => (
-        <div class="svc-row" data-svc-row={index}>
-          <p class="svc-w" aria-hidden="true" data-svc-w>
-            <span class="svc-w-outline">{item.name}</span>
-            <span class="svc-w-fill" data-svc-fill>{item.name}</span>
-          </p>
+    {items.map((item) => (
+      <p class="svc-w" aria-hidden="true" data-svc-w>
+        <span class="svc-w-solid" data-svc-solid>{item.name}</span>
+        <span class="svc-w-fill" data-svc-fill>{item.name}</span>
+      </p>
+    ))}
+    <span class="svc-orb glass-orb" aria-hidden="true" data-svc-orb></span>
 
-          {index === 0 && (
-            <div class="svc-slot svc-slot-summary">
-              {items.map((detail) => (
-                <h3 class="svc-sum" data-svc-sum>
-                  <span class="svc-sr">{detail.name}: </span>
-                  {detail.summaryLines.map((line, lineIndex) => (
-                    <span class:list={['svc-sum-line', { 'svc-sum-indent': lineIndex > 0 }]} data-svc-sum-line>
-                      {line}
-                    </span>
-                  ))}
-                </h3>
-              ))}
-            </div>
-          )}
-
-          {index === items.length - 1 && (
-            <div class="svc-slot svc-slot-detail">
-              {items.map((detail) => (
-                <div class="svc-det" data-svc-det>
-                  <p class="svc-desc">{detail.description}</p>
-                  <div class="svc-inc">
-                    <p class="svc-inc-label">{includesLabel}</p>
-                    <ul class="svc-list">
-                      {detail.list.map((entry) => <li>{entry}</li>)}
-                    </ul>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+    <div class="svc-slot svc-slot-sum">
+      {items.map((item) => (
+        <h3 class="svc-sum" data-svc-sum>
+          <span class="svc-sr">{item.name}: </span>
+          {item.summaryLines.map((line, lineIndex) => (
+            <span class:list={['svc-sum-line', { 'svc-sum-indent': lineIndex > 0 }]} data-svc-sum-line>
+              {line}
+            </span>
+          ))}
+        </h3>
       ))}
     </div>
 
-    <span class="svc-orb glass-orb" aria-hidden="true" data-svc-orb></span>
+    <div class="svc-slot svc-slot-desc">
+      {items.map((item) => <p class="svc-desc" data-svc-desc>{item.description}</p>)}
+    </div>
+
+    <div class="svc-slot svc-slot-inc">
+      {items.map((item) => (
+        <div class="svc-inc" data-svc-inc>
+          <p class="svc-inc-label">{includesLabel}</p>
+          <ul class="svc-list">
+            {item.list.map((entry) => <li>{entry}</li>)}
+          </ul>
+        </div>
+      ))}
+    </div>
   </div>
 
   <!-- ================= The stack (phones, reduced motion, no JS) ================= -->
@@ -86,7 +78,7 @@ const { heading, includesLabel, items } = site.services;
 <style>
   .svc {
     position: relative;
-    --word-size: 16vw;
+    --word-size: 14.5vw;
   }
 
   /* ---------- Shared type ---------- */
@@ -103,7 +95,7 @@ const { heading, includesLabel, items } = site.services;
     font-family: var(--font-serif);
     font-style: italic;
     font-weight: 400;
-    font-size: clamp(2.4rem, 4vw, 4rem);
+    font-size: clamp(2.6rem, 4.6vw, 4.6rem);
     line-height: 1;
     letter-spacing: -0.01em;
   }
@@ -124,7 +116,7 @@ const { heading, includesLabel, items } = site.services;
   }
   .svc-desc {
     margin: 0;
-    font-size: clamp(1.1rem, 1.45vw, 1.45rem);
+    font-size: clamp(1.1rem, 1.5vw, 1.5rem);
     line-height: 1.5;
   }
   .svc-inc-label {
@@ -139,19 +131,19 @@ const { heading, includesLabel, items } = site.services;
     padding: 0;
   }
   .svc-list li {
-    padding: 0.45rem 0;
+    padding: 0.5rem 0;
     border-top: 1px solid var(--color-line);
     font-family: var(--font-display);
     font-weight: 500;
-    font-size: clamp(1.05rem, 1.4vw, 1.4rem);
+    font-size: clamp(1.1rem, 1.5vw, 1.5rem);
     letter-spacing: -0.01em;
   }
 
-  /* ================= The index ================= */
-  .svc-index {
+  /* ================= The scene ================= */
+  .svc-scene {
     display: none;
   }
-  .svc:global(.is-staged) .svc-index {
+  .svc:global(.is-staged) .svc-scene {
     display: block;
     position: relative;
     height: 100svh;
@@ -161,28 +153,17 @@ const { heading, includesLabel, items } = site.services;
     display: none;
   }
 
-  .svc-index .svc-kicker {
+  .svc-scene .svc-kicker {
     position: absolute;
     left: 5vw;
-    top: 9svh;
-  }
-  .svc-rows {
-    position: absolute;
-    left: 4vw;
-    right: 4vw;
-    top: 17svh;
-    display: grid;
-  }
-  .svc-row {
-    position: relative;
-    display: flex;
-    align-items: flex-end;
-    gap: 4vw;
+    top: 10svh;
   }
 
+  /* Every word lives at the big spot; the script scales and moves the inactive ones into the index. */
   .svc-w {
-    position: relative;
-    flex: none;
+    position: absolute;
+    left: 4.5vw;
+    top: 22svh;
     margin: 0;
     white-space: nowrap;
     font-family: var(--font-display);
@@ -190,40 +171,21 @@ const { heading, includesLabel, items } = site.services;
     letter-spacing: -0.055em;
     line-height: 0.84;
     font-size: var(--word-size);
+    transform-origin: 0 0;
+    will-change: transform;
   }
-  .svc-w-outline {
-    color: transparent;
-    -webkit-text-stroke: 1.5px color-mix(in srgb, var(--color-fg) 32%, transparent);
+  .svc-w-solid {
+    color: var(--color-fg);
   }
-  /* The light, laid exactly over the outline; revealed by a left-to-right sweep. */
   .svc-w-fill {
     position: absolute;
     left: 0;
     top: 0;
+    padding-right: 0.06em;
     background: var(--light-fill);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    clip-path: inset(-10% 100% -10% 0);
-    padding-right: 0.06em;
-  }
-
-  /* The slots beside the short words; each service's details stack in the same cell. */
-  .svc-slot {
-    flex: 1;
-    min-width: 0;
-    display: grid;
-    align-items: end;
-    padding-bottom: 1.2vw;
-  }
-  .svc-slot > * {
-    grid-area: 1 / 1;
-  }
-  .svc-det {
-    display: grid;
-    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
-    gap: 3vw;
-    align-items: end;
   }
 
   .svc-orb {
@@ -234,6 +196,30 @@ const { heading, includesLabel, items } = site.services;
     height: calc(var(--word-size) * 0.16);
     z-index: 2;
     will-change: transform;
+  }
+
+  /* Each service's details stack in the same cell and trade places. */
+  .svc-slot {
+    position: absolute;
+    display: grid;
+    align-items: start;
+  }
+  .svc-slot > * {
+    grid-area: 1 / 1;
+  }
+  .svc-slot-sum {
+    left: 8vw;
+    top: 54svh;
+  }
+  .svc-slot-desc {
+    left: 44vw;
+    top: 57svh;
+    width: 25vw;
+  }
+  .svc-slot-inc {
+    right: 5vw;
+    top: 57svh;
+    width: 22vw;
   }
 
   /* ================= The stack ================= */
