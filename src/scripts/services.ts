@@ -1,119 +1,114 @@
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { SplitText } from 'gsap/SplitText';
-import { startWaveLines } from './wave-lines';
 
-gsap.registerPlugin(ScrollTrigger, SplitText);
+gsap.registerPlugin(ScrollTrigger);
+
+// Where the baseline sits below the top of a word's box, in em (measured on screen for
+// Clash Display at line-height 0.84).
+const BASELINE = 0.81;
 
 /**
- * Services: on desktop with motion, a pinned full-screen scene. Scrolling plays the services
- * like a film: the summary lines slide out sideways, the text fades up, the big word's letters
- * swap, the glass orb glides to the new word's end, and the next service slides in.
- * Elsewhere the markup stays a plain, readable stack.
+ * Services, "the type index": a pinned scene. Scrolling sweeps the cobalt light from one word
+ * to the next, the orb travels to the new word's end, and that service's details slide in
+ * beside the short words. Snaps to each service; reverses on the way back up.
  */
 export function initServices() {
   const section = document.querySelector<HTMLElement>('[data-services]');
   if (!section) return;
-  const stage = section.querySelector<HTMLElement>('[data-svc-stage]')!;
+  const index = section.querySelector<HTMLElement>('[data-svc-index]')!;
   const orb = section.querySelector<HTMLElement>('[data-svc-orb]')!;
-  const states = gsap.utils.toArray<HTMLElement>('[data-svc-state]', section);
 
   const mm = gsap.matchMedia();
   mm.add('(min-width: 768px) and (prefers-reduced-motion: no-preference)', () => {
     section.classList.add('is-staged');
 
-    const words = states.map((s) => s.querySelector<HTMLElement>('[data-svc-word]')!);
-    const splits = words.map((w) => SplitText.create(w, { type: 'chars', charsClass: 'svc-char' }));
-    const chars = splits.map((s) => s.chars as HTMLElement[]);
-    const lines = states.map((s) => gsap.utils.toArray<HTMLElement>('[data-svc-line]', s));
-    const fades = states.map((s) => gsap.utils.toArray<HTMLElement>('[data-svc-fade]', s));
+    const rows = gsap.utils.toArray<HTMLElement>('[data-svc-row]', section);
+    const words = gsap.utils.toArray<HTMLElement>('[data-svc-w]', section);
+    const fills = gsap.utils.toArray<HTMLElement>('[data-svc-fill]', section);
+    const sums = gsap.utils.toArray<HTMLElement>('[data-svc-sum]', section);
+    const sumLines = sums.map((s) => gsap.utils.toArray<HTMLElement>('[data-svc-sum-line]', s));
+    const dets = gsap.utils.toArray<HTMLElement>('[data-svc-det]', section);
+    const count = words.length;
 
-    // Give each letter the slice of the light that falls on it, so the whole word reads as one fill.
-    // Uses layout offsets, which ignore the letters' slide transforms.
-    function paintLetters() {
-      words.forEach((word, i) => {
-        chars[i].forEach((char) => {
-          char.style.backgroundSize = `${word.offsetWidth}px ${word.offsetHeight}px`;
-          char.style.backgroundPosition = `${-char.offsetLeft}px ${-char.offsetTop}px`;
-        });
-      });
+    // The orb's spot as a word's full stop: just after the word, resting on its baseline.
+    function orbSpot(i: number) {
+      const box = index.getBoundingClientRect();
+      const word = words[i].getBoundingClientRect();
+      const size = parseFloat(getComputedStyle(words[i]).fontSize);
+      return {
+        x: word.right - box.left + size * 0.06,
+        y: word.top - box.top + size * BASELINE - size * 0.16,
+      };
     }
 
-    // How far along the orb sits as each word's full stop: just after the last letter.
-    // (Its height is fixed in CSS, on the words' shared baseline.)
-    function orbX(i: number) {
-      const stageBox = stage.getBoundingClientRect();
-      const wordBox = words[i].getBoundingClientRect();
-      const last = chars[i][chars[i].length - 1];
-      const fontSize = parseFloat(getComputedStyle(words[i]).fontSize);
-      return wordBox.left - stageBox.left + last.offsetLeft + last.offsetWidth + fontSize * 0.05;
-    }
+    // Starting state: Build lit, only its details showing.
+    gsap.set(fills[0], { clipPath: 'inset(-10% 0% -10% 0%)' });
+    sums.forEach((s, i) => gsap.set(s, { autoAlpha: i === 0 ? 1 : 0 }));
+    dets.forEach((d, i) => gsap.set(d, { autoAlpha: i === 0 ? 1 : 0 }));
 
-    // Starting state: only the first service shows.
-    states.forEach((_, i) => {
-      if (i === 0) return;
-      gsap.set(lines[i], { autoAlpha: 0 });
-      gsap.set(fades[i], { autoAlpha: 0 });
-      gsap.set(chars[i], { yPercent: 110 });
-    });
+    // Entering: the outlined words slide in from alternating sides.
+    const enter = gsap.fromTo(
+      rows,
+      { xPercent: (i) => (i % 2 === 0 ? -12 : 12), autoAlpha: 0 },
+      {
+        xPercent: 0,
+        autoAlpha: 1,
+        ease: 'power2.out',
+        stagger: 0.12,
+        scrollTrigger: { trigger: section, start: 'top 90%', end: 'top 15%', scrub: 1 },
+      },
+    );
 
     const tl = gsap.timeline({
       defaults: { ease: 'power2.inOut' },
       scrollTrigger: {
         trigger: section,
         start: 'top top',
-        end: () => `+=${(states.length - 1) * 130 + 60}%`,
+        end: () => `+=${(count - 1) * 110 + 50}%`,
         scrub: 1,
         pin: true,
         anticipatePin: 1,
         invalidateOnRefresh: true,
         snap: { snapTo: 'labelsDirectional', duration: { min: 0.3, max: 0.9 }, delay: 0.15, ease: 'power1.inOut' },
-        onRefresh: paintLetters,
       },
     });
 
-    tl.set(orb, { x: () => orbX(0) }, 0);
-    tl.addLabel('s0', 0);
+    tl.set(orb, { x: () => orbSpot(0).x, y: () => orbSpot(0).y }, 0).addLabel('s0', 0);
 
-    // Each change: hold the current service for a moment, then play the swap.
-    states.forEach((_, i) => {
-      if (i === 0) return;
+    for (let i = 1; i < count; i++) {
       const from = i - 1;
-      const at = (i - 1) * 2 + 1;
-
-      tl.to(lines[from], { xPercent: (k) => (k % 2 === 0 ? -16 : 16), autoAlpha: 0, duration: 0.5, stagger: 0.08 }, at)
-        .to(fades[from], { y: -30, autoAlpha: 0, duration: 0.45, stagger: 0.05 }, at)
-        .to(chars[from], { yPercent: -110, duration: 0.5, stagger: 0.03, ease: 'power2.in' }, at + 0.05)
-        .to(orb, { x: () => orbX(i), duration: 0.9 }, at + 0.1)
-        .fromTo(chars[i], { yPercent: 110 }, { yPercent: 0, duration: 0.55, stagger: 0.035, ease: 'power3.out' }, at + 0.4)
+      const at = (i - 1) * 2 + 0.8;
+      tl
+        // The light sweeps off the old word and onto the new one, left to right.
+        .to(fills[from], { clipPath: 'inset(-10% 0% -10% 100%)', duration: 0.7, ease: 'power2.in' }, at)
         .fromTo(
-          lines[i],
-          { xPercent: (k) => (k % 2 === 0 ? 16 : -16), autoAlpha: 0 },
-          { xPercent: 0, autoAlpha: 1, duration: 0.55, stagger: 0.08 },
+          fills[i],
+          { clipPath: 'inset(-10% 100% -10% 0%)' },
+          { clipPath: 'inset(-10% 0% -10% 0%)', duration: 0.8, ease: 'power2.out' },
           at + 0.45,
         )
-        .fromTo(fades[i], { y: 30, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.5, stagger: 0.06 }, at + 0.5)
-        .addLabel(`s${i}`, at + 1);
-    });
+        // The orb travels to the new word's end.
+        .to(orb, { x: () => orbSpot(i).x, y: () => orbSpot(i).y, duration: 1.1, ease: 'power3.inOut' }, at + 0.1)
+        // The details trade places.
+        .to(sumLines[from], { xPercent: (k) => (k === 0 ? -14 : 14), autoAlpha: 0, duration: 0.45, stagger: 0.06 }, at)
+        .to(dets[from], { y: -24, autoAlpha: 0, duration: 0.45 }, at)
+        .set(sums[i], { autoAlpha: 1 }, at + 0.5)
+        .fromTo(
+          sumLines[i],
+          { xPercent: (k) => (k === 0 ? 14 : -14), autoAlpha: 0 },
+          { xPercent: 0, autoAlpha: 1, duration: 0.55, stagger: 0.07 },
+          at + 0.55,
+        )
+        .fromTo(dets[i], { y: 24, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.55 }, at + 0.65)
+        .addLabel(`s${i}`, at + 1.3);
+    }
     // A last moment on the final service before the scene lets go.
-    tl.to({}, { duration: 0.6 });
+    tl.to({}, { duration: 0.7 });
 
-    // The hero's wave lines continue here, fading around every service's text (traced at rest).
-    const base = section.querySelector<HTMLCanvasElement>('[data-svc-lines]')!;
-    const glow = section.querySelector<HTMLCanvasElement>('[data-svc-glow]')!;
-    startWaveLines(stage, base, glow, {
-      canDraw: () => section.classList.contains('is-staged'),
-      atRest: () => [...lines.flat(), ...fades.flat(), ...chars.flat()],
-    });
-
-    paintLetters();
-    document.fonts?.ready.then(() => {
-      paintLetters();
-      ScrollTrigger.refresh();
-    });
+    document.fonts?.ready.then(() => ScrollTrigger.refresh());
 
     return () => {
-      splits.forEach((s) => s.revert());
+      enter.scrollTrigger?.kill();
       section.classList.remove('is-staged');
     };
   });

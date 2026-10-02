@@ -1,94 +1,118 @@
 ---
 import { site } from '../../data/content';
-// Services (ticket 06). On desktop (with motion) this becomes a pinned, full-screen scene in the
-// hero's style: a huge light-filled word along the bottom with the glass orb as its full stop,
-// and each service's text placed around it. Scrolling swaps services like a film.
-// Without JS, on phones, or with reduced motion, the same markup reads as a simple stack.
-// Animation lives in src/scripts/services.ts. Each service keeps a showcase space (tickets 07–09).
+// Services (ticket 06): "the type index". All three service words stacked full-width; the active
+// one fills with cobalt light and takes the glass orb as its full stop, the others are outlines.
+// The active service's details sit in the open space beside the shorter words.
+// On desktop with motion this is a pinned scene (src/scripts/services.ts). Elsewhere, and without
+// JS, the simple stack below it is shown instead.
 
-const { heading, includesLabel, demoSoon, items } = site.services;
-const interludes = site.interludes;
+const { heading, includesLabel, items } = site.services;
 ---
 
 <section id="services" class="svc" data-services>
-  <div class="svc-stage" data-svc-stage>
-    <canvas class="wave-lines svc-lines" aria-hidden="true" data-svc-lines></canvas>
-    <canvas class="wave-lines wave-lines-glow svc-lines" aria-hidden="true" data-svc-glow></canvas>
-    <h2 class="svc-heading">{heading}</h2>
+  <!-- ================= The index (desktop, with motion) ================= -->
+  <div class="svc-index" data-svc-index>
+    <h2 class="svc-kicker">{heading}</h2>
 
-    {items.map((item, index) => (
-      <article class="svc-state" data-svc-state={index}>
-        <h3 class="svc-summary">
+    <div class="svc-rows">
+      {items.map((item, index) => (
+        <div class="svc-row" data-svc-row={index}>
+          <p class="svc-w" aria-hidden="true" data-svc-w>
+            <span class="svc-w-outline">{item.name}</span>
+            <span class="svc-w-fill" data-svc-fill>{item.name}</span>
+          </p>
+
+          {index === 0 && (
+            <div class="svc-slot svc-slot-summary">
+              {items.map((detail) => (
+                <h3 class="svc-sum" data-svc-sum>
+                  <span class="svc-sr">{detail.name}: </span>
+                  {detail.summaryLines.map((line, lineIndex) => (
+                    <span class:list={['svc-sum-line', { 'svc-sum-indent': lineIndex > 0 }]} data-svc-sum-line>
+                      {line}
+                    </span>
+                  ))}
+                </h3>
+              ))}
+            </div>
+          )}
+
+          {index === items.length - 1 && (
+            <div class="svc-slot svc-slot-detail">
+              {items.map((detail) => (
+                <div class="svc-det" data-svc-det>
+                  <p class="svc-desc">{detail.description}</p>
+                  <div class="svc-inc">
+                    <p class="svc-inc-label">{includesLabel}</p>
+                    <ul class="svc-list">
+                      {detail.list.map((entry) => <li>{entry}</li>)}
+                    </ul>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+
+    <span class="svc-orb glass-orb" aria-hidden="true" data-svc-orb></span>
+  </div>
+
+  <!-- ================= The stack (phones, reduced motion, no JS) ================= -->
+  <div class="svc-stack">
+    <h2 class="svc-kicker">{heading}</h2>
+    {items.map((item) => (
+      <article class="svc-card">
+        <p class="svc-stack-word" aria-hidden="true">{item.name}<span class="svc-stack-orb glass-orb"></span></p>
+        <h3 class="svc-sum">
           <span class="svc-sr">{item.name}: </span>
           {item.summaryLines.map((line, lineIndex) => (
-            <span class:list={['svc-s-line', `svc-s-line${lineIndex + 1}`]} data-svc-line>
-              {line}
-            </span>
+            <span class:list={['svc-sum-line', { 'svc-sum-indent': lineIndex > 0 }]}>{line}</span>
           ))}
         </h3>
-
-        <p class="svc-desc" data-svc-fade>{item.description}</p>
-
-        <div class="svc-includes" data-svc-fade>
-          <p class="svc-includes-label">{includesLabel}</p>
+        <p class="svc-desc">{item.description}</p>
+        <div class="svc-inc">
+          <p class="svc-inc-label">{includesLabel}</p>
           <ul class="svc-list">
             {item.list.map((entry) => <li>{entry}</li>)}
           </ul>
         </div>
-
-        <div class="svc-showcase" data-svc-fade data-interlude={item.interlude}>
-          <p class="svc-showcase-caption">{interludes[item.interlude as keyof typeof interludes].caption}</p>
-          <p class="svc-showcase-soon">{demoSoon}</p>
-        </div>
-
-        <p class="svc-word" aria-hidden="true" data-svc-word>
-          {item.name}<span class="svc-word-orb glass-orb"></span>
-        </p>
       </article>
     ))}
-
-    <span class="svc-orb glass-orb" aria-hidden="true" data-svc-orb></span>
   </div>
 </section>
 
 <style>
-  /* ================= Base: a readable stack (phones, reduced motion, no JS) ================= */
   .svc {
     position: relative;
+    --word-size: 16vw;
   }
-  .svc-stage {
-    max-width: 90rem;
-    margin: 0 auto;
-    padding: 6rem 6vw 4rem;
-  }
-  .svc-heading {
-    margin: 0 0 3rem;
-    font-family: var(--font-serif);
-    font-style: italic;
-    font-weight: 400;
-    font-size: clamp(1.4rem, 2.2vw, 2.1rem);
-    color: var(--color-muted);
-  }
-  .svc-state {
-    display: grid;
-    gap: 1.5rem;
-    padding-bottom: 6rem;
-  }
-  .svc-summary {
+
+  /* ---------- Shared type ---------- */
+  .svc-kicker {
     margin: 0;
     font-family: var(--font-serif);
     font-style: italic;
     font-weight: 400;
-    font-size: clamp(2.6rem, 5.6vw, 5.6rem);
+    font-size: clamp(1.4rem, 2.1vw, 2rem);
+    color: var(--color-muted);
+  }
+  .svc-sum {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 400;
+    font-size: clamp(2.4rem, 4vw, 4rem);
     line-height: 1;
     letter-spacing: -0.01em;
   }
-  .svc-s-line {
+  .svc-sum-line {
     display: block;
     white-space: nowrap;
   }
-  .svc-s-line2 {
-    padding-left: 0.9em;
+  .svc-sum-indent {
+    padding-left: 1.1em;
   }
   .svc-sr {
     position: absolute;
@@ -100,14 +124,12 @@ const interludes = site.interludes;
   }
   .svc-desc {
     margin: 0;
-    max-width: 32rem;
-    font-size: clamp(1.2rem, 1.55vw, 1.55rem);
+    font-size: clamp(1.1rem, 1.45vw, 1.45rem);
     line-height: 1.5;
-    color: color-mix(in srgb, var(--color-fg) 82%, transparent);
   }
-  .svc-includes-label {
-    margin: 0 0 0.6rem;
-    font-size: 1rem;
+  .svc-inc-label {
+    margin: 0 0 0.4rem;
+    font-size: 0.95rem;
     font-weight: 600;
     color: var(--color-accent);
   }
@@ -115,155 +137,142 @@ const interludes = site.interludes;
     list-style: none;
     margin: 0;
     padding: 0;
-    max-width: 24rem;
   }
   .svc-list li {
-    padding: 0.75rem 0;
+    padding: 0.45rem 0;
     border-top: 1px solid var(--color-line);
     font-family: var(--font-display);
     font-weight: 500;
-    font-size: clamp(1.25rem, 1.75vw, 1.7rem);
-    letter-spacing: -0.015em;
-    line-height: 1.15;
-  }
-  .svc-list li:last-child {
-    border-bottom: 1px solid var(--color-line);
-  }
-  .svc-showcase {
-    min-height: 14rem;
-    display: grid;
-    align-content: center;
-    gap: 0.4rem;
-    padding-left: 1.25rem;
-    border-left: 1px solid var(--color-line);
-  }
-  .svc-showcase-caption {
-    margin: 0;
-    max-width: 22ch;
-    font-family: var(--font-serif);
-    font-style: italic;
-    font-size: clamp(1.6rem, 2.7vw, 2.7rem);
-    line-height: 1.1;
-  }
-  .svc-showcase-soon {
-    margin: 0;
-    font-size: 0.9rem;
-    color: var(--color-muted);
+    font-size: clamp(1.05rem, 1.4vw, 1.4rem);
+    letter-spacing: -0.01em;
   }
 
-  /* The service word, filled with the same cobalt light as the hero name. */
-  .svc-word {
-    order: -1;
+  /* ================= The index ================= */
+  .svc-index {
+    display: none;
+  }
+  .svc:global(.is-staged) .svc-index {
+    display: block;
+    position: relative;
+    height: 100svh;
+    overflow: clip;
+  }
+  .svc:global(.is-staged) .svc-stack {
+    display: none;
+  }
+
+  .svc-index .svc-kicker {
+    position: absolute;
+    left: 5vw;
+    top: 9svh;
+  }
+  .svc-rows {
+    position: absolute;
+    left: 4vw;
+    right: 4vw;
+    top: 17svh;
+    display: grid;
+  }
+  .svc-row {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    gap: 4vw;
+  }
+
+  .svc-w {
+    position: relative;
+    flex: none;
     margin: 0;
+    white-space: nowrap;
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.055em;
+    line-height: 0.84;
+    font-size: var(--word-size);
+  }
+  .svc-w-outline {
+    color: transparent;
+    -webkit-text-stroke: 1.5px color-mix(in srgb, var(--color-fg) 32%, transparent);
+  }
+  /* The light, laid exactly over the outline; revealed by a left-to-right sweep. */
+  .svc-w-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    background: var(--light-fill);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    clip-path: inset(-10% 100% -10% 0);
+    padding-right: 0.06em;
+  }
+
+  /* The slots beside the short words; each service's details stack in the same cell. */
+  .svc-slot {
+    flex: 1;
+    min-width: 0;
+    display: grid;
+    align-items: end;
+    padding-bottom: 1.2vw;
+  }
+  .svc-slot > * {
+    grid-area: 1 / 1;
+  }
+  .svc-det {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    gap: 3vw;
+    align-items: end;
+  }
+
+  .svc-orb {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: calc(var(--word-size) * 0.16);
+    height: calc(var(--word-size) * 0.16);
+    z-index: 2;
+    will-change: transform;
+  }
+
+  /* ================= The stack ================= */
+  .svc-stack {
+    max-width: 90rem;
+    margin: 0 auto;
+    padding: 6rem 6vw 2rem;
+    display: grid;
+    gap: 2.5rem;
+  }
+  .svc-card {
+    display: grid;
+    gap: 1.25rem;
+    padding-bottom: 3rem;
+  }
+  .svc-stack-word {
+    margin: 0;
+    white-space: nowrap;
     font-family: var(--font-display);
     font-weight: 600;
     letter-spacing: -0.055em;
     line-height: 0.85;
-    font-size: min(17vw, 11rem);
-    white-space: nowrap;
+    font-size: min(18vw, 10rem);
     background: var(--light-fill);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
   }
-  .svc-word-orb {
+  .svc-stack-orb {
     display: inline-block;
     width: 0.16em;
     height: 0.16em;
     margin-left: 0.05em;
   }
-  .svc-orb,
-  .svc-lines {
-    display: none;
+  .svc-stack .svc-desc {
+    max-width: 34rem;
+    color: color-mix(in srgb, var(--color-fg) 82%, transparent);
   }
-
-  /* ================= Staged: the full-screen pinned scene (desktop + motion, set by JS) ================= */
-  .svc:global(.is-staged) .svc-stage {
-    position: relative;
-    height: 100svh;
-    max-width: none;
-    padding: 0;
-    overflow: clip;
-  }
-  .svc:global(.is-staged) .svc-heading {
-    position: absolute;
-    left: 6vw;
-    top: 11svh;
-    margin: 0;
-    z-index: 2;
-  }
-  .svc:global(.is-staged) .svc-state {
-    position: absolute;
-    inset: 0;
-    display: block;
-    padding: 0;
-  }
-  .svc:global(.is-staged) .svc-summary {
-    position: absolute;
-    left: 6vw;
-    top: 18svh;
-  }
-  .svc:global(.is-staged) .svc-lines {
-    display: block;
-  }
-  .svc:global(.is-staged) .svc-desc {
-    position: absolute;
-    right: 7vw;
-    top: 17svh;
-    width: 31vw;
-    max-width: none;
-  }
-  .svc:global(.is-staged) .svc-includes {
-    position: absolute;
-    left: 6vw;
-    top: 47svh;
-    width: 26vw;
-  }
-  /* Centre stage: where each service's live showcase will play (tickets 07–09). */
-  .svc:global(.is-staged) .svc-showcase {
-    position: absolute;
-    left: 40vw;
-    right: 7vw;
-    top: 41svh;
-    height: 30svh;
-    min-height: 0;
-  }
-  .svc:global(.is-staged) .svc-word {
-    position: absolute;
-    left: 4vw;
-    /* Bleeds just below the edge; the baseline (and the orb on it) stays on screen. */
-    bottom: -0.02em;
-    /* Sized so the widest word, "Automate" plus its full stop, fits with room to spare. */
-    font-size: 16vw;
-    line-height: 0.8;
-    /* Letters slide in and out past the word's top edge only; never cut at the sides. */
-    clip-path: inset(0 -100vw -1em -100vw);
-    background: none;
-    color: transparent;
-  }
-  .svc:global(.is-staged) .svc-word-orb {
-    display: none;
-  }
-  /* The orb rests on the words' baseline. With line-height 0.8 the baseline sits 0.08em above
-     the word box's bottom, and the box sits 0.02em below the stage edge: 0.06em of 16vw.
-     The script only moves it sideways, to the end of each word. */
-  .svc:global(.is-staged) .svc-orb {
-    display: block;
-    position: absolute;
-    left: 0;
-    bottom: calc(16vw * 0.06);
-    width: calc(16vw * 0.16);
-    height: calc(16vw * 0.16);
-    z-index: 3;
-    will-change: transform;
-  }
-
-  /* Each letter carries its own slice of the light, so the word reads as one fill. */
-  .svc :global(.svc-char) {
-    background-image: var(--light-fill);
-    background-repeat: no-repeat;
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+  .svc-stack .svc-inc {
+    max-width: 26rem;
   }
 </style>
