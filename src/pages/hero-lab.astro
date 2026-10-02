@@ -8,7 +8,6 @@ const nav = ['Services', 'Work', 'Process', 'About'];
 const variants = [
   { id: 'k', name: 'K. Glass orb as the dot of the i', fill: 'fill-light', italics: 'it-solid', detail: 'orb' },
   { id: 'l', name: 'L. Glass lens over the name', fill: 'fill-light', italics: 'it-solid', detail: 'lens' },
-  { id: 'm', name: 'M. Square glass tile as the dot of the i', fill: 'fill-light', italics: 'it-solid', detail: 'tile' },
 ];
 ---
 
@@ -27,6 +26,7 @@ const variants = [
   <body>
     {variants.map((variant) => (
       <section class="sketch" id={variant.id}>
+        <canvas class="lines" aria-hidden="true"></canvas>
         <p class="tag">{variant.name}</p>
 
         <header class="top">
@@ -59,7 +59,7 @@ const variants = [
 
     <script is:inline>
       const only = location.hash.slice(1);
-      if (['k', 'l', 'm'].includes(only)) {
+      if (['k', 'l'].includes(only)) {
         document.querySelectorAll('.sketch').forEach((el) => { if (el.id !== only) el.hidden = true; });
       }
     </script>
@@ -91,6 +91,72 @@ const variants = [
           light.y += (ty - light.y) * 0.04;
           fills().forEach((el) => (el.style.backgroundPosition = `${light.x}% ${light.y}%`));
         });
+      });
+
+      // ---- Faint background grid that fades out before it reaches any text ----
+      const GRID = 64;
+      document.querySelectorAll<HTMLCanvasElement>('canvas.lines').forEach((canvas) => {
+        const section = canvas.closest<HTMLElement>('.sketch')!;
+        const ctx = canvas.getContext('2d')!;
+        const mask = document.createElement('canvas');
+        const mctx = mask.getContext('2d')!;
+
+        function draw() {
+          const dpr = Math.min(devicePixelRatio || 1, 2);
+          const w = section.clientWidth + GRID * 2;
+          const h = section.clientHeight + GRID * 2;
+          for (const c of [canvas, mask]) {
+            c.width = w * dpr;
+            c.height = h * dpr;
+          }
+          canvas.style.width = w + 'px';
+          canvas.style.height = h + 'px';
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          mctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+          // 1. The grid.
+          ctx.clearRect(0, 0, w, h);
+          ctx.strokeStyle = 'rgb(143 176 255 / 0.14)';
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          for (let x = 0.5; x < w; x += GRID) { ctx.moveTo(x, 0); ctx.lineTo(x, h); }
+          for (let y = 0.5; y < h; y += GRID) { ctx.moveTo(0, y); ctx.lineTo(w, y); }
+          ctx.stroke();
+
+          // 2. A soft-edged pocket around every piece of text, cut out of the grid.
+          const origin = section.getBoundingClientRect();
+          mctx.clearRect(0, 0, w, h);
+          mctx.filter = 'blur(44px)';
+          mctx.fillStyle = '#000';
+          const pad = 76;
+          const textEls = section.querySelectorAll('.top a, .top .mark, .headline .l, .pill, .giant, .orb');
+          textEls.forEach((el) => {
+            if (el.closest('.lens')) return;
+            const range = document.createRange();
+            range.selectNodeContents(el);
+            for (const r of range.getClientRects()) {
+              mctx.fillRect(r.left - origin.left + GRID - pad, r.top - origin.top + GRID - pad, r.width + pad * 2, r.height + pad * 2);
+            }
+          });
+          mctx.filter = 'none';
+          ctx.globalCompositeOperation = 'destination-out';
+          ctx.drawImage(mask, 0, 0, w, h);
+          ctx.globalCompositeOperation = 'source-over';
+        }
+
+        draw();
+        document.fonts?.ready.then(draw);
+        addEventListener('resize', draw);
+
+        // A little depth: the grid drifts against the cursor.
+        if (!reduce) {
+          const gx = gsap.quickTo(canvas, 'x', { duration: 1.2, ease: 'power3' });
+          const gy = gsap.quickTo(canvas, 'y', { duration: 1.2, ease: 'power3' });
+          addEventListener('pointermove', (e) => {
+            gx(-(e.clientX / innerWidth - 0.5) * 16);
+            gy(-(e.clientY / innerHeight - 0.5) * 16);
+          });
+        }
       });
 
       // ---- K: the orb drops in, floats, leans toward the cursor and catches its light ----
@@ -200,6 +266,8 @@ const variants = [
         position: absolute; right: 1rem; bottom: 1rem; z-index: 9; margin: 0;
         font-size: 0.8rem; padding: 0.3rem 0.6rem; border-radius: 0.4rem; background: rgb(255 255 255 / 0.12);
       }
+
+      .lines { position: absolute; left: -64px; top: -64px; z-index: 0; pointer-events: none; }
 
       .top {
         position: absolute; top: 0; left: 0; right: 0; z-index: 2;
@@ -327,7 +395,7 @@ const variants = [
       .lens {
         position: absolute; left: 37%; top: 71%; z-index: 3; will-change: transform; pointer-events: none;
         width: clamp(9rem, 17vw, 17rem); aspect-ratio: 1; border-radius: 50%;
-        overflow: hidden; background: var(--ink);
+        overflow: hidden; background: rgb(4 10 36 / 0.7);
         border: 1px solid rgb(255 255 255 / 0.35);
         box-shadow:
           inset 0.6rem 0.8rem 1.6rem rgb(255 255 255 / 0.12),
