@@ -1,6 +1,5 @@
 // All site copy lives here. Components read from this file only — no hard-coded copy.
 // Voice: casual and warm. Plain words, short sentences, written to small-business owners.
-// Lines marked TODO need a real value from Shainy before launch.
 
 export const site = {
   brand: 'ShainyDev',
@@ -17,9 +16,8 @@ export const site = {
     { label: 'Contact', href: '#contact' },
   ],
   links: {
-    email: 'TODO@shainydev.com', // TODO: business email address
-    linkedin: 'https://www.linkedin.com/in/TODO', // TODO: LinkedIn profile URL
-    bookCall: 'https://cal.com/TODO', // TODO: Cal.com booking link
+    email: 'shainydev@gmail.com',
+    linkedin: 'https://www.linkedin.com/in/shainy-naar-79618b358/',
   },
 
   hero: {
@@ -180,7 +178,6 @@ export const site = {
     altHeading: 'Rather not fill in a form?',
     emailLabel: 'Email me',
     linkedinLabel: 'Find me on LinkedIn',
-    bookCallLabel: 'Book a 15-minute call',
   },
 
   footer: {

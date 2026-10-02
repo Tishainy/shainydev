@@ -33,7 +33,7 @@ Lead offer: websites (the site itself is the proof). Draft one-liner: *"Websites
 3. **Work** — Jarvis (`ai-assistant`) as a 20–40s demo-video case study, plus the travel agency site as an "In progress — launching soon" card. Built to grow; real screenshots only once live **and** the client has agreed.
 4. **Process / How I work** — e.g. Talk → Design → Build → Launch & support. Includes a "How we can work together" block: *Fixed-price projects · Monthly support & maintenance · Hourly for small jobs*, plus "Tell me what you need — I'll send a clear quote within 48 hours." **No prices.**
 5. **About** — portrait, short human bio, languages.
-6. **Contact** — big closing CTA. Form: name, email, "What do you need?" picker (Build / Automate / AI / Not sure yet), message. Alongside: email, LinkedIn, book-a-call link (Cal.com). **No budget field, no WhatsApp.**
+6. **Contact** — big closing CTA. Form: name, email, "What do you need?" picker (Build / Automate / AI / Not sure yet), message. Alongside: email (shainydev@gmail.com) and LinkedIn. Book-a-call link dropped for now (2026-10-02). **No budget field, no WhatsApp.**
 
 **Not included until real:** stats strip, testimonials, client logo wall, price list.
 
