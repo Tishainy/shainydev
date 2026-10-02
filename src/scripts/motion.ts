@@ -13,6 +13,12 @@ gsap.registerPlugin(ScrollTrigger, SplitText);
 // Phone address bars resize the viewport while scrolling; don't recalculate pins for that.
 ScrollTrigger.config({ ignoreMobileResize: true });
 
+// Phones fling the page with momentum, which skips straight past pinned, scroll-played scenes.
+// Normalising takes over touch scrolling so it stays controllable (and the address bar stays put).
+if (ScrollTrigger.isTouch === 1 && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  ScrollTrigger.normalizeScroll(true);
+}
+
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
 // Height of the fixed header, so in-page jumps don't hide headings beneath it.

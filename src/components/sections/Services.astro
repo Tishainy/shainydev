@@ -146,10 +146,7 @@ const { build, automate, ai } = site.interludes;
     clip-path: inset(50%);
     white-space: nowrap;
   }
-  /* On phones the demos play by themselves; the chat needs its typing dots for that. */
-  .svc:global(.is-autoplay) .chat-typing {
-    display: flex;
-  }
+
 
   .svc-word {
     margin: 0;
@@ -560,9 +557,82 @@ const { build, automate, ai } = site.interludes;
     display: flex;
   }
 
+  /* ---------- Phones: each sideways frame becomes a portrait column that fits one screen ---------- */
   @media (max-width: 767px) {
+    .svc:global(.is-strip) .svc-frame {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+      padding: 4.6rem 5vw 4.2rem;
+    }
+    .svc:global(.is-strip) .svc-word,
+    .svc:global(.is-strip) .svc-sum,
+    .svc:global(.is-strip) .svc-desc,
+    .svc:global(.is-strip) .svc-demo,
+    .svc:global(.is-strip) .svc-inc {
+      position: static;
+      width: auto;
+      height: auto;
+    }
+    .svc:global(.is-strip) .svc-word {
+      font-size: 3.2rem;
+    }
+    .svc:global(.is-strip) .svc-sum {
+      font-size: 2rem;
+    }
+    .svc:global(.is-strip) .svc-desc {
+      font-size: 1rem;
+      line-height: 1.45;
+    }
+    .svc:global(.is-strip) .svc-demo {
+      flex: 1;
+      min-height: 0;
+    }
+    .svc:global(.is-strip) .svc-demo-caption {
+      display: none;
+    }
+    /* The list becomes one compact line. */
+    .svc:global(.is-strip) .svc-inc-label {
+      display: none;
+    }
+    .svc:global(.is-strip) .svc-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.2rem 0.9rem;
+    }
+    .svc:global(.is-strip) .svc-list li {
+      padding: 0;
+      border: 0;
+      font-size: 0.9rem;
+      color: var(--color-muted);
+    }
+    .svc:global(.is-strip) .svc-hud {
+      bottom: 1.4rem;
+    }
     .flow {
-      grid-template-columns: minmax(0, 1fr);
+      grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+      gap: 0.9rem;
+    }
+    .flow-steps {
+      padding-left: 1.8rem;
+    }
+    .flow-list {
+      gap: 1.6rem;
+    }
+    .flow-step {
+      font-size: 0.9rem;
+    }
+    .flow-dot {
+      left: -1.6rem;
+    }
+    .mail {
+      padding: 0.8rem;
+    }
+    .mail-subject {
+      font-size: 0.95rem;
+    }
+    .mail-body {
+      font-size: 0.8rem;
     }
   }
 </style>

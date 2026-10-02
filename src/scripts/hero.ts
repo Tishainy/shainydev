@@ -27,7 +27,10 @@ export function initHero() {
   });
 
   // Measure at rest: once the visitor has scrolled, the scroll animation has moved the letters.
-  startWaveLines(hero, base, glow, { canDraw: () => window.scrollY < hero.offsetHeight * 0.1 });
+  // Not on phones: at that size the lines read as clutter.
+  if (matchMedia('(min-width: 768px)').matches) {
+    startWaveLines(hero, base, glow, { canDraw: () => window.scrollY < hero.offsetHeight * 0.1 });
+  }
   startHeaderState(hero);
 
   const mm = gsap.matchMedia();
@@ -40,13 +43,17 @@ export function initHero() {
       const { desktop } = context.conditions as { desktop: boolean; mobile: boolean };
 
       // ---- Scroll: the headline drifts apart, the name rises, the orb lifts off ----
-      // Desktop holds the hero in place while this plays. Phones scroll far faster (one flick can
-      // cover several screens), so there the hero isn't held: the same motion plays as it scrolls away.
+      // The hero holds in place while this plays; phones get a little more scroll room for it.
       const scroll = gsap.timeline({
         defaults: { ease: 'power2.inOut' },
-        scrollTrigger: desktop
-          ? { trigger: hero, start: 'top top', end: '+=110%', scrub: 1, pin: true, anticipatePin: 1 }
-          : { trigger: hero, start: 'top top', end: 'bottom top', scrub: 0.6 },
+        scrollTrigger: {
+          trigger: hero,
+          start: 'top top',
+          end: desktop ? '+=110%' : '+=130%',
+          scrub: 1,
+          pin: true,
+          anticipatePin: 1,
+        },
       });
       const spread = desktop ? 14 : 10;
       scroll

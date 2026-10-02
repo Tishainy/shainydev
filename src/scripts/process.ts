@@ -18,29 +18,17 @@ export function initProcessAndAbout() {
     const lines = gsap.utils.toArray<HTMLElement>('[data-proc-line]', steps);
     const texts = stepEls.map((step) => gsap.utils.toArray<HTMLElement>('[data-proc-text]', step));
 
-    const mm = gsap.matchMedia();
-    // Desktop: the staircase is drawn by the scroll, step after step.
-    mm.add('(min-width: 768px)', () => {
-      const tl = gsap.timeline({
-        scrollTrigger: { trigger: steps, start: 'top 80%', end: 'bottom 60%', scrub: 1 },
-      });
-      lines.forEach((line, i) => {
-        tl.fromTo(line, { scaleX: 0 }, { scaleX: 1, duration: 1, ease: 'power2.inOut' }, i).fromTo(
-          texts[i],
-          { y: 28, autoAlpha: 0 },
-          { y: 0, autoAlpha: 1, duration: 0.6, stagger: 0.12, ease: 'power2.out' },
-          i + 0.55,
-        );
-      });
+    // The staircase is drawn by the scroll, step after step.
+    const tl = gsap.timeline({
+      scrollTrigger: { trigger: steps, start: 'top 80%', end: 'bottom 60%', scrub: 1 },
     });
-    // Phones scroll too fast for that: each step draws itself at a fixed pace as it comes into view.
-    mm.add('(max-width: 767px)', () => {
-      stepEls.forEach((step, i) => {
-        gsap
-          .timeline({ scrollTrigger: { trigger: step, start: 'top 82%', once: true } })
-          .fromTo(lines[i], { scaleX: 0 }, { scaleX: 1, duration: 0.8, ease: 'power2.inOut' })
-          .fromTo(texts[i], { y: 24, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.55, stagger: 0.1, ease: 'power2.out' }, 0.35);
-      });
+    lines.forEach((line, i) => {
+      tl.fromTo(line, { scaleX: 0 }, { scaleX: 1, duration: 1, ease: 'power2.inOut' }, i).fromTo(
+        texts[i],
+        { y: 28, autoAlpha: 0 },
+        { y: 0, autoAlpha: 1, duration: 0.6, stagger: 0.12, ease: 'power2.out' },
+        i + 0.55,
+      );
     });
   }
 

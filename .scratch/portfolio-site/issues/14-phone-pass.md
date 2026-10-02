@@ -20,3 +20,4 @@
   - Process: each step's line draws and its text appears as that step comes into view.
   - Work: more room above the Jarvis conversation so the orb doesn't overlap it.
   Desktop is unchanged. Still to do: Shainy checks on a real phone (feel, speed, address-bar jumps, light mode, the contact form).
+- 2026-10-02 (pass 2): Shainy wants the same scroll-driven feel as desktop on phones, including the sideways services strip. Pass 1's "play on its own" approach reverted. Instead: GSAP `normalizeScroll` on touch devices (flicks can't skip pinned scenes; the address bar stays put), more scroll room per step on phones (hero +=130%, services 80% per step), snapping kept. Services frames get a portrait layout on phones (title, subtitle, description, list as one line, demo). Hero on phones: no wave lines; "Shainy" sized to fit the screen width.

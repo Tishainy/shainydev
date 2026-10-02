@@ -14,7 +14,9 @@ export function initServices() {
   if (!section) return;
 
   const mm = gsap.matchMedia();
-  mm.add('(min-width: 768px) and (prefers-reduced-motion: no-preference)', () => {
+  mm.add({ desktop: '(min-width: 768px)', motion: '(prefers-reduced-motion: no-preference)' }, (context) => {
+    const { desktop, motion } = context.conditions as { desktop: boolean; motion: boolean };
+    if (!motion) return;
     section.classList.add('is-strip');
 
     const strip = section.querySelector<HTMLElement>('[data-svc-strip]')!;
@@ -29,7 +31,8 @@ export function initServices() {
       scrollTrigger: {
         trigger: section,
         start: 'top top',
-        end: () => `+=${(count * 2 - 1) * 55}%`,
+        // Phones get more scroll room per step, so a flick plays a step instead of skipping it.
+        end: () => `+=${(count * 2 - 1) * (desktop ? 55 : 80)}%`,
         scrub: 1,
         pin: true,
         anticipatePin: 1,
@@ -74,35 +77,6 @@ export function initServices() {
       section.classList.remove('is-strip');
       gsap.set(strip, { clearProps: 'transform' });
     };
-  });
-
-  // Phones: the frames stay stacked. Each frame rises in and its demo plays by itself, at its own
-  // pace, when it reaches the screen. A flick can't skip it, unlike scroll-tied animation.
-  mm.add('(max-width: 767px) and (prefers-reduced-motion: no-preference)', () => {
-    section.classList.add('is-autoplay');
-    const frames = gsap.utils.toArray<HTMLElement>('[data-svc-frame]', section);
-
-    frames.forEach((frame) => {
-      const parts = frame.querySelectorAll('[data-svc-word], [data-svc-part]');
-      gsap.from(parts, {
-        y: 30,
-        autoAlpha: 0,
-        duration: 0.7,
-        stagger: 0.08,
-        ease: 'power2.out',
-        scrollTrigger: { trigger: frame, start: 'top 80%', once: true },
-      });
-
-      const demo = demoFor(frame).pause().duration(2.6);
-      ScrollTrigger.create({
-        trigger: frame.querySelector('[data-svc-demo]'),
-        start: 'top 75%',
-        once: true,
-        onEnter: () => demo.play(),
-      });
-    });
-
-    return () => section.classList.remove('is-autoplay');
   });
 }
 
