@@ -4,7 +4,7 @@
 
 **Blocked by:** 02 — Font comparison page; 03 — Copy draft + Jarvis shot list
 
-**Status:** ready-for-agent
+**Status:** done (About moved into ticket 12)
 
 - [x] Process steps and working formats render from the content file, with no prices
 - [x] About shows "Hi, I'm Shainy", the bio, languages and a photo slot
@@ -14,3 +14,4 @@
 ## Comments
 
 - 2026-10-02: Built. Process: the four steps form a staircase; each step's cobalt line draws in order with the scroll, then its text appears; ways to work together as large rows; the 48-hour quote promise with a Let's talk pill. About: "Hi, I'm Shainy." rises in word by word beside a portrait frame that shows a lit serif "S" until `about.photo` is set. Awaiting Shainy's review; dark/light and phone checked in ticket 14.
+- 2026-10-02: Shainy decided the About section isn't needed as its own section; it's folded into Contact (ticket 12): a short 'Hi, I'm Shainy' with the photo/monogram beside the form. About section and menu link removed.
