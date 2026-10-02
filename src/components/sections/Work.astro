@@ -58,7 +58,9 @@ const [jarvis, ...others] = projects;
         <p class="work-next-status">{project.status === 'In progress' ? statusLabel : project.status}</p>
         <p class="work-next-summary">{project.summary}</p>
       </div>
-      <span class="work-progress" aria-hidden="true"><span class="work-progress-fill" data-work-progress></span></span>
+      {project.status === 'In progress' && (
+        <span class="work-progress" aria-hidden="true"><span class="work-progress-fill" data-work-progress></span></span>
+      )}
     </article>
   ))}
 </section>
