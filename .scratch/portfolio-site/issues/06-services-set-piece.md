@@ -4,13 +4,13 @@
 
 **Blocked by:** 05 — Hero set piece
 
-**Status:** done for now (Shainy may revisit the layout later)
+**Status:** done
 
 - [x] The section pins and scrubs through the three services, forward and backward
 - [x] Each service shows its headline and its specific service list
-- [ ] The pinned distance is short enough on phones that no scene drags
+- [x] The pinned distance is short enough on phones that no scene drags (no pin on phones: stacked)
 - [x] Reduced-motion visitors see the three services as a readable static list
-- [ ] There is a defined place for each of the three interludes — still open, decide with tickets 07–09
+- [x] There is a defined place for each of the three interludes (inside each film-strip frame)
 
 ## Comments
 
@@ -20,3 +20,4 @@
 - 2026-10-02: Type index was 'not loved' (thin outlines looked low quality; three huge words at once too much). Shainy chose **grow & shrink**: one huge lit word with the orb, the other two small and solid in a mini index top-right; scrolling grows the next word out of the index while the current one shrinks into it. Built and deployed; awaiting review.
 - 2026-10-02: Shainy: 'better but not perfect, can't put my finger on it' — leaving as is for now, may come back to it. Phone pin length is checked in ticket 14.
 - 2026-10-02: Services rebuilt as a sideways film strip (Shainy asked for a scroll that shifts sideways, not too similar to Work). Each frame: lit word across the top with the orb, details around a live demo. The three showcases now live inside their service's frame and are played by the scroll: Build (wireframe to styled Bloom page), Automate (dot travels the booking flow, email builds itself), AI (question, typing, answer). First versions; awaiting Shainy's review.
+- 2026-10-02: Approved by Shainy. Final form: sideways film strip, medium lit titles (no orb after the words), scroll-played demos in the centre of each frame. Phones/reduced motion show the frames stacked with demos complete (instead of a short reveal). Smoothness on a real phone is checked in ticket 14.
