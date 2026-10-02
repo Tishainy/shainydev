@@ -99,6 +99,7 @@ export const site = {
 
   work: {
     heading: 'Work',
+    statusLabel: 'Launching soon',
     intro: "I've been freelancing since 2025. Here's what I've been building.",
     projects: [
       {
@@ -114,6 +115,16 @@ export const site = {
         ],
         tools: ['Python', 'Speech recognition', 'Computer vision', 'Local AI models'],
         videoAlt: 'Screen recording of Shainy talking to Jarvis and Jarvis answering out loud',
+        // Path to the recorded demo clip once it exists (ticket 04); until then the live mini demo shows.
+        video: '',
+        // A real exchange: Jarvis's replies are copied from its own code.
+        demoLabel: 'A conversation with Jarvis',
+        demo: [
+          { who: 'You', text: 'Hey Jarvis, remind me to call the client.' },
+          { who: 'Jarvis', text: 'I require a time, Shainy. Even butlers have standards.' },
+          { who: 'You', text: 'Remind me to call the client at three.' },
+          { who: 'Jarvis', text: 'Alarm scheduled for 3:00 PM. Title: call the client' },
+        ],
       },
       {
         name: 'Travel agency website',
@@ -122,6 +133,9 @@ export const site = {
         highlights: [],
         tools: [],
         videoAlt: '',
+        video: '',
+        demoLabel: '',
+        demo: [],
       },
     ],
   },

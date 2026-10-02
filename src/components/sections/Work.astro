@@ -1,28 +1,301 @@
 ---
 import { site } from '../../data/content';
-// Stub. Built out in ticket 10.
+// Work (ticket 10). Jarvis as the main case study, with a live mini demo where the recorded clip
+// will go: the glass orb acts as Jarvis's voice while a real exchange types itself out. The travel
+// agency site sits below as an "in progress" row. Animation lives in src/scripts/work.ts.
+
+const { heading, intro, projects, statusLabel } = site.work;
+const [jarvis, travel] = projects;
 ---
 
-<section id="work" class="mx-auto max-w-6xl px-4 py-24 sm:px-6">
-  <h2 class="text-3xl" data-reveal>{site.work.heading}</h2>
-  <p class="mt-3 max-w-prose text-muted" data-reveal>{site.work.intro}</p>
-  <div class="mt-10 grid gap-10 md:grid-cols-2">
-    {site.work.projects.map((project) => (
-      <article class="min-w-0 border-t border-line pt-6" data-reveal>
-        <p class="text-sm text-muted">{project.status}</p>
-        <h3 class="mt-1 text-3xl">{project.name}</h3>
-        <p class="mt-3">{project.summary}</p>
-        {project.highlights.length > 0 && (
-          <ul class="mt-4 list-disc space-y-1 pl-5 text-muted">
-            {project.highlights.map((highlight) => <li>{highlight}</li>)}
-          </ul>
-        )}
-        {project.tools.length > 0 && (
-          <ul class="mt-4 flex flex-wrap gap-2 text-sm">
-            {project.tools.map((tool) => <li class="rounded-full border border-line px-3 py-1">{tool}</li>)}
-          </ul>
-        )}
-      </article>
-    ))}
-  </div>
+<section id="work" class="work" data-work>
+  <header class="work-head">
+    <h2 class="work-kicker" data-reveal>{heading}</h2>
+    <p class="work-intro" data-reveal>{intro}</p>
+  </header>
+
+  <article class="work-feature">
+    <div class="work-copy">
+      <p class="work-status" data-reveal>{jarvis.status}</p>
+      <h3 class="work-title" data-reveal>{jarvis.name}</h3>
+      <p class="work-summary" data-reveal>{jarvis.summary}</p>
+      <ul class="work-highlights" data-reveal>
+        {jarvis.highlights.map((highlight) => <li>{highlight}</li>)}
+      </ul>
+      <p class="work-tools" data-reveal>
+        {jarvis.tools.map((tool, i) => (
+          <span>{tool}{i < jarvis.tools.length - 1 && <span class="work-sep" aria-hidden="true"> / </span>}</span>
+        ))}
+      </p>
+    </div>
+
+    <div class="work-demo" data-work-demo>
+      {jarvis.video ? (
+        <video class="work-video" src={jarvis.video} controls muted playsinline preload="none" aria-label={jarvis.videoAlt}></video>
+      ) : (
+        <figure class="work-voice" aria-label={jarvis.demoLabel}>
+          <span class="work-orb glass-orb" aria-hidden="true" data-work-orb></span>
+          <span class="work-ring" aria-hidden="true" data-work-ring></span>
+          <span class="work-ring" aria-hidden="true" data-work-ring></span>
+          <ol class="work-transcript" data-work-transcript>
+            {jarvis.demo.map((line) => (
+              <li class:list={['work-line', line.who === 'Jarvis' ? 'is-jarvis' : 'is-you']} data-work-line>
+                <span class="work-who">{line.who}</span>
+                <span class="work-said" data-work-said>{line.text}</span>
+              </li>
+            ))}
+          </ol>
+        </figure>
+      )}
+    </div>
+  </article>
+
+  <article class="work-next" data-work-next>
+    <h3 class="work-next-title" data-reveal>{travel.name}</h3>
+    <div class="work-next-meta" data-reveal>
+      <p class="work-next-status">{statusLabel}</p>
+      <p class="work-next-summary">{travel.summary}</p>
+    </div>
+    <span class="work-progress" aria-hidden="true"><span class="work-progress-fill" data-work-progress></span></span>
+  </article>
 </section>
+
+<style>
+  .work {
+    max-width: 90rem;
+    margin: 0 auto;
+    padding: 18svh 6vw 14svh;
+  }
+
+  /* ---------- Heading ---------- */
+  .work-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+    align-items: end;
+    gap: 2rem 6vw;
+    margin-bottom: 12svh;
+  }
+  .work-kicker {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.055em;
+    line-height: 0.85;
+    font-size: clamp(4rem, 11vw, 10rem);
+  }
+  .work-intro {
+    margin: 0 0 1.2vw;
+    max-width: 22ch;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: clamp(1.8rem, 3vw, 3rem);
+    line-height: 1.1;
+  }
+
+  /* ---------- Jarvis ---------- */
+  .work-feature {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+    gap: 4rem 6vw;
+    align-items: center;
+  }
+  .work-copy {
+    display: grid;
+    gap: 1.4rem;
+    align-content: start;
+  }
+  .work-status {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: clamp(1.3rem, 1.8vw, 1.7rem);
+    color: var(--color-muted);
+  }
+  .work-title {
+    margin: -0.3rem 0 0;
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.05em;
+    line-height: 0.9;
+    font-size: clamp(3.5rem, 7.5vw, 7rem);
+    background: var(--light-fill);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    padding-right: 0.06em;
+    justify-self: start;
+  }
+  .work-summary {
+    margin: 0;
+    max-width: 34rem;
+    font-size: clamp(1.15rem, 1.5vw, 1.5rem);
+    line-height: 1.5;
+  }
+  .work-highlights {
+    list-style: none;
+    margin: 0.5rem 0 0;
+    padding: 0;
+    max-width: 34rem;
+  }
+  .work-highlights li {
+    padding: 0.8rem 0;
+    border-top: 1px solid var(--color-line);
+    font-size: clamp(1rem, 1.2vw, 1.15rem);
+    line-height: 1.45;
+    color: color-mix(in srgb, var(--color-fg) 85%, transparent);
+  }
+  .work-highlights li:last-child {
+    border-bottom: 1px solid var(--color-line);
+  }
+  .work-tools {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(1rem, 1.25vw, 1.2rem);
+    letter-spacing: -0.01em;
+  }
+  .work-sep {
+    color: var(--color-accent);
+  }
+
+  /* ---------- The live demo: the orb is Jarvis's voice ---------- */
+  .work-demo {
+    position: relative;
+    min-width: 0;
+  }
+  .work-video {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    aspect-ratio: 16 / 10;
+    border-radius: 1rem;
+    background: #000;
+  }
+  .work-voice {
+    position: relative;
+    margin: 0;
+    min-height: 34rem;
+    display: grid;
+    align-content: end;
+  }
+  .work-orb {
+    position: absolute;
+    left: 50%;
+    top: 4rem;
+    width: 9rem;
+    height: 9rem;
+    margin-left: -4.5rem;
+    /* The orb's glow is sized in em; 9rem is 0.16em of 56rem, the same proportions as elsewhere. */
+    font-size: 56rem;
+    z-index: 1;
+  }
+  /* Soft rings that spread from the orb while someone is speaking. */
+  .work-ring {
+    position: absolute;
+    left: 50%;
+    top: 4rem;
+    width: 9rem;
+    height: 9rem;
+    margin-left: -4.5rem;
+    border-radius: 50%;
+    border: 1px solid color-mix(in srgb, var(--color-accent) 60%, transparent);
+    opacity: 0;
+    pointer-events: none;
+  }
+  .work-transcript {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1.1rem;
+  }
+  .work-line {
+    display: grid;
+    gap: 0.2rem;
+    max-width: 30rem;
+  }
+  .work-line.is-jarvis {
+    justify-self: end;
+    text-align: right;
+  }
+  .work-who {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-muted);
+  }
+  .is-jarvis .work-who {
+    color: var(--color-accent);
+  }
+  .work-said {
+    font-size: clamp(1.15rem, 1.5vw, 1.45rem);
+    line-height: 1.35;
+  }
+  .is-jarvis .work-said {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: clamp(1.4rem, 1.9vw, 1.85rem);
+    line-height: 1.2;
+  }
+
+  /* ---------- Up next: the travel agency site ---------- */
+  .work-next {
+    position: relative;
+    margin-top: 16svh;
+    padding-top: 2.5rem;
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    gap: 1.5rem 6vw;
+    align-items: end;
+  }
+  .work-next-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.045em;
+    line-height: 0.95;
+    font-size: clamp(2.6rem, 5.5vw, 5.4rem);
+  }
+  .work-next-meta {
+    display: grid;
+    gap: 0.6rem;
+  }
+  .work-next-status {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: clamp(1.5rem, 2.2vw, 2.1rem);
+    color: var(--color-accent);
+  }
+  .work-next-summary {
+    margin: 0;
+    max-width: 30rem;
+    font-size: clamp(1rem, 1.25vw, 1.2rem);
+    line-height: 1.5;
+    color: var(--color-muted);
+  }
+  /* A thin line along the top that fills partway as you pass: still in progress. */
+  .work-progress {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 2px;
+    background: var(--color-line);
+    overflow: hidden;
+  }
+  .work-progress-fill {
+    position: absolute;
+    inset: 0;
+    width: 68%;
+    background: linear-gradient(90deg, #2f5bff, #709bff, #8ef0ff);
+    transform-origin: 0 50%;
+  }
+
+  @media (max-width: 767px) {
+    .work { padding: 12svh 5vw 10svh; }
+    .work-head, .work-feature, .work-next { grid-template-columns: minmax(0, 1fr); }
+    .work-head { margin-bottom: 8svh; }
+    .work-voice { min-height: 28rem; }
+    .work-orb, .work-ring { width: 7rem; height: 7rem; margin-left: -3.5rem; top: 2rem; }
+  }
+</style>
