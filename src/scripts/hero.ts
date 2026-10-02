@@ -83,10 +83,23 @@ export function initHero() {
           .fromTo(
             giant,
             { clipPath: 'inset(100% 0% 0% 0%)', yPercent: 12 },
-            { clipPath: 'inset(0% 0% 0% 0%)', yPercent: 0, duration: 1.6, ease: 'expo.inOut' },
+            {
+              clipPath: 'inset(0% 0% 0% 0%)',
+              yPercent: 0,
+              duration: 1.6,
+              ease: 'expo.inOut',
+              // Drop the clip once revealed, or it would cut off the orb's glow as it floats up.
+              clearProps: 'clipPath',
+            },
             0.35,
           )
-          .from(ball, { scale: 0.3, autoAlpha: 0, filter: 'brightness(2.4)', duration: 1.3 }, 1.5);
+          // Explicit end value: tweening a filter toward "none" dips through black.
+          .fromTo(
+            ball,
+            { scale: 0.3, autoAlpha: 0, filter: 'brightness(2.4)' },
+            { scale: 1, autoAlpha: 1, filter: 'brightness(1)', duration: 1.3, clearProps: 'filter' },
+            1.5,
+          );
       });
 
       // ---- The orb floats, leans toward the cursor and turns its shine to face it ----
@@ -156,10 +169,11 @@ function startHeaderState(hero: HTMLElement) {
 function startWaveLines(hero: HTMLElement, base: HTMLCanvasElement, glow: HTMLCanvasElement) {
   const mask = document.createElement('canvas');
   const mctx = mask.getContext('2d')!;
-  const layers: [HTMLCanvasElement, string][] = [
-    [base, 'rgb(143 176 255 / 0.13)'],
-    [glow, 'rgb(196 214 255 / 0.8)'],
-  ];
+  // Line colours come from the hero's CSS, so they follow the theme.
+  const colours = () => {
+    const cs = getComputedStyle(hero);
+    return [cs.getPropertyValue('--hero-line').trim(), cs.getPropertyValue('--hero-line-glow').trim()];
+  };
 
   function drawMask(w: number, h: number, dpr: number) {
     mask.width = w * dpr;
@@ -218,7 +232,8 @@ function startWaveLines(hero: HTMLElement, base: HTMLCanvasElement, glow: HTMLCa
     const h = hero.clientHeight + BLEED * 2;
     drawMask(w, h, dpr);
 
-    for (const [canvas, colour] of layers) {
+    const [line, lineGlow] = colours();
+    for (const [canvas, colour] of [[base, line], [glow, lineGlow]] as const) {
       const ctx = canvas.getContext('2d')!;
       canvas.width = w * dpr;
       canvas.height = h * dpr;
@@ -248,6 +263,11 @@ function startWaveLines(hero: HTMLElement, base: HTMLCanvasElement, glow: HTMLCa
   const fonts = document.fonts?.ready ?? Promise.resolve();
   fonts.then(draw);
   addEventListener('resize', () => requestAnimationFrame(draw));
+  // Redraw in the other theme's colours when the theme is switched.
+  new MutationObserver(() => requestAnimationFrame(draw)).observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['data-theme'],
+  });
 
   // Two spotlights wander across the lines on their own.
   let t = Math.random() * 100;

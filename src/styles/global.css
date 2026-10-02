@@ -71,7 +71,3 @@ h1, h2, h3 {
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
 }
-/* Over the (always dark) hero, the header text stays light in both themes. */
-.site-header:not(.is-scrolled) :is(a, button) {
-  color: #f3f6ff;
-}

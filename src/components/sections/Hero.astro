@@ -1,7 +1,7 @@
 ---
 import { site } from '../../data/content';
 // Hero (ticket 05). Animation, wave lines and the orb live in src/scripts/hero.ts.
-// The hero keeps its own dark palette in both themes.
+// The hero follows the site's theme: dark and light each have their own palette below.
 // Without JS or with reduced motion, this markup is the full, readable composition.
 
 const { lines, cta, name } = site.hero;
@@ -35,8 +35,18 @@ const nameEnd = name.slice(iIndex + 1);
 
 <style>
   .hero {
-    --hero-bg: #040a24;
-    --hero-fg: #f3f6ff;
+    --hero-bg: var(--color-bg);
+    --hero-fg: var(--color-fg);
+    --hero-on-fg: var(--color-bg);
+    --hero-pill-line: color-mix(in srgb, var(--color-fg) 55%, transparent);
+    /* Read by hero.ts when it draws the wave lines. */
+    --hero-line: rgb(143 176 255 / 0.13);
+    --hero-line-glow: rgb(196 214 255 / 0.8);
+    --hero-giant-fill:
+      radial-gradient(28% 70% at 16% 35%, #dbe6ff 0%, #7aa2ff 28%, transparent 70%),
+      radial-gradient(24% 70% at 78% 55%, #8ef0ff 0%, #3a8bff 35%, transparent 72%),
+      radial-gradient(30% 60% at 48% 90%, #8a6bff 0%, transparent 70%),
+      linear-gradient(90deg, #1d3fd6, #2f5bff 50%, #1a36c4);
     position: relative;
     height: 100svh;
     min-height: 38rem;
@@ -116,7 +126,7 @@ const nameEnd = name.slice(iIndex + 1);
   .hero-pill {
     margin-left: 1.3em;
     padding: 0.85rem 1.7rem;
-    border: 1.5px solid rgb(243 246 255 / 0.6);
+    border: 1.5px solid var(--hero-pill-line);
     border-radius: 999px;
     font-family: var(--font-body);
     font-size: 1.1rem;
@@ -130,7 +140,7 @@ const nameEnd = name.slice(iIndex + 1);
   }
   .hero-pill:hover {
     background: var(--hero-fg);
-    color: var(--hero-bg);
+    color: var(--hero-on-fg);
     border-color: var(--hero-fg);
   }
 
@@ -149,11 +159,7 @@ const nameEnd = name.slice(iIndex + 1);
     font-size: 29vw;
     white-space: nowrap;
     text-align: center;
-    background:
-      radial-gradient(28% 70% at 16% 35%, #dbe6ff 0%, #7aa2ff 28%, transparent 70%),
-      radial-gradient(24% 70% at 78% 55%, #8ef0ff 0%, #3a8bff 35%, transparent 72%),
-      radial-gradient(30% 60% at 48% 90%, #8a6bff 0%, transparent 70%),
-      linear-gradient(90deg, #1d3fd6, #2f5bff 50%, #1a36c4);
+    background: var(--hero-giant-fill);
     background-size: 130% 130%;
     background-position: 50% 50%;
     -webkit-background-clip: text;
@@ -188,6 +194,17 @@ const nameEnd = name.slice(iIndex + 1);
       inset -0.012em -0.016em 0.03em rgb(0 0 40 / 0.55),
       inset 0.01em 0.01em 0.02em rgb(255 255 255 / 0.5),
       0 0 0.08em rgb(142 176 255 / 0.55);
+  }
+
+  /* Light theme: off-white page, dark type, deeper cobalt light so the name stays strong. */
+  :global(:root[data-theme='light']) .hero {
+    --hero-line: rgb(47 91 224 / 0.16);
+    --hero-line-glow: rgb(47 91 224 / 0.6);
+    --hero-giant-fill:
+      radial-gradient(28% 70% at 16% 35%, #7aa2ff 0%, #3d6bff 30%, transparent 70%),
+      radial-gradient(24% 70% at 78% 55%, #1fb6e0 0%, #2f6bff 38%, transparent 72%),
+      radial-gradient(30% 60% at 48% 90%, #6b3fd6 0%, transparent 70%),
+      linear-gradient(90deg, #1a36c4, #2f5be0 50%, #1730b0);
   }
 
   @media (max-width: 767px) {
