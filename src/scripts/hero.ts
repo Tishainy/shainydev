@@ -32,6 +32,7 @@ export function initHero() {
     startWaveLines(hero, base, glow, { canDraw: () => window.scrollY < hero.offsetHeight * 0.1 });
   }
   startHeaderState(hero);
+  placeOrb(giant);
 
   const mm = gsap.matchMedia();
   mm.add(
@@ -43,17 +44,13 @@ export function initHero() {
       const { desktop } = context.conditions as { desktop: boolean; mobile: boolean };
 
       // ---- Scroll: the headline drifts apart, the name rises, the orb lifts off ----
-      // The hero holds in place while this plays; phones get a little more scroll room for it.
+      // Desktop holds the hero in place while this plays. Phones keep native scrolling (holding a
+      // section under a thumb feels stuck), so there the same motion plays as the hero scrolls away.
       const scroll = gsap.timeline({
         defaults: { ease: 'power2.inOut' },
-        scrollTrigger: {
-          trigger: hero,
-          start: 'top top',
-          end: desktop ? '+=110%' : '+=130%',
-          scrub: 1,
-          pin: true,
-          anticipatePin: 1,
-        },
+        scrollTrigger: desktop
+          ? { trigger: hero, start: 'top top', end: '+=110%', scrub: 1, pin: true, anticipatePin: 1 }
+          : { trigger: hero, start: 'top top', end: 'bottom top', scrub: 0.5 },
       });
       const spread = desktop ? 14 : 10;
       scroll
@@ -159,4 +156,28 @@ function startHeaderState(hero: HTMLElement) {
     onEnter: () => header.classList.add('is-scrolled'),
     onLeaveBack: () => header.classList.remove('is-scrolled'),
   });
+}
+
+/**
+ * Finds where the "i" in the name lands and hands that to CSS (--i-x, in em), which places the orb
+ * and the patch over the i's square dot. Measured in em so it holds at any font size, and divided by
+ * the current scale so a scroll-time scale-up doesn't skew it.
+ */
+function placeOrb(giant: HTMLElement) {
+  const measure = () => {
+    const text = [...giant.childNodes].find((n) => n.nodeType === Node.TEXT_NODE && n.textContent?.includes('i'));
+    if (!text) return;
+    const index = text.textContent!.indexOf('i');
+    const range = document.createRange();
+    range.setStart(text, index);
+    range.setEnd(text, index + 1);
+    const i = range.getBoundingClientRect();
+    const box = giant.getBoundingClientRect();
+    const scale = box.width / giant.offsetWidth || 1;
+    const fontSize = parseFloat(getComputedStyle(giant).fontSize) * scale;
+    giant.style.setProperty('--i-x', String((i.left - box.left) / fontSize));
+    giant.classList.add('has-orb');
+  };
+  (document.fonts?.ready ?? Promise.resolve()).then(measure);
+  addEventListener('resize', () => requestAnimationFrame(measure));
 }

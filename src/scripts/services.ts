@@ -86,8 +86,8 @@ export function initServices() {
       const next = frames[i + 1];
       if (next) {
         gsap.to(frame, {
-          scale: 0.9,
-          filter: 'brightness(0.55)',
+          scale: 0.94,
+          filter: 'brightness(0.82)',
           ease: 'none',
           scrollTrigger: { trigger: next, start: 'top bottom', end: 'top top', scrub: true },
         });

@@ -5,11 +5,9 @@ import { site } from '../../data/content';
 // Without JS or with reduced motion, this markup is the full, readable composition.
 
 const { lines, cta, name } = site.hero;
-// The glass orb sits exactly over the dot of the name's "i", covering it. (A plain "i", not the
-// dotless "ı": some phone browsers render that character in a fallback font, or not at all.)
-const iIndex = name.indexOf('i');
-const nameStart = name.slice(0, iIndex);
-const nameEnd = name.slice(iIndex + 1);
+// The name stays one plain text run: Safari won't paint clipped-background text inside a nested,
+// positioned element, so the "i" can't be wrapped. The orb and the patch hiding the i's square dot
+// are siblings, positioned by hero.ts from where the "i" actually lands.
 ---
 
 <section id="hero" class="hero" data-hero>
@@ -30,7 +28,7 @@ const nameEnd = name.slice(iIndex + 1);
   </h1>
 
   <p class="hero-giant" aria-hidden="true" data-hero-giant>
-    {nameStart}<span class="hero-i">i<span class="hero-orb" data-hero-orb data-lines-avoid><span class="hero-orb-ball glass-orb" data-hero-orb-ball></span></span></span>{nameEnd}
+    {name}<span class="hero-dot-cover" aria-hidden="true"></span><span class="hero-orb" data-hero-orb data-lines-avoid><span class="hero-orb-ball glass-orb" data-hero-orb-ball></span></span>
   </p>
 </section>
 
@@ -143,25 +141,30 @@ const nameEnd = name.slice(iIndex + 1);
     transform-origin: 50% 100%;
   }
 
-  /* Placed from Clash Display Semibold's own metrics: the i's square dot spans 0.04–0.19em across and
-     0.552–0.67em above the baseline (centre 0.115em in, 0.279em below the top of the 0.89em ascent).
-     A patch in the page colour hides the square dot; the round orb sits centred on top of it. */
-  .hero-i {
-    position: relative;
-  }
-  .hero-i::before {
-    content: '';
+  /* The orb replaces the dot of the "i". --i-x (set by hero.ts) is where the "i" starts, in em.
+     Vertical positions come from Clash Display Semibold's metrics: with line-height 0.8 the baseline
+     sits 0.72em below the top of the box, and the i's square dot spans 0.552–0.67em above it
+     (0.04–0.19em across). A patch in the page colour hides the square dot; the round orb sits on top.
+     Until the script has measured (or without JS), neither shows and the "i" keeps its own dot. */
+  .hero-dot-cover,
+  .hero-orb {
     position: absolute;
-    left: 0.03em;
-    top: 0.21em;
+    visibility: hidden;
+  }
+  .hero-giant:global(.has-orb) .hero-dot-cover,
+  .hero-giant:global(.has-orb) .hero-orb {
+    visibility: visible;
+  }
+  .hero-dot-cover {
+    left: calc(var(--i-x, 0) * 1em + 0.03em);
+    top: 0.04em;
     width: 0.17em;
     height: 0.14em;
     background: var(--hero-bg);
   }
   .hero-orb {
-    position: absolute;
-    left: 0.045em;
-    top: 0.209em;
+    left: calc(var(--i-x, 0) * 1em + 0.045em);
+    top: 0.039em;
     width: 0.14em;
     height: 0.14em;
   }
