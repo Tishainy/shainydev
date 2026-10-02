@@ -44,7 +44,7 @@ const variants = [
         </h1>
 
         {variant.detail === 'orb' ? (
-          <p class={`giant ${variant.fill}`} aria-hidden="true">Sha<span class="i-wrap">ı<span class="orb"></span></span>ny</p>
+          <p class={`giant ${variant.fill}`} aria-hidden="true">Sha<span class="i-wrap">ı<span class="orb"><span class="orb-ball"></span></span></span>ny</p>
         ) : (
           <>
             <p class={`giant ${variant.fill}`} aria-hidden="true">Shainy</p>
@@ -61,25 +61,120 @@ const variants = [
       if (['k', 'l'].includes(only)) {
         document.querySelectorAll('.sketch').forEach((el) => { if (el.id !== only) el.hidden = true; });
       }
+    </script>
 
-      // Lens: a magnified copy of the section behind a round window.
+    <script>
+      import gsap from 'gsap';
+
+      const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const finePointer = matchMedia('(hover: hover) and (pointer: fine)').matches;
+      const pointer = { x: innerWidth / 2, y: innerHeight / 2, active: false };
+      addEventListener('pointermove', (e) => {
+        pointer.x = e.clientX;
+        pointer.y = e.clientY;
+        pointer.active = true;
+      });
+
+      // ---- Both: the light inside the name drifts toward the cursor ----
+      document.querySelectorAll<HTMLElement>('.sketch').forEach((section) => {
+        const fills = section.querySelectorAll<HTMLElement>('.giant');
+        fills.forEach((el) => (el.style.backgroundSize = '130% 130%'));
+        const light = { x: 50, y: 50 };
+        gsap.ticker.add(() => {
+          if (reduce) return;
+          const rect = section.getBoundingClientRect();
+          const tx = pointer.active ? 100 - ((pointer.x - rect.left) / rect.width) * 100 : 50;
+          const ty = pointer.active ? 100 - ((pointer.y - rect.top) / rect.height) * 100 : 50;
+          light.x += (tx - light.x) * 0.04;
+          light.y += (ty - light.y) * 0.04;
+          fills.forEach((el) => (el.style.backgroundPosition = `${light.x}% ${light.y}%`));
+        });
+      });
+
+      // ---- K: the orb drops in, floats, leans toward the cursor and catches its light ----
+      document.querySelectorAll<HTMLElement>('.orb').forEach((orb) => {
+        const ball = orb.querySelector<HTMLElement>('.orb-ball')!;
+        const giant = orb.closest<HTMLElement>('.giant')!;
+        if (reduce) return;
+
+        const drop = () =>
+          gsap.fromTo(orb, { y: -window.innerHeight * 0.75 }, { y: 0, duration: 1.5, ease: 'bounce.out', overwrite: true });
+        drop();
+        gsap.to(ball, { y: -5, duration: 2.2, ease: 'sine.inOut', yoyo: true, repeat: -1, delay: 1.6 });
+
+        const leanX = gsap.quickTo(orb, 'x', { duration: 0.8, ease: 'power3' });
+        const shine = { x: 34, y: 28 };
+        gsap.ticker.add(() => {
+          const rect = ball.getBoundingClientRect();
+          const cx = rect.left + rect.width / 2;
+          const cy = rect.top + rect.height / 2;
+          const dx = pointer.x - cx;
+          const dy = pointer.y - cy;
+          const dist = Math.hypot(dx, dy) || 1;
+          if (pointer.active) leanX(gsap.utils.clamp(-14, 14, dx * 0.03));
+          // The highlight slides toward the cursor, like glass catching a light.
+          const tx = pointer.active ? 50 + (dx / dist) * 22 : 34;
+          const ty = pointer.active ? 50 + (dy / dist) * 22 : 28;
+          shine.x += (tx - shine.x) * 0.12;
+          shine.y += (ty - shine.y) * 0.12;
+          ball.style.setProperty('--sx', shine.x + '%');
+          ball.style.setProperty('--sy', shine.y + '%');
+        });
+
+        giant.style.cursor = 'pointer';
+        giant.addEventListener('click', drop);
+      });
+
+      // ---- L: a lens that glides along the name, magnifying what's under it ----
       const MAGNIFY = 1.35;
-      function placeLenses() {
-        document.querySelectorAll('.lens').forEach((lens) => {
-          const section = lens.closest('.sketch');
-          const stage = lens.querySelector('.lens-stage');
+      document.querySelectorAll<HTMLElement>('.lens').forEach((lens) => {
+        const section = lens.closest<HTMLElement>('.sketch')!;
+        const stage = lens.querySelector<HTMLElement>('.lens-stage')!;
+        const giant = section.querySelector<HTMLElement>('.giant')!;
+        const pos = { x: 0, y: 0 };
+        let t = 0;
+
+        function render() {
           const r = lens.offsetWidth / 2;
+          const left = lens.offsetLeft + pos.x;
+          const top = lens.offsetTop + pos.y;
+          lens.style.transform = `translate(${pos.x}px, ${pos.y}px)`;
           stage.style.width = section.clientWidth + 'px';
           stage.style.height = section.clientHeight + 'px';
-          stage.style.left = -lens.offsetLeft + 'px';
-          stage.style.top = -lens.offsetTop + 'px';
-          stage.style.transformOrigin = `${lens.offsetLeft + r}px ${lens.offsetTop + r}px`;
+          stage.style.left = -left + 'px';
+          stage.style.top = -top + 'px';
+          stage.style.transformOrigin = `${left + r}px ${top + r}px`;
           stage.style.transform = `scale(${MAGNIFY})`;
+        }
+
+        gsap.ticker.add((_, delta) => {
+          const s = section.getBoundingClientRect();
+          const g = giant.getBoundingClientRect();
+          const r = lens.offsetWidth / 2;
+          // Keep the lens within the band of the name.
+          const minX = g.left - s.left - lens.offsetLeft + r * 0.2;
+          const maxX = Math.min(g.right, s.right) - s.left - lens.offsetLeft - r * 2.2;
+          const bandTop = g.top - s.top - lens.offsetTop + r * 0.6;
+          let tx: number;
+          let ty: number;
+          if (finePointer && pointer.active && !reduce) {
+            tx = pointer.x - s.left - lens.offsetLeft - r;
+            ty = pointer.y - s.top - lens.offsetTop - r;
+          } else if (!reduce) {
+            t += delta / 1000;
+            tx = minX + ((Math.sin(t * 0.35) + 1) / 2) * (maxX - minX);
+            ty = bandTop + 10 + Math.sin(t * 0.7) * 12;
+          } else {
+            tx = 0;
+            ty = 0;
+          }
+          tx = gsap.utils.clamp(minX, maxX, tx);
+          ty = gsap.utils.clamp(bandTop - 20, bandTop + 60, ty);
+          pos.x += (tx - pos.x) * 0.08;
+          pos.y += (ty - pos.y) * 0.08;
+          render();
         });
-      }
-      placeLenses();
-      addEventListener('resize', placeLenses);
-      document.fonts?.ready.then(placeLenses);
+      });
     </script>
 
     <style is:global>
@@ -184,10 +279,14 @@ const variants = [
       /* K. The dot of the i becomes a small glowing glass sphere. */
       .i-wrap { position: relative; }
       .orb {
-        position: absolute; left: 50%; top: 0.15em; translate: -50% 0;
-        width: 0.145em; height: 0.145em; border-radius: 50%;
+        position: absolute; left: 54%; top: 0.175em; translate: -50% 0;
+        width: 0.145em; height: 0.145em;
+      }
+      .orb-ball {
+        position: absolute; inset: 0; border-radius: 50%;
+        --sx: 34%; --sy: 28%;
         background:
-          radial-gradient(circle at 34% 28%, #ffffff 0 6%, rgb(255 255 255 / 0.6) 12%, transparent 30%),
+          radial-gradient(circle at var(--sx) var(--sy), #ffffff 0 6%, rgb(255 255 255 / 0.6) 12%, transparent 30%),
           radial-gradient(circle at 50% 55%, #8ef0ff 0%, #709bff 38%, #2346e0 72%, #0d1f8a 100%);
         box-shadow:
           inset -0.012em -0.016em 0.03em rgb(0 0 40 / 0.55),
@@ -197,7 +296,7 @@ const variants = [
 
       /* L. A round glass lens resting on the name. */
       .lens {
-        position: absolute; left: 37%; top: 71%; z-index: 3;
+        position: absolute; left: 37%; top: 71%; z-index: 3; will-change: transform;
         width: clamp(9rem, 17vw, 17rem); aspect-ratio: 1; border-radius: 50%;
         overflow: hidden; background: var(--ink);
         border: 1px solid rgb(255 255 255 / 0.35);
