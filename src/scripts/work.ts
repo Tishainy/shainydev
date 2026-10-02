@@ -30,7 +30,8 @@ export function initWork() {
   const rings = gsap.utils.toArray<HTMLElement>('[data-work-ring]', section);
   const lines = gsap.utils.toArray<HTMLElement>('[data-work-line]', section);
   const said = gsap.utils.toArray<HTMLElement>('[data-work-said]', section);
-  const letters = said.map((el) => SplitText.create(el, { type: 'chars' }).chars);
+  // Split into words as well as letters, so lines only break between whole words.
+  const letters = said.map((el) => SplitText.create(el, { type: 'words,chars' }).chars);
 
   // Someone is speaking: rings spread from the orb and it swells gently.
   function speaking(tl: gsap.core.Timeline, at: number, length: number, jarvis: boolean) {
@@ -51,16 +52,16 @@ export function initWork() {
   const demo = gsap.timeline({ repeat: -1, repeatDelay: 0.6, paused: true });
   demo.set(lines, { autoAlpha: 0, y: 12 }).set(letters.flat(), { autoAlpha: 0 });
 
-  let at = 0.6;
+  let at = 0.15;
   lines.forEach((line, i) => {
     const jarvis = line.classList.contains('is-jarvis');
     // Jarvis "thinks" for a moment before answering.
-    if (jarvis) at += 0.5;
-    const typing = letters[i].length * (jarvis ? 0.028 : 0.034);
+    if (jarvis) at += 0.35;
+    const typing = letters[i].length * (jarvis ? 0.018 : 0.022);
     demo.to(line, { autoAlpha: 1, y: 0, duration: 0.4, ease: 'power2.out' }, at);
     demo.to(letters[i], { autoAlpha: 1, duration: 0.01, stagger: typing / letters[i].length }, at + 0.15);
     speaking(demo, at, typing + 0.2, jarvis);
-    at += typing + 0.9;
+    at += typing + 0.6;
   });
   // Hold the finished exchange, then clear it for the next loop.
   demo.to(lines, { autoAlpha: 0, y: -12, duration: 0.5, stagger: 0.05, ease: 'power2.in' }, at + 2.4);
@@ -68,8 +69,8 @@ export function initWork() {
   // Only run while the demo is on screen.
   ScrollTrigger.create({
     trigger: section.querySelector('[data-work-demo]'),
-    start: 'top 85%',
-    end: 'bottom 15%',
+    start: 'top bottom',
+    end: 'bottom top',
     onToggle: (self) => (self.isActive ? demo.play() : demo.pause()),
   });
 
