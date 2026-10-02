@@ -107,7 +107,7 @@ const { build, automate, ai } = site.interludes;
 <style>
   .svc {
     position: relative;
-    --word-size: 18vw;
+    --word-size: clamp(3.5rem, 7.5vw, 7rem);
   }
 
   /* ================= Base: frames stacked (phones, reduced motion, no JS) ================= */
@@ -133,8 +133,10 @@ const { build, automate, ai } = site.interludes;
     font-family: var(--font-display);
     font-weight: 600;
     letter-spacing: -0.055em;
-    line-height: 0.8;
-    font-size: min(18vw, 10rem);
+    line-height: 0.9;
+    font-size: var(--word-size);
+    padding-right: 0.06em;
+    justify-self: start;
     background: var(--light-fill);
     -webkit-background-clip: text;
     background-clip: text;
@@ -209,36 +211,35 @@ const { build, automate, ai } = site.interludes;
     height: 100%;
     padding: 0;
   }
+  /* Title, subtitle and description down the left; the demo takes the middle; the list sits right. */
   .svc:global(.is-strip) .svc-word {
     position: absolute;
-    left: 4vw;
-    /* Starts just below the fixed menu bar, so the bar never covers the word. */
-    top: 3.6rem;
-    font-size: var(--word-size);
+    left: 5vw;
+    top: 19svh;
   }
   .svc:global(.is-strip) .svc-sum {
     position: absolute;
     left: 5vw;
-    top: 36svh;
+    top: calc(19svh + var(--word-size) * 1.15);
   }
   .svc:global(.is-strip) .svc-desc {
     position: absolute;
     left: 5vw;
-    top: 60svh;
-    width: 28vw;
+    top: 58svh;
+    width: 27vw;
   }
   .svc:global(.is-strip) .svc-demo {
     position: absolute;
-    left: 38vw;
-    top: 30svh;
-    width: 36vw;
-    height: 56svh;
+    left: 36vw;
+    top: 17svh;
+    width: 40vw;
+    height: 68svh;
   }
   .svc:global(.is-strip) .svc-inc {
     position: absolute;
     right: 4vw;
-    top: 36svh;
-    width: 19vw;
+    top: 22svh;
+    width: 17vw;
   }
   .svc:global(.is-strip) .svc-hud {
     display: flex;
