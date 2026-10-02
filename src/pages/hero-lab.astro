@@ -6,10 +6,11 @@ import { Font } from 'astro:assets';
 
 const nav = ['Services', 'Work', 'Process', 'About'];
 // The orb won. The lens (detail: 'lens') is kept in the code for possible later use.
+// Line styles 'ripple' and 'diagonal' remain in drawLines() if needed later.
 const variants = [
-  { id: 'r', name: 'R. Ripples from the orb', fill: 'fill-light', italics: 'it-solid', detail: 'orb', lines: 'ripple' },
-  { id: 'w', name: 'W. Flowing waves', fill: 'fill-light', italics: 'it-solid', detail: 'orb', lines: 'waves' },
-  { id: 'd', name: 'D. Diagonal hairlines', fill: 'fill-light', italics: 'it-solid', detail: 'orb', lines: 'diagonal' },
+  { id: 'w', name: 'W. Flowing waves', fill: 'fill-light', italics: 'it-solid', detail: 'orb', lines: 'waves', layout: 'classic' },
+  { id: 'x', name: 'X. Woven name', fill: 'fill-light', italics: 'it-solid', detail: 'orb', lines: 'waves', layout: 'woven' },
+  { id: 'y', name: 'Y. Spine', fill: 'fill-light', italics: 'it-solid', detail: 'orb', lines: 'waves', layout: 'spine' },
 ];
 ---
 
@@ -27,9 +28,10 @@ const variants = [
   </head>
   <body>
     {variants.map((variant) => (
-      <section class="sketch" id={variant.id}>
+      <section class={`sketch layout-${variant.layout}`} id={variant.id}>
         <canvas class="lines" data-lines={variant.lines} aria-hidden="true"></canvas>
         <canvas class="lines lines-glow" data-lines={variant.lines} aria-hidden="true"></canvas>
+        {variant.layout === 'woven' && <canvas class="lines lines-name" aria-hidden="true"></canvas>}
         <p class="tag">{variant.name}</p>
 
         <header class="top">
@@ -62,7 +64,7 @@ const variants = [
 
     <script is:inline>
       const only = location.hash.slice(1);
-      if (['r', 'w', 'd'].includes(only)) {
+      if (['w', 'x', 'y'].includes(only)) {
         document.querySelectorAll('.sketch').forEach((el) => { if (el.id !== only) el.hidden = true; });
       }
     </script>
@@ -148,6 +150,11 @@ const variants = [
           const text = node.textContent ?? '';
           const cs = getComputedStyle(parent);
           if (cs.visibility === 'hidden' || cs.display === 'none') continue;
+          const giantEl = parent.closest('.giant');
+          // The woven name is made of the lines, so the lines don't avoid it.
+          if (giantEl && section.classList.contains('layout-woven')) continue;
+          // A rotated name can't be traced glyph by glyph; give each letter a soft box instead.
+          const rotated = giantEl && section.classList.contains('layout-spine');
           mctx.font = `${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
           for (let i = 0; i < text.length; i++) {
             const ch = text[i];
@@ -156,6 +163,10 @@ const variants = [
             range.setEnd(node, i + 1);
             const r = range.getBoundingClientRect();
             if (!r.width) continue;
+            if (rotated) {
+              mctx.fillRect(r.left + ox - HALO, r.top + oy - HALO, r.width + HALO * 2, r.height + HALO * 2);
+              continue;
+            }
             const ascent = mctx.measureText(ch).fontBoundingBoxAscent;
             mctx.strokeText(ch, r.left + ox, r.top + oy + ascent);
             mctx.fillText(ch, r.left + ox, r.top + oy + ascent);
@@ -222,9 +233,75 @@ const variants = [
           }
         }
 
-        draw();
-        document.fonts?.ready.then(draw);
-        addEventListener('resize', draw);
+        // X: the name itself is woven from dense, bright wave lines.
+        const nameCanvas = section.querySelector<HTMLCanvasElement>('canvas.lines-name');
+        function drawWovenName() {
+          if (!nameCanvas) return;
+          const giant = section.querySelector<HTMLElement>('.giant');
+          if (!giant) return;
+          const dpr = Math.min(devicePixelRatio || 1, 2);
+          const w = section.clientWidth + GRID * 2;
+          const h = section.clientHeight + GRID * 2;
+          const ctx = nameCanvas.getContext('2d')!;
+          nameCanvas.width = w * dpr;
+          nameCanvas.height = h * dpr;
+          nameCanvas.style.width = w + 'px';
+          nameCanvas.style.height = h + 'px';
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+          const gradient = ctx.createLinearGradient(0, 0, w, 0);
+          gradient.addColorStop(0, '#dbe6ff');
+          gradient.addColorStop(0.35, '#709bff');
+          gradient.addColorStop(0.7, '#8ef0ff');
+          gradient.addColorStop(1, '#8a6bff');
+          ctx.strokeStyle = gradient;
+          ctx.lineWidth = 2.2;
+          ctx.beginPath();
+          for (let y = 0, row = 0; y < h + 40; y += 9, row++) {
+            for (let x = 0; x <= w; x += 6) {
+              const yy = y + Math.sin(x * 0.0042 + row * 0.1) * 18 + Math.sin(x * 0.0011 - row * 0.055) * 26;
+              if (x === 0) ctx.moveTo(x, yy);
+              else ctx.lineTo(x, yy);
+            }
+          }
+          ctx.stroke();
+
+          // Keep only the lines inside the letters: build the letter shapes on their own
+          // canvas first, then cut with it once (cutting per letter would erase earlier ones).
+          const shape = document.createElement('canvas');
+          shape.width = w * dpr;
+          shape.height = h * dpr;
+          const sctx = shape.getContext('2d')!;
+          sctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          const origin = section.getBoundingClientRect();
+          const cs = getComputedStyle(giant);
+          sctx.font = `${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+          sctx.fillStyle = '#000';
+          const walker = document.createTreeWalker(giant, NodeFilter.SHOW_TEXT);
+          const range = document.createRange();
+          let node: Node | null;
+          while ((node = walker.nextNode())) {
+            const text = node.textContent ?? '';
+            for (let i = 0; i < text.length; i++) {
+              range.setStart(node, i);
+              range.setEnd(node, i + 1);
+              const r = range.getBoundingClientRect();
+              const ascent = sctx.measureText(text[i]).fontBoundingBoxAscent;
+              sctx.fillText(text[i], r.left - origin.left + GRID, r.top - origin.top + GRID + ascent);
+            }
+          }
+          ctx.globalCompositeOperation = 'destination-in';
+          ctx.drawImage(shape, 0, 0, w, h);
+          ctx.globalCompositeOperation = 'source-over';
+        }
+
+        const redraw = () => {
+          draw();
+          drawWovenName();
+        };
+        redraw();
+        document.fonts?.ready.then(redraw);
+        addEventListener('resize', redraw);
 
         // Two spotlights: soft pools of light that wander across the lines on their own.
         let t = Math.random() * 100;
@@ -244,8 +321,9 @@ const variants = [
 
         // A little depth: both grid layers drift against the cursor.
         if (!reduce) {
-          const gx = gsap.quickTo([base, glow], 'x', { duration: 1.2, ease: 'power3' });
-          const gy = gsap.quickTo([base, glow], 'y', { duration: 1.2, ease: 'power3' });
+          const drifting = [base, glow, nameCanvas].filter(Boolean) as HTMLElement[];
+          const gx = gsap.quickTo(drifting, 'x', { duration: 1.2, ease: 'power3' });
+          const gy = gsap.quickTo(drifting, 'y', { duration: 1.2, ease: 'power3' });
           addEventListener('pointermove', (e) => {
             gx(-(e.clientX / innerWidth - 0.5) * 16);
             gy(-(e.clientY / innerHeight - 0.5) * 16);
@@ -392,6 +470,7 @@ const variants = [
       .l2 { padding-left: 40%; font-size: 1.1em; }
       .l3 { padding-left: 0; }
       .l4 { padding-left: 33%; display: flex; align-items: center; gap: 0.4em; font-size: 1.1em; }
+      .l4 .pill { margin-left: 0.9em; }
 
       .it-solid .it { color: #8fb0ff; }
       /* The italic words carry the same light as the giant name. */
@@ -512,6 +591,36 @@ const variants = [
           radial-gradient(circle at 70% 82%, rgb(142 240 255 / 0.18), transparent 30%);
       }
       .lens-stage { position: absolute; pointer-events: none; }
+
+      /* ===== X. Woven name: the name is drawn by the wave lines ===== */
+      .layout-woven .lines-name { z-index: 1; }
+      .layout-woven .giant { background: none !important; color: transparent; bottom: 3%; font-size: 31vw; }
+      .layout-woven .headline {
+        left: auto; right: 6%; top: 15%; translate: none; width: auto;
+        font-size: clamp(2.2rem, 3.9vw, 4rem);
+      }
+      .layout-woven .l1 { padding-left: 0; }
+      .layout-woven .l2 { padding-left: 16%; }
+      .layout-woven .l3 { padding-left: 4%; }
+      .layout-woven .l4 { padding-left: 20%; }
+
+      /* ===== Y. Spine: the name runs up the left edge ===== */
+      .layout-spine .mark { visibility: hidden; }
+      .layout-spine .giant {
+        left: -0.04em; right: auto; top: 50%; bottom: auto;
+        width: max-content; font-size: 35svh; line-height: 0.8;
+        transform-origin: 0 0;
+        transform: rotate(-90deg) translateX(-50%);
+        text-align: left;
+      }
+      .layout-spine .headline {
+        left: 34%; top: 21%; translate: none; width: auto;
+        font-size: clamp(2.8rem, 6vw, 6.4rem);
+      }
+      .layout-spine .l1 { padding-left: 0; }
+      .layout-spine .l2 { padding-left: 24%; }
+      .layout-spine .l3 { padding-left: 6%; }
+      .layout-spine .l4 { padding-left: 30%; }
 
       @media (max-width: 767px) {
         .top-nav { display: none; }
