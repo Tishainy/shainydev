@@ -1,26 +1,201 @@
 ---
 import { site } from '../../data/content';
-// Stub. Built out in ticket 11.
+// Process (ticket 11). The four steps form a staircase across the screen; each step's cobalt line
+// draws itself in order as you scroll, then its text appears (src/scripts/process.ts).
+// Below: the ways to work together and the quote promise with the hero's "Let's talk" pill.
+
+const { heading, steps, formatsHeading, formats, quoteNote, cta } = site.process;
 ---
 
-<section id="process" class="mx-auto max-w-6xl px-4 py-24 sm:px-6">
-  <h2 class="text-3xl" data-reveal>{site.process.heading}</h2>
-  <ol class="mt-10 grid gap-8 sm:grid-cols-2 md:grid-cols-4">
-    {site.process.steps.map((step) => (
-      <li class="min-w-0 border-t border-line pt-4" data-reveal>
-        <h3 class="text-xl">{step.name}</h3>
-        <p class="mt-2 text-muted">{step.description}</p>
+<section id="process" class="proc" data-process>
+  <h2 class="proc-heading" data-reveal>{heading}</h2>
+
+  <ol class="proc-steps" data-proc-steps>
+    {steps.map((step, index) => (
+      <li class="proc-step" style={`--i: ${index}`} data-proc-step>
+        <span class="proc-line" aria-hidden="true"><span class="proc-line-fill" data-proc-line></span></span>
+        <p class="proc-num" data-proc-text>{index + 1}</p>
+        <h3 class="proc-name" data-proc-text>{step.name}</h3>
+        <p class="proc-desc" data-proc-text>{step.description}</p>
       </li>
     ))}
   </ol>
-  <h3 class="mt-16 text-2xl" data-reveal>{site.process.formatsHeading}</h3>
-  <ul class="mt-6 grid gap-6 sm:grid-cols-3">
-    {site.process.formats.map((format) => (
-      <li class="min-w-0" data-reveal>
-        <p class="font-medium">{format.name}</p>
-        <p class="mt-1 text-muted">{format.description}</p>
-      </li>
-    ))}
-  </ul>
-  <p class="mt-8 text-lg" data-reveal>{site.process.quoteNote}</p>
+
+  <div class="proc-formats">
+    <h3 class="proc-formats-heading" data-reveal>{formatsHeading}</h3>
+    <ul class="proc-format-list">
+      {formats.map((format) => (
+        <li class="proc-format" data-reveal>
+          <span class="proc-format-name">{format.name}</span>
+          <span class="proc-format-desc">{format.description}</span>
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  <p class="proc-quote" data-reveal>
+    <span class="proc-quote-text">{quoteNote}</span>
+    <a href="#contact" class="proc-pill">{cta}</a>
+  </p>
 </section>
+
+<style>
+  .proc {
+    max-width: 90rem;
+    margin: 0 auto;
+    padding: 18svh 6vw 16svh;
+  }
+
+  .proc-heading {
+    margin: 0 0 10svh;
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.055em;
+    line-height: 0.85;
+    font-size: clamp(3.5rem, 9vw, 8.5rem);
+  }
+
+  /* ---------- The staircase ---------- */
+  .proc-steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0 3vw;
+  }
+  .proc-step {
+    position: relative;
+    display: grid;
+    align-content: start;
+    gap: 0.9rem;
+    padding-top: 1.6rem;
+    /* Each step sits a little lower than the one before. */
+    margin-top: calc(var(--i) * 9svh);
+  }
+  .proc-line {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 2px;
+    background: var(--color-line);
+    overflow: hidden;
+  }
+  .proc-line-fill {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, #2f5bff, #709bff, #8ef0ff);
+    transform-origin: 0 50%;
+  }
+  .proc-num {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: clamp(1.6rem, 2.4vw, 2.3rem);
+    line-height: 1;
+    color: var(--color-accent);
+  }
+  .proc-name {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.04em;
+    line-height: 0.95;
+    font-size: clamp(1.9rem, 3.2vw, 3.1rem);
+  }
+  .proc-desc {
+    margin: 0;
+    max-width: 22rem;
+    font-size: clamp(1rem, 1.2vw, 1.15rem);
+    line-height: 1.5;
+    color: color-mix(in srgb, var(--color-fg) 82%, transparent);
+  }
+
+  /* ---------- Ways to work together ---------- */
+  .proc-formats {
+    margin-top: 16svh;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    gap: 2rem 6vw;
+    align-items: start;
+  }
+  .proc-formats-heading {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 400;
+    font-size: clamp(2rem, 3.4vw, 3.3rem);
+    line-height: 1.05;
+  }
+  .proc-format-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .proc-format {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    gap: 1rem 3vw;
+    align-items: baseline;
+    padding: 1.4rem 0;
+    border-top: 1px solid var(--color-line);
+  }
+  .proc-format:last-child {
+    border-bottom: 1px solid var(--color-line);
+  }
+  .proc-format-name {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    font-size: clamp(1.5rem, 2.4vw, 2.3rem);
+    line-height: 1.05;
+  }
+  .proc-format-desc {
+    font-size: clamp(1rem, 1.25vw, 1.2rem);
+    line-height: 1.5;
+    color: color-mix(in srgb, var(--color-fg) 82%, transparent);
+  }
+
+  /* ---------- The promise ---------- */
+  .proc-quote {
+    margin: 14svh 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.5rem 2.5rem;
+    padding-left: 18%;
+  }
+  .proc-quote-text {
+    max-width: 24ch;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: clamp(2rem, 3.6vw, 3.5rem);
+    line-height: 1.05;
+  }
+  .proc-pill {
+    padding: 0.85rem 1.7rem;
+    border: 1.5px solid color-mix(in srgb, var(--color-fg) 55%, transparent);
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    line-height: 1;
+    color: var(--color-fg);
+    text-decoration: none;
+    transition: background-color 0.25s, color 0.25s, border-color 0.25s;
+  }
+  .proc-pill:hover {
+    background: var(--color-fg);
+    color: var(--color-bg);
+    border-color: var(--color-fg);
+  }
+
+  @media (max-width: 767px) {
+    .proc { padding: 12svh 5vw 10svh; }
+    .proc-steps { grid-template-columns: minmax(0, 1fr); gap: 3rem; }
+    .proc-step { margin-top: 0; }
+    .proc-formats { grid-template-columns: minmax(0, 1fr); margin-top: 10svh; }
+    .proc-format { grid-template-columns: minmax(0, 1fr); gap: 0.4rem; }
+    .proc-quote { padding-left: 0; margin-top: 10svh; }
+  }
+</style>

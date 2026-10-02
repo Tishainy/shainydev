@@ -167,6 +167,7 @@ export const site = {
       { name: 'Hourly', description: 'For small jobs and quick fixes.' },
     ],
     quoteNote: "Tell me what you need and I'll send you a clear quote within 48 hours.",
+    cta: "Let's talk",
   },
 
   about: {
@@ -179,6 +180,8 @@ export const site = {
     ],
     languagesLabel: 'I speak',
     languages: ['English', 'Dutch', 'Papiamentu', 'a bit of Spanish'],
+    // Path to the portrait once it exists (ticket 04); until then a lit monogram shows.
+    photo: '',
     photoAlt: 'Portrait of Shainy',
   },
 

@@ -5,6 +5,7 @@ import Lenis from 'lenis';
 import { initHero } from './hero';
 import { initServices } from './services';
 import { initWork } from './work';
+import { initProcessAndAbout } from './process';
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
 
@@ -71,6 +72,7 @@ startSmoothScroll();
 initHero();
 initServices();
 initWork();
+initProcessAndAbout();
 startReveals();
 
 // Web fonts change text metrics; recalculate trigger positions once they're in.

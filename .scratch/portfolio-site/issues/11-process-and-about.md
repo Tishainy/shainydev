@@ -6,7 +6,11 @@
 
 **Status:** ready-for-agent
 
-- [ ] Process steps and working formats render from the content file, with no prices
-- [ ] About shows "Hi, I'm Shainy", the bio, languages and a photo slot
-- [ ] Both sections reveal on scroll; static for reduced motion
+- [x] Process steps and working formats render from the content file, with no prices
+- [x] About shows "Hi, I'm Shainy", the bio, languages and a photo slot
+- [x] Both sections reveal on scroll; static for reduced motion
 - [ ] Both read well in dark and light, on desktop and phone
+
+## Comments
+
+- 2026-10-02: Built. Process: the four steps form a staircase; each step's cobalt line draws in order with the scroll, then its text appears; ways to work together as large rows; the 48-hour quote promise with a Let's talk pill. About: "Hi, I'm Shainy." rises in word by word beside a portrait frame that shows a lit serif "S" until `about.photo` is set. Awaiting Shainy's review; dark/light and phone checked in ticket 14.
