@@ -40,16 +40,13 @@ export function initHero() {
       const { desktop } = context.conditions as { desktop: boolean; mobile: boolean };
 
       // ---- Scroll: the headline drifts apart, the name rises, the orb lifts off ----
+      // Desktop holds the hero in place while this plays. Phones scroll far faster (one flick can
+      // cover several screens), so there the hero isn't held: the same motion plays as it scrolls away.
       const scroll = gsap.timeline({
         defaults: { ease: 'power2.inOut' },
-        scrollTrigger: {
-          trigger: hero,
-          start: 'top top',
-          end: desktop ? '+=110%' : '+=80%',
-          scrub: 1,
-          pin: true,
-          anticipatePin: 1,
-        },
+        scrollTrigger: desktop
+          ? { trigger: hero, start: 'top top', end: '+=110%', scrub: 1, pin: true, anticipatePin: 1 }
+          : { trigger: hero, start: 'top top', end: 'bottom top', scrub: 0.6 },
       });
       const spread = desktop ? 14 : 10;
       scroll

@@ -22,13 +22,7 @@ export function initServices() {
     const dots = gsap.utils.toArray<HTMLElement>('[data-svc-dot]', section);
     const count = frames.length;
 
-    const demos = frames.map((frame) => {
-      const kind = frame.querySelector<HTMLElement>('[data-svc-demo]')?.dataset.svcDemo;
-      if (kind === 'build') return buildDemo(frame);
-      if (kind === 'automate') return automateDemo(frame);
-      if (kind === 'ai') return aiDemo(frame);
-      return gsap.timeline();
-    });
+    const demos = frames.map(demoFor);
 
     const tl = gsap.timeline({
       defaults: { ease: 'none' },
@@ -81,6 +75,44 @@ export function initServices() {
       gsap.set(strip, { clearProps: 'transform' });
     };
   });
+
+  // Phones: the frames stay stacked. Each frame rises in and its demo plays by itself, at its own
+  // pace, when it reaches the screen. A flick can't skip it, unlike scroll-tied animation.
+  mm.add('(max-width: 767px) and (prefers-reduced-motion: no-preference)', () => {
+    section.classList.add('is-autoplay');
+    const frames = gsap.utils.toArray<HTMLElement>('[data-svc-frame]', section);
+
+    frames.forEach((frame) => {
+      const parts = frame.querySelectorAll('[data-svc-word], [data-svc-part]');
+      gsap.from(parts, {
+        y: 30,
+        autoAlpha: 0,
+        duration: 0.7,
+        stagger: 0.08,
+        ease: 'power2.out',
+        scrollTrigger: { trigger: frame, start: 'top 80%', once: true },
+      });
+
+      const demo = demoFor(frame).pause().duration(2.6);
+      ScrollTrigger.create({
+        trigger: frame.querySelector('[data-svc-demo]'),
+        start: 'top 75%',
+        once: true,
+        onEnter: () => demo.play(),
+      });
+    });
+
+    return () => section.classList.remove('is-autoplay');
+  });
+}
+
+/** The demo timeline for a frame, by its showcase kind. */
+function demoFor(frame: HTMLElement) {
+  const kind = frame.querySelector<HTMLElement>('[data-svc-demo]')?.dataset.svcDemo;
+  if (kind === 'build') return buildDemo(frame);
+  if (kind === 'automate') return automateDemo(frame);
+  if (kind === 'ai') return aiDemo(frame);
+  return gsap.timeline();
 }
 
 /**
@@ -92,6 +124,8 @@ function buildDemo(frame: HTMLElement) {
   const wires = gsap.utils.toArray<HTMLElement>('[data-wire]', frame);
   const fills = gsap.utils.toArray<HTMLElement>('[data-wire-fill]', frame);
   const bars = wires.map((el) => {
+    const existing = el.querySelector<HTMLElement>('.wire-bar');
+    if (existing) return existing;
     const bar = document.createElement('span');
     bar.className = 'wire-bar';
     bar.setAttribute('aria-hidden', 'true');

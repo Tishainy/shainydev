@@ -11,3 +11,12 @@
 - [ ] Scrubbed scenes feel smooth; any cut or simplified motion is listed with a reason
 - [ ] Reduced-motion mode verified end to end
 - [ ] Contact form tested from the phone
+
+## Comments
+
+- 2026-10-02 (pass 1, simulated at 390px): Phones scroll much faster than desktop, so scroll-tied ("scrubbed") motion was swapped for motion that plays at its own pace once reached:
+  - Hero: no pinning on phones; the headline drifts apart and the name rises as the hero scrolls away. Headline moved lower to close the gap above the name.
+  - Services: frames stay stacked; each frame rises in and its demo plays by itself (about 2.6s) when it reaches the screen. Added the "What I can do for you" heading on phones.
+  - Process: each step's line draws and its text appears as that step comes into view.
+  - Work: more room above the Jarvis conversation so the orb doesn't overlap it.
+  Desktop is unchanged. Still to do: Shainy checks on a real phone (feel, speed, address-bar jumps, light mode, the contact form).

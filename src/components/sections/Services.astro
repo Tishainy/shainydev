@@ -10,6 +10,7 @@ const { build, automate, ai } = site.interludes;
 ---
 
 <section id="services" class="svc" data-services>
+  <h2 class="svc-heading">{heading}</h2>
   <div class="svc-viewport">
     <div class="svc-strip" data-svc-strip>
       {items.map((item, index) => (
@@ -125,6 +126,29 @@ const { build, automate, ai } = site.interludes;
   }
   .svc-hud {
     display: none;
+  }
+  .svc-heading {
+    margin: 0;
+    padding: 6rem 5vw 0;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 400;
+    font-size: clamp(1.6rem, 6vw, 2.2rem);
+    color: var(--color-muted);
+  }
+  /* In the film strip the same words show in the bottom caption, so the heading is kept for screen readers only. */
+  .svc:global(.is-strip) .svc-heading {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  /* On phones the demos play by themselves; the chat needs its typing dots for that. */
+  .svc:global(.is-autoplay) .chat-typing {
+    display: flex;
   }
 
   .svc-word {
