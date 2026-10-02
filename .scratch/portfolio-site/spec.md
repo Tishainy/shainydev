@@ -82,6 +82,17 @@ Lead offer: websites (the site itself is the proof). Draft one-liner: *"Websites
 
 > Ticketing note: deploy was moved into step 1 (walking skeleton is live on Vercel from day one), and the calm sections depend only on fonts + copy, not on hero approval. Launch polish (meta, share image, favicon, optional analytics) was added before the phone pass. See `issues/`.
 
+## Hero direction (ticket 05, agreed so far — 2026-10-02)
+
+The first animated hero (colour blobs, glass pills, giant gradient name) was rejected as "AI-looking". After still sketches in `/hero-lab`, the agreed direction is:
+
+- Calm navy page; nothing boxed.
+- Headline (kstoimenov-style placement, own words): "Websites, apps / *& automations* / that do the work / *for you.*" with a "Let's talk" pill at the end of the last line. Sans lines in Clash Display, italic lines in **Instrument Serif Italic** (light cobalt) — a 4th font, added for these words.
+- Giant "Shainy" bleeding off the bottom, letters filled with cobalt/cyan/violet light that follows the cursor.
+- **The dot of the i is a glowing glass orb** (placed from the font's own metrics); fades in, floats, leans toward the cursor, its shine turns to face it. No drop/bounce.
+- Faint background lines that fade out ~34px before every glyph, with two roaming spotlights brightening them. Line style still being chosen (a square grid read as "blueprints" and was rejected).
+- **Saved for later:** a glass magnifying lens that follows the cursor and magnifies what's under it (code kept in `hero-lab.astro`, `detail: 'lens'`).
+
 ## Open items
 
 - Contact form delivery mechanism
