@@ -42,11 +42,7 @@ const nameEnd = name.slice(iIndex + 1);
     /* Read by hero.ts when it draws the wave lines. */
     --hero-line: rgb(143 176 255 / 0.13);
     --hero-line-glow: rgb(196 214 255 / 0.8);
-    --hero-giant-fill:
-      radial-gradient(28% 70% at 16% 35%, #dbe6ff 0%, #7aa2ff 28%, transparent 70%),
-      radial-gradient(24% 70% at 78% 55%, #8ef0ff 0%, #3a8bff 35%, transparent 72%),
-      radial-gradient(30% 60% at 48% 90%, #8a6bff 0%, transparent 70%),
-      linear-gradient(90deg, #1d3fd6, #2f5bff 50%, #1a36c4);
+    --hero-giant-fill: var(--light-fill);
     position: relative;
     height: 100svh;
     min-height: 38rem;
@@ -190,11 +186,6 @@ const nameEnd = name.slice(iIndex + 1);
   :global(:root[data-theme='light']) .hero {
     --hero-line: rgb(47 91 224 / 0.16);
     --hero-line-glow: rgb(47 91 224 / 0.6);
-    --hero-giant-fill:
-      radial-gradient(28% 70% at 16% 35%, #7aa2ff 0%, #3d6bff 30%, transparent 70%),
-      radial-gradient(24% 70% at 78% 55%, #1fb6e0 0%, #2f6bff 38%, transparent 72%),
-      radial-gradient(30% 60% at 48% 90%, #6b3fd6 0%, transparent 70%),
-      linear-gradient(90deg, #1a36c4, #2f5be0 50%, #1730b0);
   }
 
   @media (max-width: 767px) {

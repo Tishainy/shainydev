@@ -4,74 +4,123 @@ import { SplitText } from 'gsap/SplitText';
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
 
+// Clash Display's ascent and descent, as fractions of the font size (from the font's own metrics).
+const ASCENT = 0.89;
+const DESCENT = 0.25;
+
 /**
- * Services: the big sticky word changes to match the service panel in view.
- * Letters of the old word slide up and out, the new word's letters rise in,
- * and the glass orb (the full stop) glides to the end of the new word.
+ * Services: on desktop with motion, a pinned full-screen scene. Scrolling plays the services
+ * like a film: the summary lines slide out sideways, the text fades up, the big word's letters
+ * swap, the glass orb glides to the new word's end, and the next service slides in.
+ * Elsewhere the markup stays a plain, readable stack.
  */
 export function initServices() {
   const section = document.querySelector<HTMLElement>('[data-services]');
   if (!section) return;
-
-  const words = gsap.utils.toArray<HTMLElement>('[data-svc-word]', section);
-  const ghost = section.querySelector<HTMLElement>('[data-svc-ghost]')!;
+  const stage = section.querySelector<HTMLElement>('[data-svc-stage]')!;
   const orb = section.querySelector<HTMLElement>('[data-svc-orb]')!;
-  const panels = gsap.utils.toArray<HTMLElement>('[data-svc-panel]', section);
-  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const states = gsap.utils.toArray<HTMLElement>('[data-svc-state]', section);
 
-  // Words are plain text in a single colour, so splitting them into letters is safe.
-  const letters = words.map((word) => SplitText.create(word, { type: 'chars' }).chars as HTMLElement[]);
-  let active = 0;
+  const mm = gsap.matchMedia();
+  mm.add('(min-width: 768px) and (prefers-reduced-motion: no-preference)', () => {
+    section.classList.add('is-staged');
 
-  function show(next: number) {
-    if (next === active) return;
-    const prev = active;
-    active = next;
-    const down = next > prev;
+    const words = states.map((s) => s.querySelector<HTMLElement>('[data-svc-word]')!);
+    const splits = words.map((w) => SplitText.create(w, { type: 'chars', charsClass: 'svc-char' }));
+    const chars = splits.map((s) => s.chars as HTMLElement[]);
+    const lines = states.map((s) => gsap.utils.toArray<HTMLElement>('[data-svc-line]', s));
+    const fades = states.map((s) => gsap.utils.toArray<HTMLElement>('[data-svc-fade]', s));
 
-    // Where the orb is now, before the width changes.
-    const before = orb.getBoundingClientRect().left;
-    ghost.textContent = words[next].textContent;
-    const after = orb.getBoundingClientRect().left;
-
-    words.forEach((word, i) => word.classList.toggle('is-active', i === next || i === prev));
-
-    if (reduce) {
-      words[prev].classList.remove('is-active');
-      return;
+    // Give each letter the slice of the light that falls on it, so the whole word reads as one fill.
+    // Uses layout offsets, which ignore the letters' slide transforms.
+    function paintLetters() {
+      words.forEach((word, i) => {
+        chars[i].forEach((char) => {
+          char.style.backgroundSize = `${word.offsetWidth}px ${word.offsetHeight}px`;
+          char.style.backgroundPosition = `${-char.offsetLeft}px ${-char.offsetTop}px`;
+        });
+      });
     }
 
-    gsap.killTweensOf([...letters[prev], ...letters[next], orb]);
-    gsap.to(letters[prev], {
-      yPercent: down ? -110 : 110,
-      duration: 0.5,
-      ease: 'power3.in',
-      stagger: 0.025,
-      onComplete: () => {
-        if (active !== prev) words[prev].classList.remove('is-active');
+    // Where the orb sits as each word's full stop: just after the last letter, resting on the baseline.
+    function orbSpot(i: number) {
+      const stageBox = stage.getBoundingClientRect();
+      const wordBox = words[i].getBoundingClientRect();
+      const last = chars[i][chars[i].length - 1];
+      const cs = getComputedStyle(words[i]);
+      const fontSize = parseFloat(cs.fontSize);
+      const lineHeight = parseFloat(cs.lineHeight);
+      // Within a line box, the baseline sits half the leading plus the ascent below its top.
+      const baseline = wordBox.top + last.offsetTop + (lineHeight + (ASCENT - DESCENT) * fontSize) / 2;
+      return {
+        x: wordBox.left - stageBox.left + last.offsetLeft + last.offsetWidth + fontSize * 0.05,
+        y: baseline - stageBox.top - fontSize * 0.16,
+      };
+    }
+
+    // Starting state: only the first service shows.
+    states.forEach((_, i) => {
+      if (i === 0) return;
+      gsap.set(lines[i], { autoAlpha: 0 });
+      gsap.set(fades[i], { autoAlpha: 0 });
+      gsap.set(chars[i], { yPercent: 110 });
+    });
+
+    const tl = gsap.timeline({
+      defaults: { ease: 'power2.inOut' },
+      scrollTrigger: {
+        trigger: section,
+        start: 'top top',
+        end: () => `+=${(states.length - 1) * 130 + 60}%`,
+        scrub: 1,
+        pin: true,
+        anticipatePin: 1,
+        invalidateOnRefresh: true,
+        snap: { snapTo: 'labelsDirectional', duration: { min: 0.3, max: 0.9 }, delay: 0.15, ease: 'power1.inOut' },
+        onRefresh: paintLetters,
       },
     });
-    gsap.fromTo(
-      letters[next],
-      { yPercent: down ? 110 : -110 },
-      { yPercent: 0, duration: 0.8, ease: 'expo.out', stagger: 0.035, delay: 0.25 },
-    );
-    // The full stop slides from its old spot to the end of the new word.
-    gsap.fromTo(orb, { x: before - after }, { x: 0, duration: 1, ease: 'expo.inOut', delay: 0.1 });
-  }
 
-  panels.forEach((panel, i) => {
-    ScrollTrigger.create({
-      trigger: panel,
-      start: 'top 55%',
-      end: 'bottom 55%',
-      onEnter: () => show(i),
-      onEnterBack: () => show(i),
+    tl.set(orb, { x: () => orbSpot(0).x, y: () => orbSpot(0).y }, 0);
+    tl.addLabel('s0', 0);
+
+    // Each change: hold the current service for a moment, then play the swap.
+    states.forEach((_, i) => {
+      if (i === 0) return;
+      const from = i - 1;
+      const at = (i - 1) * 2 + 1;
+
+      tl.to(lines[from], { xPercent: (k) => (k % 2 === 0 ? -16 : 16), autoAlpha: 0, duration: 0.5, stagger: 0.08 }, at)
+        .to(fades[from], { y: -30, autoAlpha: 0, duration: 0.45, stagger: 0.05 }, at)
+        .to(chars[from], { yPercent: -110, duration: 0.5, stagger: 0.03, ease: 'power2.in' }, at + 0.05)
+        .to(orb, { x: () => orbSpot(i).x, y: () => orbSpot(i).y, duration: 0.9 }, at + 0.1)
+        .fromTo(chars[i], { yPercent: 110 }, { yPercent: 0, duration: 0.55, stagger: 0.035, ease: 'power3.out' }, at + 0.4)
+        .fromTo(
+          lines[i],
+          { xPercent: (k) => (k % 2 === 0 ? 16 : -16), autoAlpha: 0 },
+          { xPercent: 0, autoAlpha: 1, duration: 0.55, stagger: 0.08 },
+          at + 0.45,
+        )
+        .fromTo(fades[i], { y: 30, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.5, stagger: 0.06 }, at + 0.5)
+        .addLabel(`s${i}`, at + 1);
     });
+    // A last moment on the final service before the scene lets go.
+    tl.to({}, { duration: 0.6 });
+
+    paintLetters();
+    document.fonts?.ready.then(() => {
+      paintLetters();
+      ScrollTrigger.refresh();
+    });
+
+    return () => {
+      splits.forEach((s) => s.revert());
+      section.classList.remove('is-staged');
+    };
   });
 
   // The orb's highlight turns to face the cursor, like the one in the hero.
-  if (!reduce) {
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
     const shine = { x: 34, y: 28 };
     const pointer = { x: 0, y: 0, active: false };
     addEventListener('pointermove', (e) => {
@@ -82,7 +131,7 @@ export function initServices() {
     gsap.ticker.add(() => {
       if (!pointer.active) return;
       const r = orb.getBoundingClientRect();
-      if (r.bottom < 0 || r.top > innerHeight) return;
+      if (!r.width || r.bottom < 0 || r.top > innerHeight) return;
       const dx = pointer.x - (r.left + r.width / 2);
       const dy = pointer.y - (r.top + r.height / 2);
       const dist = Math.hypot(dx, dy) || 1;

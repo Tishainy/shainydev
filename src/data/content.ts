@@ -43,6 +43,7 @@ export const site = {
         name: 'Build',
         interlude: 'build',
         summary: 'Websites & apps',
+        summaryLines: ['Websites', '& apps'],
         description:
           'A website that looks like you and works on every phone. Or a web app that handles the one job your business keeps doing by hand.',
         list: ['Business websites', 'Landing pages', 'Website redesigns', 'Web apps'],
@@ -51,6 +52,7 @@ export const site = {
         name: 'Automate',
         interlude: 'automate',
         summary: 'Workflows, data & email',
+        summaryLines: ['Workflows,', 'data & email'],
         description:
           "If you do the same task every week, a computer can probably do it for you. I set that up, from booking confirmations to monthly reports, so you get your hours back.",
         list: ['Workflow automation', 'Data clean-up & reports', 'Email design', 'Automated email flows'],
@@ -59,6 +61,7 @@ export const site = {
         name: 'AI',
         interlude: 'ai',
         summary: 'Assistants & smart features',
+        summaryLines: ['Assistants &', 'smart features'],
         description:
           'AI that actually helps: an assistant that answers your customers, or a tool that reads and sorts the paperwork for you.',
         list: ['Chatbots & assistants', 'AI features in your existing tools', 'Document & text processing'],
