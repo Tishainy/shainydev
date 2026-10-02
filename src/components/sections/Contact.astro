@@ -6,6 +6,8 @@ import { site } from '../../data/content';
 
 const { headingLines, replyNote, lead, form, altHeading, emailLabel, linkedinLabel } = site.contact;
 const { intro, bio, languagesLabel, languages, photo, photoAlt } = site.about;
+// Exported at exactly these widths so each screen gets a sharp image without browser resizing.
+const photoSizes = [240, 360, 480];
 ---
 
 <section id="contact" class="contact">
@@ -20,8 +22,17 @@ const { intro, bio, languagesLabel, languages, photo, photoAlt } = site.about;
       <span class="contact-photo">
         {photo ? (
           <picture>
-            <source srcset={photo.replace(/\.jpe?g$/, '.webp')} type="image/webp" />
-            <img src={photo} alt={photoAlt} width="480" height="480" loading="lazy" decoding="async" />
+            <source type="image/webp" sizes="7.5rem" srcset={photoSizes.map((w) => `${photo}-${w}.webp ${w}w`).join(', ')} />
+            <img
+              src={`${photo}-240.jpg`}
+              srcset={photoSizes.map((w) => `${photo}-${w}.jpg ${w}w`).join(', ')}
+              sizes="7.5rem"
+              alt={photoAlt}
+              width="240"
+              height="240"
+              loading="lazy"
+              decoding="async"
+            />
           </picture>
         ) : (
           <span class="contact-mono" aria-hidden="true">S</span>

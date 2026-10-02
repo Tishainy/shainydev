@@ -179,8 +179,8 @@ export const site = {
     ],
     languagesLabel: 'I speak',
     languages: ['English', 'Dutch', 'Papiamentu', 'a bit of Spanish'],
-    // The portrait (a WebP sits next to it with the same name); empty shows a lit monogram instead.
-    photo: '/images/shainy.jpg',
+    // The portrait's file base name: /images/shainy-240|360|480.webp|jpg. Empty shows a lit monogram instead.
+    photo: '/images/shainy',
     photoAlt: 'Portrait of Shainy',
   },
 
