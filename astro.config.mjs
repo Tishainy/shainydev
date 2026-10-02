@@ -4,9 +4,12 @@ import { defineConfig, fontProviders } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 import { SITE_URL } from './site.config.mjs';
 
+import vercel from '@astrojs/vercel';
+
 // https://astro.build/config
 export default defineConfig({
   site: SITE_URL,
+
   // Fonts are downloaded at build time and served from the site itself.
   fonts: [
     {
@@ -47,7 +50,10 @@ export default defineConfig({
       fallbacks: ['sans-serif'],
     },
   ],
+
   vite: {
     plugins: [tailwindcss()]
-  }
+  },
+
+  adapter: vercel()
 });

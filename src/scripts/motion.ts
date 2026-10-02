@@ -6,6 +6,7 @@ import { initHero } from './hero';
 import { initServices } from './services';
 import { initWork } from './work';
 import { initProcessAndAbout } from './process';
+import { initContact } from './contact';
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
 
@@ -74,6 +75,7 @@ initServices();
 initWork();
 initProcessAndAbout();
 startReveals();
+initContact();
 
 // Web fonts change text metrics; recalculate trigger positions once they're in.
 document.fonts?.ready.then(() => ScrollTrigger.refresh());

@@ -186,6 +186,9 @@ export const site = {
 
   contact: {
     heading: "Let's build something",
+    headingLines: ["Let's build", 'something.'],
+    // The personal touch that used to be the About section.
+    replyNote: "I'll be the one reading your message, and replying to it.",
     lead: "Tell me a bit about your business and what you need. I'll get back to you within 48 hours.",
     form: {
       nameLabel: 'Your name',
@@ -203,6 +206,10 @@ export const site = {
       sending: 'Sending…',
       success: "Thanks! Your message is on its way. I'll get back to you within 48 hours.",
       error: "Your message didn't send. Check your connection and try again, or email me directly.",
+      missing: 'Please add your name, your email and a short message.',
+      badEmail: "That email address doesn't look right. Could you check it?",
+      // Shown until email delivery is connected (Resend needs the domain, ticket 15).
+      notConnected: "The form isn't switched on just yet. Please email me at shainydev@gmail.com and I'll reply within 48 hours.",
     },
     altHeading: 'Rather not fill in a form?',
     emailLabel: 'Email me',
