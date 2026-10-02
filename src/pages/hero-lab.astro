@@ -1,15 +1,14 @@
 ---
-// Ticket 05, round 3: back to C's simplicity. Calm navy page, staggered headline,
-// and all the colour inside the giant name. The three sketches differ only in the fill.
-// Hidden (noindex), not linked. Open one alone with /hero-lab/#f, #g or #h.
+// Ticket 05, round 4: A's slogan, line placement and type on H's calm navy page,
+// with the light-filled giant name. The two sketches differ only in the italic lines.
+// Hidden (noindex), not linked. Open one alone with /hero-lab/#i or #j.
 import '../styles/global.css';
 import { Font } from 'astro:assets';
 
 const nav = ['Services', 'Work', 'Process', 'About'];
 const variants = [
-  { id: 'f', name: 'F. Reeded light', fill: 'fill-reeds' },
-  { id: 'g', name: 'G. Glass blocks', fill: 'fill-blocks' },
-  { id: 'h', name: 'H. Pure light', fill: 'fill-light' },
+  { id: 'i', name: 'I. Italics in light cobalt', fill: 'fill-light', italics: 'it-solid' },
+  { id: 'j', name: 'J. Italics filled with the light', fill: 'fill-light', italics: 'it-lit' },
 ];
 ---
 
@@ -38,10 +37,11 @@ const variants = [
           </nav>
         </header>
 
-        <h1 class="headline">
-          <span class="l l1">I build the tools</span>
-          <span class="l l2 it">your business</span>
-          <span class="l l3">wishes it had.<a class="pill" href="#">Let's talk</a></span>
+        <h1 class={`headline ${variant.italics}`}>
+          <span class="l l1">Websites, apps</span>
+          <span class="l l2 it">&amp; automations</span>
+          <span class="l l3">that do the work</span>
+          <span class="l l4"><span class="it">for you.</span><a class="pill" href="#">Let's talk</a></span>
         </h1>
 
         <p class={`giant ${variant.fill}`} aria-hidden="true">Shainy</p>
@@ -50,7 +50,7 @@ const variants = [
 
     <script is:inline>
       const only = location.hash.slice(1);
-      if (['f', 'g', 'h'].includes(only)) {
+      if (['i', 'j'].includes(only)) {
         document.querySelectorAll('.sketch').forEach((el) => { if (el.id !== only) el.hidden = true; });
       }
     </script>
@@ -79,27 +79,44 @@ const variants = [
       .mark { font-family: var(--font-clash); font-weight: 600; font-size: 1.35rem; letter-spacing: -0.02em; }
       .top-nav { flex: 1; display: flex; justify-content: flex-end; gap: clamp(1.5rem, 4vw, 3.5rem); font-weight: 500; opacity: 0.9; }
 
+      /* A's placement: a centred block, each line pushed to its own spot. */
       .headline {
-        position: absolute; left: 6%; top: 18%; margin: 0; z-index: 2;
-        font-family: var(--font-clash); font-weight: 500; letter-spacing: -0.035em; line-height: 0.98;
-        font-size: clamp(2.6rem, 5.2vw, 5.4rem);
+        position: absolute; left: 50%; top: 15%; translate: -50% 0; margin: 0; z-index: 2;
+        width: min(64rem, 90vw);
+        font-family: var(--font-clash); font-weight: 500; letter-spacing: -0.035em; line-height: 0.95;
+        font-size: clamp(2.8rem, 6.3vw, 6.2rem);
       }
       .l { display: block; white-space: nowrap; }
-      .it { font-family: var(--serif); font-style: italic; font-weight: 400; letter-spacing: -0.01em; color: #8fb0ff; }
-      .l2 { padding-left: 22%; font-size: 1.16em; }
-      .l3 { padding-left: 9%; display: flex; align-items: center; gap: 0.45em; }
+      .it { font-family: var(--serif); font-style: italic; font-weight: 400; letter-spacing: -0.01em; }
+      .l1 { padding-left: 2%; }
+      .l2 { padding-left: 40%; font-size: 1.1em; }
+      .l3 { padding-left: 0; }
+      .l4 { padding-left: 33%; display: flex; align-items: center; gap: 0.4em; font-size: 1.1em; }
+
+      .it-solid .it { color: #8fb0ff; }
+      /* The italic words carry the same light as the giant name. */
+      .it-lit .it {
+        background:
+          radial-gradient(60% 120% at 20% 30%, #dbe6ff 0%, #7aa2ff 40%, transparent 80%),
+          radial-gradient(50% 120% at 85% 70%, #8ef0ff 0%, #3a8bff 45%, transparent 85%),
+          linear-gradient(90deg, #5b84ff, #8a6bff);
+        -webkit-background-clip: text; background-clip: text; color: transparent;
+        padding: 0 0.08em 0.18em 0;
+        margin-bottom: -0.18em;
+        display: inline-block;
+      }
 
       .pill {
         display: inline-flex; align-items: center;
-        font-family: var(--font-hanken); font-size: 1.1rem; letter-spacing: 0; font-weight: 600;
+        font-family: var(--font-hanken); font-size: 1.1rem; letter-spacing: 0; font-weight: 600; font-style: normal;
         padding: 0.85rem 1.7rem; border-radius: 999px; border: 1.5px solid rgb(243 246 255 / 0.6);
       }
 
       /* The giant name carries all the colour. */
       .giant {
-        position: absolute; left: -1%; right: -1%; bottom: -7%; margin: 0;
+        position: absolute; left: -1%; right: -1%; bottom: -6%; margin: 0;
         font-family: var(--font-clash); font-weight: 600; letter-spacing: -0.055em; line-height: 0.8;
-        font-size: 34vw; white-space: nowrap; text-align: center;
+        font-size: 29vw; white-space: nowrap; text-align: center;
         -webkit-background-clip: text; background-clip: text; color: transparent;
       }
 
@@ -139,9 +156,9 @@ const variants = [
 
       @media (max-width: 767px) {
         .top-nav { display: none; }
-        .headline { top: 16%; font-size: 10.5vw; }
-        .l2 { padding-left: 14%; }
-        .l3 { flex-wrap: wrap; padding-left: 5%; row-gap: 1.2rem; }
+        .headline { top: 15%; font-size: 11vw; }
+        .l2 { padding-left: 22%; }
+        .l4 { padding-left: 12%; flex-wrap: wrap; row-gap: 1.2rem; }
         .giant { font-size: 38vw; bottom: -3%; }
       }
     </style>
