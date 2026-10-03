@@ -1,0 +1,272 @@
+---
+// Phone redesign sketches (ticket 14). Hidden (noindex), not linked. Designed for a phone screen;
+// on a laptop it shows as a phone-width column. Open one alone with /mobile-lab/#h1 … #s2.
+import '../styles/global.css';
+import { Font } from 'astro:assets';
+import { site } from '../data/content';
+
+const { lines, cta } = site.hero;
+const services = site.services.items;
+const { build, automate, ai } = site.interludes;
+
+// Finished-state demos for the sketches (on the real site they animate).
+const esc = (t: string) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+function demoHtml(kind: string) {
+  if (kind === 'build')
+    return `<div class="m"><div class="m-nav"><span class="m-logo">${esc(build.demoBusiness)}</span><span>Services · Book</span></div>
+      <p class="m-h">${esc(build.demoHeadline)}</p><span class="m-btn">${esc(build.demoButton)}</span><div class="m-img"></div></div>`;
+  if (kind === 'automate')
+    return `<div class="flow">${automate.steps.map((s) => `<span class="flow-dot"></span><span>${esc(s)}</span>`).join('')}</div>
+      <div class="mail"><b>${esc(automate.email.subject)}</b>${esc(automate.email.greeting)} ${esc(automate.email.body)}</div>`;
+  return `<div class="chat"><p class="bub them">${esc(ai.question)}</p><p class="bub bot">${esc(ai.answer)}</p></div>`;
+}
+---
+
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Mobile lab — ShainyDev</title>
+    <Font cssVariable="--font-clash" preload />
+    <Font cssVariable="--font-hanken" preload />
+    <Font cssVariable="--font-instrument" preload />
+  </head>
+  <body>
+    <main class="phone">
+      <!-- ================= Hero 1: the name stacked ================= -->
+      <section class="sk hero hero-1" id="h1" data-waves>
+        <canvas class="wave-lines" aria-hidden="true" data-base></canvas>
+        <canvas class="wave-lines wave-lines-glow" aria-hidden="true" data-glow></canvas>
+        <p class="tag">H1 · Name stacked</p>
+        <p class="bar"><span class="mark">ShainyDev</span></p>
+        <h1 class="hl hl-1">
+          {lines.map((l, i) => <span class:list={['l', `l${i + 1}`, { it: l.italic }]}>{l.text}</span>)}
+        </h1>
+        <a class="pill pill-1" href="#">{cta}</a>
+        <p class="stack" aria-hidden="true">
+          <span class="stack-a">Sha<span class="dot-i">i<span class="mini-orb glass-orb"></span></span></span>
+          <span class="stack-b">ny</span>
+        </p>
+      </section>
+
+      <!-- ================= Hero 2: the orb takes centre stage ================= -->
+      <section class="sk hero hero-2" id="h2" data-waves>
+        <canvas class="wave-lines" aria-hidden="true" data-base></canvas>
+        <canvas class="wave-lines wave-lines-glow" aria-hidden="true" data-glow></canvas>
+        <p class="tag">H2 · The orb leads</p>
+        <p class="bar"><span class="mark">ShainyDev</span></p>
+        <h1 class="hl hl-2">
+          {lines.map((l, i) => <span class:list={['l', `l${i + 1}`, { it: l.italic }]}>{l.text}</span>)}
+        </h1>
+        <span class="big-orb glass-orb" aria-hidden="true"></span>
+        <p class="hi">Hi, I'm Shainy.</p>
+        <a class="pill pill-2" href="#">{cta}</a>
+      </section>
+
+      <!-- ================= Hero 3: the name runs up the edge ================= -->
+      <section class="sk hero hero-3" id="h3" data-waves>
+        <canvas class="wave-lines" aria-hidden="true" data-base></canvas>
+        <canvas class="wave-lines wave-lines-glow" aria-hidden="true" data-glow></canvas>
+        <p class="tag">H3 · Name up the edge</p>
+        <p class="bar"><span class="mark">ShainyDev</span></p>
+        <h1 class="hl hl-3">
+          {lines.map((l, i) => <span class:list={['l', `l${i + 1}`, { it: l.italic }]}>{l.text}</span>)}
+        </h1>
+        <a class="pill pill-3" href="#">{cta}</a>
+        <p class="spine" aria-hidden="true">Shainy</p>
+      </section>
+
+      <!-- ================= Services 1: swipe sideways ================= -->
+      <section class="sk svc svc-1" id="s1">
+        <p class="tag">S1 · Swipe sideways</p>
+        <h2 class="kicker">What I can do for you</h2>
+        <div class="swipe" data-swipe>
+          {services.map((item) => (
+            <article class="panel">
+              <p class="svc-word">{item.name}</p>
+              <p class="svc-sum">{item.summary}</p>
+              <p class="svc-desc">{item.description}</p>
+              <div class="demo" set:html={demoHtml(item.interlude)} />
+            </article>
+          ))}
+        </div>
+        <p class="dots" data-dots>{services.map((_, i) => <span class:list={['d', { on: i === 0 }]}></span>)}</p>
+        <p class="hint">Swipe to see more</p>
+      </section>
+
+      <!-- ================= Services 2: tap to open ================= -->
+      <section class="sk svc svc-2" id="s2">
+        <p class="tag">S2 · Tap a service</p>
+        <h2 class="kicker">What I can do for you</h2>
+        <div class="index">
+          {services.map((item, i) => (
+            <details class="row" open={i === 0} data-row>
+              <summary class="row-word">{item.name}<span class="row-orb glass-orb" aria-hidden="true"></span></summary>
+              <div class="row-body">
+                <p class="svc-sum">{item.summary}</p>
+                <p class="svc-desc">{item.description}</p>
+                <div class="demo" set:html={demoHtml(item.interlude)} />
+              </div>
+            </details>
+          ))}
+        </div>
+      </section>
+    </main>
+
+    <script is:inline>
+      const only = location.hash.slice(1);
+      if (only) document.querySelectorAll('.sk').forEach((el) => { if (el.id !== only) el.hidden = true; });
+    </script>
+
+    <script>
+      import { startWaveLines } from '../scripts/wave-lines';
+      // Waves tuned for a phone: closer, gentler lines with more waves across the narrow width.
+      document.querySelectorAll<HTMLElement>('[data-waves]').forEach((section) => {
+        if (section.hidden) return;
+        startWaveLines(section, section.querySelector('[data-base]')!, section.querySelector('[data-glow]')!, {
+          spacing: 24,
+          amplitude: 0.42,
+          frequency: 3.2,
+          halo: 20,
+        });
+      });
+      // S1: dots follow the swipe.
+      const swipe = document.querySelector<HTMLElement>('[data-swipe]');
+      const dots = document.querySelectorAll('[data-dots] .d');
+      swipe?.addEventListener('scroll', () => {
+        const i = Math.round(swipe.scrollLeft / swipe.clientWidth);
+        dots.forEach((d, k) => d.classList.toggle('on', k === i));
+      });
+      // S2: one service open at a time.
+      document.querySelectorAll<HTMLDetailsElement>('[data-row]').forEach((row, _, all) => {
+        row.addEventListener('toggle', () => {
+          if (row.open) all.forEach((other) => other !== row && (other.open = false));
+        });
+      });
+    </script>
+
+    <style is:global>
+      * { box-sizing: border-box; }
+      body { margin: 0; background: #2a2d36; color: var(--color-fg); font-family: var(--font-body); }
+      .phone { max-width: 430px; margin: 0 auto; background: var(--color-bg); }
+      .sk { position: relative; min-height: 100svh; overflow: clip; border-bottom: 1px dashed var(--color-line); }
+      .tag {
+        position: absolute; right: 0.6rem; bottom: 0.6rem; z-index: 9; margin: 0;
+        font-size: 0.7rem; padding: 0.25rem 0.5rem; border-radius: 0.35rem; background: rgb(255 255 255 / 0.12);
+      }
+      .bar { position: absolute; left: 0; right: 0; top: 0; margin: 0; padding: 1rem 5vw; z-index: 3; }
+      .mark { font-family: var(--font-clash); font-weight: 600; letter-spacing: -0.02em; font-size: 1.05rem; }
+      .hero .wave-lines { z-index: 0; }
+
+      .hl { position: relative; z-index: 2; margin: 0; font-family: var(--font-clash); font-weight: 500; letter-spacing: -0.035em; line-height: 0.98; }
+      .l { display: block; white-space: nowrap; }
+      .it { font-family: var(--font-serif); font-style: italic; font-weight: 400; letter-spacing: -0.01em; font-size: 1.1em; }
+      .pill {
+        position: absolute; z-index: 2; padding: 0.75rem 1.4rem; border-radius: 999px;
+        border: 1.5px solid color-mix(in srgb, var(--color-fg) 55%, transparent); color: var(--color-fg);
+        font-weight: 600; font-size: 1rem; text-decoration: none;
+      }
+      .lit { background: var(--light-fill); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+      /* --- H1 --- */
+      .hl-1 { position: absolute; left: 6vw; top: 15svh; font-size: clamp(2.4rem, 11vw, 3.2rem); }
+      .hl-1 .l2 { padding-left: 18%; }
+      .hl-1 .l4 { padding-left: 10%; }
+      .pill-1 { left: 6vw; top: calc(15svh + 13.2rem); }
+      .stack {
+        position: absolute; right: 4vw; bottom: 3svh; margin: 0; text-align: right; z-index: 1;
+        font-family: var(--font-clash); font-weight: 600; letter-spacing: -0.055em; line-height: 0.8;
+        font-size: min(36vw, 9.5rem);
+      }
+      .stack-a, .stack-b {
+        display: block;
+        background: var(--light-fill); -webkit-background-clip: text; background-clip: text; color: transparent;
+      }
+      .stack-b { padding-right: 8vw; }
+      .dot-i { position: relative; display: inline-block; }
+      .mini-orb { position: absolute; left: 0.045em; top: 0.03em; width: 0.15em; height: 0.15em; }
+      /* Hide the i's own dot behind a patch, as on the real hero. */
+      .dot-i::before { content: ''; position: absolute; left: 0.03em; top: 0.03em; width: 0.17em; height: 0.15em; background: var(--color-bg); }
+
+      /* --- H2 --- */
+      .hl-2 { position: absolute; left: 6vw; top: 13svh; font-size: clamp(2.4rem, 11vw, 3.2rem); }
+      .hl-2 .l2 { padding-left: 18%; }
+      .hl-2 .l4 { padding-left: 10%; }
+      .big-orb {
+        position: absolute; left: 50%; bottom: 17svh; width: 44vw; max-width: 12rem; aspect-ratio: 1; height: auto;
+        margin-left: min(-22vw, -6rem); font-size: min(275vw, 75rem); z-index: 1;
+      }
+      .hi { position: absolute; left: 0; right: 0; bottom: 9svh; margin: 0; text-align: center; z-index: 2;
+        font-family: var(--font-serif); font-style: italic; font-size: 1.7rem; }
+      .pill-2 { left: 6vw; top: calc(13svh + 13.2rem); }
+
+      /* --- H3 --- */
+      .hl-3 { position: absolute; left: 6vw; top: 22svh; font-size: clamp(2.2rem, 10vw, 3rem); }
+      .hl-3 .l2 { padding-left: 14%; }
+      .hl-3 .l4 { padding-left: 8%; }
+      .pill-3 { left: 6vw; top: calc(22svh + 12.4rem); }
+      /* Vertical text reading bottom-to-top along the right edge (writing-mode keeps its real size,
+         so it never widens the page the way a rotated element does). */
+      .spine {
+        position: absolute; right: -0.1em; bottom: 3svh; margin: 0; z-index: 1;
+        font-family: var(--font-clash); font-weight: 600; letter-spacing: -0.05em; line-height: 0.8;
+        font-size: min(22svh, 9rem); white-space: nowrap;
+        writing-mode: vertical-rl; transform: rotate(180deg);
+        background: var(--light-fill); -webkit-background-clip: text; background-clip: text; color: transparent;
+        opacity: 0.9;
+      }
+
+      /* --- Services, shared --- */
+      .kicker { margin: 0; padding: 4.5rem 6vw 1.2rem; font-family: var(--font-serif); font-style: italic; font-weight: 400; font-size: 1.6rem; color: var(--color-muted); }
+      .svc-word {
+        margin: 0; font-family: var(--font-clash); font-weight: 600; letter-spacing: -0.05em; line-height: 0.9; font-size: 3.4rem;
+        background: var(--light-fill); -webkit-background-clip: text; background-clip: text; color: transparent; justify-self: start; padding-right: 0.06em;
+      }
+      .svc-sum { margin: 0; font-family: var(--font-serif); font-style: italic; font-size: 1.7rem; line-height: 1.05; }
+      .svc-desc { margin: 0; font-size: 1rem; line-height: 1.5; color: color-mix(in srgb, var(--color-fg) 82%, transparent); }
+
+      /* --- S1: native sideways swipe, snapping to each service --- */
+      .swipe { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
+      .swipe::-webkit-scrollbar { display: none; }
+      .panel { flex: none; width: 100%; scroll-snap-align: start; display: grid; gap: 0.9rem; align-content: start; padding: 0 6vw 1rem; }
+      .dots { display: flex; gap: 0.5rem; justify-content: center; margin: 0.8rem 0 0; }
+      .d { width: 0.5rem; height: 0.5rem; border-radius: 50%; border: 1px solid var(--color-muted); }
+      .d.on { background: var(--color-accent); border-color: var(--color-accent); }
+      .hint { text-align: center; margin: 0.5rem 0 2rem; font-size: 0.8rem; color: var(--color-muted); }
+
+      /* --- S2: a typographic index; tap a word to open it --- */
+      .index { padding: 0 6vw 2rem; }
+      .row { border-top: 1px solid var(--color-line); }
+      .row:last-child { border-bottom: 1px solid var(--color-line); }
+      .row-word {
+        list-style: none; cursor: pointer; display: flex; align-items: baseline; gap: 0.1em; padding: 0.6rem 0;
+        font-family: var(--font-clash); font-weight: 600; letter-spacing: -0.05em; line-height: 0.95; font-size: 3.6rem;
+        color: color-mix(in srgb, var(--color-fg) 35%, transparent);
+      }
+      .row-word::-webkit-details-marker { display: none; }
+      .row[open] .row-word { background: var(--light-fill); -webkit-background-clip: text; background-clip: text; color: transparent; }
+      .row-orb { width: 0.16em; height: 0.16em; font-size: 3.6rem; display: none; }
+      .row[open] .row-orb { display: inline-block; }
+      .row-body { display: grid; gap: 0.8rem; padding: 0.2rem 0 1.4rem; }
+
+      /* --- Demos (finished state; on the real site they animate) --- */
+      .demo { margin-top: 0.4rem; }
+      .m { border: 1px solid var(--color-line); border-radius: 0.9rem; padding: 0.9rem; background: color-mix(in srgb, var(--color-fg) 3%, transparent); display: grid; gap: 0.6rem; }
+      .m-nav { display: flex; justify-content: space-between; font-size: 0.75rem; }
+      .m-logo { font-family: var(--font-serif); font-style: italic; font-size: 0.95rem; }
+      .m-h { margin: 0; font-family: var(--font-clash); font-weight: 600; letter-spacing: -0.03em; font-size: 1.3rem; }
+      .m-btn { justify-self: start; padding: 0.35rem 0.75rem; border-radius: 999px; background: var(--color-accent); color: var(--color-on-accent); font-size: 0.72rem; font-weight: 600; }
+      .m-img { height: 4.5rem; border-radius: 0.5rem; background: var(--light-fill); }
+      .flow { display: grid; grid-template-columns: auto 1fr; gap: 0.5rem 0.8rem; align-items: center; font-family: var(--font-clash); font-weight: 500; font-size: 0.9rem; }
+      .flow-dot { width: 0.6rem; height: 0.6rem; border-radius: 50%; background: var(--color-accent); }
+      .mail { margin-top: 0.4rem; border: 1px solid var(--color-line); border-radius: 0.7rem; padding: 0.7rem; font-size: 0.8rem; }
+      .mail b { display: block; font-family: var(--font-clash); font-size: 0.95rem; margin-bottom: 0.2rem; }
+      .chat { display: grid; gap: 0.5rem; }
+      .bub { margin: 0; max-width: 85%; padding: 0.6rem 0.85rem; border-radius: 1rem; font-size: 0.9rem; line-height: 1.35; }
+      .them { justify-self: end; background: var(--color-accent); color: var(--color-on-accent); border-bottom-right-radius: 0.3rem; }
+      .bot { justify-self: start; background: color-mix(in srgb, var(--color-fg) 9%, transparent); border-bottom-left-radius: 0.3rem; }
+    </style>
+  </body>
+</html>
+

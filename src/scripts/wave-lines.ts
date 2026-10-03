@@ -2,10 +2,15 @@ import gsap from 'gsap';
 
 // Lines are drawn a little larger than their container so they can drift without showing edges.
 export const BLEED = 64;
-// How far the lines' fade reaches out from each letter, in px.
-const HALO = 34;
-
 interface Options {
+  /** Distance between lines, in px (default 34). */
+  spacing?: number;
+  /** Multiplier for how tall the waves are (default 1). */
+  amplitude?: number;
+  /** Multiplier for how many waves fit across (default 1; narrow screens need more to look wavy). */
+  frequency?: number;
+  /** How far the lines' fade reaches out from each letter, in px (default 34). */
+  halo?: number;
   /** Elements whose transforms are switched off while measuring, so letters are traced at rest. */
   atRest?: () => HTMLElement[];
   /** Return false to skip a redraw (e.g. when the letters have been animated away). */
@@ -19,6 +24,10 @@ interface Options {
  */
 export function startWaveLines(container: HTMLElement, base: HTMLCanvasElement, glow: HTMLCanvasElement, options: Options = {}) {
   const reduce = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const HALO = options.halo ?? 34;
+  const SPACING = options.spacing ?? 34;
+  const AMP = options.amplitude ?? 1;
+  const FREQ = options.frequency ?? 1;
   const mask = document.createElement('canvas');
   const mctx = mask.getContext('2d')!;
 
@@ -99,9 +108,9 @@ export function startWaveLines(container: HTMLElement, base: HTMLCanvasElement, 
       ctx.lineWidth = 1;
       ctx.beginPath();
       // Gently undulating lines, each a little out of phase with the next.
-      for (let y = 0, row = 0; y < h + 40; y += 34, row++) {
-        for (let x = 0; x <= w; x += 8) {
-          const yy = y + Math.sin(x * 0.0042 + row * 0.38) * 18 + Math.sin(x * 0.0011 - row * 0.21) * 26;
+      for (let y = 0, row = 0; y < h + 40; y += SPACING, row++) {
+        for (let x = 0; x <= w; x += 6) {
+          const yy = y + (Math.sin(x * 0.0042 * FREQ + row * 0.38) * 18 + Math.sin(x * 0.0011 * FREQ - row * 0.21) * 26) * AMP;
           if (x === 0) ctx.moveTo(x, yy);
           else ctx.lineTo(x, yy);
         }
