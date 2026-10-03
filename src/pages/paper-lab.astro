@@ -189,11 +189,6 @@ const steps = [
         sync();
       });
 
-      // Live local time in Zoetermeer.
-      const clock = document.querySelector<HTMLElement>('[data-clock]')!;
-      const tick = () => (clock.textContent = new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Amsterdam' }).format(new Date()));
-      tick(); setInterval(tick, 30000);
-
       if (!reduce) {
         const lenis = new Lenis();
         lenis.on('scroll', ScrollTrigger.update);
