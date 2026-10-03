@@ -3,6 +3,7 @@
 // Hidden (noindex), not linked. Toggle the mode with the button; /paper-lab/#dark opens in dark.
 import '../styles/global.css';
 import { Font } from 'astro:assets';
+import { projects, media } from '../data/work';
 
 // Shainy's star: five separate shards (from her own logo SVG).
 const shards = [
@@ -114,65 +115,32 @@ const steps = [
       </div>
     </section>
 
-    <!-- ===================== WORK PREVIEW ===================== -->
+    <!-- ===================== WORK: posters slide past while the section holds ===================== -->
     <section class="work" id="work">
-      <header class="sec-head" data-up>
-        <p class="sec-no">Selected work</p>
-        <h2>Things I've <em>built</em>.</h2>
-      </header>
-      <div class="cases">
-        <article class="case" data-case="elsewhere">
-          <div class="case-media">
-            <div class="frame">
-              <p class="frame-bar"><span></span><span></span><span></span><em>elsewhere · travel</em></p>
-              <div class="frame-view">
-              <img class="shot" src="/images/work/elsewhere-home-1440.webp" srcset="/images/work/elsewhere-home-800.webp 800w, /images/work/elsewhere-home-1440.webp 1440w" sizes="(max-width: 767px) 92vw, 60vw" width="1440" height="900" alt="Elsewhere travel website, Home page" />
+      <div class="posters" data-posters>
+        <div class="poster-track" data-track>
+          <article class="poster po-intro">
+            <p class="sec-no">Selected work</p>
+            <h2>Things I've <em>built</em>.</h2>
+            <p class="po-hint">Scroll <span aria-hidden="true">→</span></p>
+          </article>
+          {projects.map((p, i) => (
+            <article class={`poster po-${p.id}`}>
+              <div class="po-media"><Fragment set:html={media(p.id)} /></div>
+              <div class="po-text">
+                <p class="po-kind">0{i + 1} · {p.kind} · {p.who}</p>
+                <h3>{p.name}</h3>
+                <p class="po-line">{p.line}</p>
               </div>
-            </div>
-          </div>
-          <div class="case-meta" data-up>
-            <p class="case-kind"><span class="pill">Website · Client</span><span class="pill pill-red">Launching soon</span></p>
-            <h3>Elsewhere</h3>
-            <p class="case-line">A travel agency site for trips planned around one person. Full-screen film, destination pages and quiet scroll motion.</p>
-            <ul class="case-did"><li>Design</li><li>Build</li><li>Motion</li><li>Destination pages</li></ul>
-          </div>
-        </article>
-        <article class="case case-flip" data-case="luna">
-          <div class="case-media">
-            <div class="stage">
-              <img class="phone" src="/images/work/luna-sage-phone.webp" width="409" height="837" alt="Luna &amp; Sage skincare webshop on a phone" />
-            </div>
-          </div>
-          <div class="case-meta" data-up>
-            <p class="case-kind"><span class="pill">Webshop · Design</span></p>
-            <h3>Luna &amp; Sage</h3>
-            <p class="case-line">A gentle, earthy webshop for a natural skincare brand. Designed phone-first, with soft product photography up front.</p>
-            <ul class="case-did"><li>Design</li><li>Mobile first</li><li>Webshop</li></ul>
-          </div>
-        </article>
-        <article class="case" data-case="jarvis">
-          <div class="case-media">
-            <div class="frame frame-dark">
-              <p class="frame-bar"><span></span><span></span><span></span><em>jarvis.py · home server</em></p>
-              <div class="frame-view term" data-term>
-              <p class="tl acc" data-tl>[voice] wake word "hey jarvis" detected</p>
-              <p class="tl " data-tl>[stt] 'remind me to call the client at three'</p>
-              <p class="tl " data-tl>[orchestrator] reminder scheduled for 15:00</p>
-              <p class="tl ok" data-tl>→ tts: "Alarm scheduled for 3 PM."</p>
-              <p class="tl dim" data-tl>[presence] desk zone: empty</p>
-              <p class="tl " data-tl>[presence] desk zone: person entered</p>
-              <p class="tl ok" data-tl>jarvis: "Welcome back. You have one reminder."</p>
-                <p class="tl cur" data-tl>&gt; <span class="caret"></span></p>
-              </div>
-            </div>
-          </div>
-          <div class="case-meta" data-up>
-            <p class="case-kind"><span class="pill">AI assistant · Personal</span></p>
-            <h3>Jarvis</h3>
-            <p class="case-line">A voice assistant that runs fully offline on my own server. It hears its name, sets reminders, and knows which part of the room you're in.</p>
-            <ul class="case-did"><li>Python</li><li>Speech to text</li><li>Local AI</li><li>Presence zones</li></ul>
-          </div>
-        </article>
+            </article>
+          ))}
+          <article class="poster po-next">
+            <Fragment set:html={star('po-star')} />
+            <h3>Your project <em>next?</em></h3>
+            <a class="po-btn" href="#talk">Let's talk</a>
+          </article>
+        </div>
+        <p class="po-count" aria-hidden="true"><span data-count>01</span> / 0{projects.length}</p>
       </div>
     </section>
 
@@ -273,15 +241,23 @@ const steps = [
         gsap.from('[data-step]', { y: 40, autoAlpha: 0, stagger: 0.15, ease: 'power2.out', scrollTrigger: { trigger: '.steps', start: 'top 80%', end: 'bottom 70%', scrub: 0.6 } });
         // Closing: the big star turns with the scroll.
         gsap.fromTo('.talk-star', { rotation: -40, scale: 0.7 }, { rotation: 30, scale: 1, ease: 'none', scrollTrigger: { trigger: '.talk', start: 'top bottom', end: 'bottom bottom', scrub: true } });
-        // Elsewhere: the screenshot drifts slightly inside its frame as you scroll past.
-        gsap.fromTo('.shot', { yPercent: -4, scale: 1.08 }, { yPercent: 4, scale: 1.08, ease: 'none', scrollTrigger: { trigger: '[data-case="elsewhere"]', start: 'top bottom', end: 'bottom top', scrub: true } });
-        gsap.from('[data-case="elsewhere"] .frame', { y: 50, autoAlpha: 0, duration: 1, ease: 'power3.out', scrollTrigger: { trigger: '[data-case="elsewhere"]', start: 'top 85%', toggleActions: 'play none none reverse' } });
-        // Luna & Sage: the phone rises a little faster than the page.
-        gsap.fromTo('.phone', { yPercent: 4 }, { yPercent: -4, ease: 'none', scrollTrigger: { trigger: '[data-case="luna"]', start: 'top bottom', end: 'bottom top', scrub: true } });
-        gsap.from('[data-case="luna"] .stage', { y: 50, autoAlpha: 0, duration: 1, ease: 'power3.out', scrollTrigger: { trigger: '[data-case="luna"]', start: 'top 85%', toggleActions: 'play none none reverse' } });
-        // Jarvis: the console lines arrive one by one, tied to the scroll.
-        gsap.from('[data-case="jarvis"] .frame', { y: 50, autoAlpha: 0, duration: 1, ease: 'power3.out', scrollTrigger: { trigger: '[data-case="jarvis"]', start: 'top 85%', toggleActions: 'play none none reverse' } });
-        gsap.fromTo('[data-tl]', { autoAlpha: 0, x: -10 }, { autoAlpha: 1, x: 0, stagger: 0.3, ease: 'none', scrollTrigger: { trigger: '[data-term]', start: 'top 80%', end: 'bottom 45%', scrub: 0.6 } });
+        // Work: the posters slide sideways while the section holds (desktop; phones get a vertical stack).
+        const barH = () => document.querySelector<HTMLElement>('.bar')!.offsetHeight;
+        const setBar = () => document.documentElement.style.setProperty('--bar', barH() + 'px');
+        setBar();
+        addEventListener('resize', setBar);
+        gsap.matchMedia().add('(min-width: 768px)', () => {
+          const track = document.querySelector<HTMLElement>('[data-track]')!;
+          const count = document.querySelector<HTMLElement>('[data-count]')!;
+          const dist = () => track.scrollWidth - innerWidth;
+          gsap.to(track, {
+            x: () => -dist(), ease: 'none',
+            scrollTrigger: {
+              trigger: '[data-posters]', start: () => 'top ' + barH(), end: () => '+=' + dist(), scrub: 0.8, pin: true, invalidateOnRefresh: true,
+              onUpdate: (st) => (count.textContent = '0' + Math.min(3, Math.max(1, Math.round(st.progress * 4 + 0.3)))),
+            },
+          });
+        });
 
         // The closing row of marks pops in one by one.
         gsap.from('.talk-mark', { scale: 0, duration: 0.6, stagger: 0.07, ease: 'back.out(2)', scrollTrigger: { trigger: '.talk', start: 'top 70%', toggleActions: 'play none none reverse' } });
@@ -297,6 +273,9 @@ const steps = [
         --line: #121110;
         --soft: rgb(18 17 16 / 0.06);
         --blend: multiply;
+        --sage: #b7c5a3;
+        --sage-ink: #34402b;
+        --night: #0b0c0f;
       }
       :root[data-mode='dark'] {
         --paper: #121110;
@@ -357,7 +336,7 @@ const steps = [
       .band-glyph { width: 0.55em; height: auto; }
 
       /* ---------- Sections ---------- */
-      section.svc, section.work, section.how { padding: 14svh 4vw; border-bottom: 1.5px solid var(--line); }
+      section.svc, section.how { padding: 14svh 4vw; border-bottom: 1.5px solid var(--line); }
       .sec-head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2.2fr); gap: 1rem 4vw; align-items: end; margin-bottom: 4rem; }
       .sec-no { margin: 0; font-size: 0.95rem; color: var(--mute); }
       .sec-head h2 { margin: 0; font: 600 clamp(2.4rem, 5.2vw, 5rem)/0.98 var(--font-clash); letter-spacing: -0.045em; }
@@ -372,38 +351,47 @@ const steps = [
       .svc-col ul { list-style: none; margin: 0.4rem 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.4rem; }
       .svc-col li { padding: 0.3rem 0.75rem; border: 1px solid color-mix(in srgb, var(--line) 40%, transparent); border-radius: 999px; font-size: 0.85rem; color: var(--mute); }
 
-      .cases { display: grid; gap: 12svh; }
-      .case { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr); gap: 2rem 4vw; align-items: center; }
-      .case-flip { grid-template-columns: minmax(0, 1fr) minmax(0, 1.65fr); }
-      .case-flip .case-media { order: 2; }
-      .case-media { display: grid; gap: 1rem; min-width: 0; }
-      .frame { border: 1.5px solid var(--line); border-radius: 1rem; overflow: hidden; background: var(--paper); box-shadow: 0.6rem 0.6rem 0 var(--ink); }
-      .frame-dark { background: #0b0c0f; box-shadow: 0.6rem 0.6rem 0 var(--red); }
-      .frame-bar { margin: 0; display: flex; align-items: center; gap: 0.45rem; padding: 0.7rem 1rem; border-bottom: 1.5px solid var(--line); font-size: 0.8rem; color: var(--mute); }
-      .frame-bar span { width: 0.65rem; height: 0.65rem; border-radius: 50%; border: 1.5px solid var(--line); }
-      .frame-bar span:first-child { background: var(--red); border-color: var(--red); }
-      .frame-bar em { margin-left: auto; font-style: normal; font-family: ui-monospace, 'Cascadia Code', Consolas, monospace; }
-      .frame-dark .frame-bar { color: #7b8194; border-color: #23262e; }
-      .frame-dark .frame-bar span { border-color: #3a3f4b; }
-      .frame-dark .frame-bar span:first-child { background: var(--red); border-color: var(--red); }
-      .frame-view { position: relative; aspect-ratio: 16 / 10; overflow: hidden; }
-      .stage { position: relative; aspect-ratio: 16 / 10; border: 1.5px solid var(--line); border-radius: 1rem; background: var(--ink); box-shadow: 0.6rem 0.6rem 0 var(--red); }
-      .phone { position: absolute; left: 50%; top: 6%; height: 88%; width: auto; translate: -50% 0; display: block; filter: drop-shadow(0 0.6rem 1rem rgb(0 0 0 / 0.3)); }
-      .shot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
-      .term { padding: 5% 5.5%; display: grid; align-content: start; gap: 0.75em; font: 400 clamp(0.72rem, 1.05vw, 1rem)/1.45 ui-monospace, 'Cascadia Code', Consolas, monospace; color: #d6dae6; }
+      /* ---------- Work: posters ---------- */
+      .work { border-bottom: 1.5px solid var(--line); }
+      .posters { position: relative; height: calc(100svh - var(--bar, 68px)); overflow: hidden; }
+      .poster-track { display: flex; gap: 1.5rem; height: 100%; padding: 2rem 4vw; width: max-content; }
+      .poster { position: relative; flex: none; width: min(78vw, 72rem); height: 100%; border-radius: 1.4rem; overflow: hidden; }
+      .po-intro { width: min(40vw, 34rem); display: grid; align-content: center; gap: 1.4rem; padding: 0 3vw 0 0; overflow: visible; }
+      .po-intro h2 { margin: 0; font: 600 clamp(2.4rem, 5.2vw, 5rem)/0.98 var(--font-clash); letter-spacing: -0.045em; }
+      .po-intro em { color: var(--red); }
+      .po-hint { margin: 0; font-weight: 600; color: var(--red); }
+      .po-media { position: absolute; inset: 0; }
+      .po-text { position: absolute; left: 0; right: 0; bottom: 0; padding: 2.4rem 2.6rem; display: grid; gap: 0.6rem; justify-items: start; }
+      .po-kind { margin: 0; font-size: 0.95rem; font-weight: 600; }
+      .po-text h3 { margin: 0; font: 600 clamp(3rem, 8vw, 8rem)/0.9 var(--font-clash); letter-spacing: -0.05em; }
+      .po-line { margin: 0; max-width: 40ch; line-height: 1.5; }
+      .po-elsewhere .po-text { color: #fbf8ef; background: linear-gradient(transparent, rgb(20 24 18 / 0.55)); padding-top: 8rem; }
+      .po-luna .m-luna { place-items: center end; padding-right: 9%; }
+      .po-luna .po-text { top: 0; right: 45%; align-content: end; color: var(--sage-ink); }
+      .po-jarvis .m-term { padding: 3.5% 4% 0; font-size: clamp(0.8rem, 1.15vw, 1.1rem); }
+      .po-jarvis .po-text { color: #f1ede4; }
+      :root[data-mode='dark'] .po-jarvis { box-shadow: inset 0 0 0 1.5px rgb(241 237 228 / 0.18); }
+      .po-next { width: min(48vw, 40rem); background: var(--red); color: #fff; display: grid; align-content: center; justify-items: start; gap: 1.6rem; padding: 3rem; }
+      .po-next h3 { margin: 0; font: 600 clamp(2.6rem, 5vw, 5rem)/0.95 var(--font-clash); letter-spacing: -0.045em; }
+      .po-star { width: 5rem; height: auto; }
+      .po-star .sh { fill: #fff; }
+      .po-btn { display: inline-flex; padding: 0.95rem 1.5rem; border-radius: 999px; background: #fff; color: var(--red); font-weight: 600; }
+      .po-count { position: absolute; right: 4vw; top: 2.6rem; margin: 0; padding: 0.4rem 0.8rem; border-radius: 999px; background: var(--paper); font-weight: 600; font-variant-numeric: tabular-nums; }
+      /* Project visuals (from src/data/work.ts). Each project keeps its own colours in both modes. */
+      .m-shot { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top; }
+      .m-luna { width: 100%; height: 100%; display: grid; place-items: center; background: var(--sage); }
+      .m-phone { height: 86%; width: auto; filter: drop-shadow(0 1rem 1.4rem rgb(52 64 43 / 0.35)); }
+      .m-term { width: 100%; height: 100%; padding: 4% 5%; display: grid; align-content: start; gap: 0.7em; background: var(--night); color: #d6dae6; font: 400 clamp(0.7rem, 1vw, 1rem)/1.45 ui-monospace, 'Cascadia Code', Consolas, monospace; }
+      .m-bar { margin: 0 0 0.8em; display: flex; align-items: center; gap: 0.45em; color: #6d7385; font-size: 0.85em; }
+      .m-bar span { width: 0.7em; height: 0.7em; border-radius: 50%; border: 1.5px solid #3a3f4b; }
+      .m-bar span:first-child { background: var(--red); border-color: var(--red); }
+      .m-bar em { margin-left: auto; font: inherit; font-style: normal; }
       .tl { margin: 0; }
       .tl.acc { color: #ff8a80; }
       .tl.ok { color: #9fe0a8; }
       .tl.dim { color: #5b6276; }
       .caret { display: inline-block; width: 0.6em; height: 1.1em; vertical-align: -0.2em; background: #d6dae6; animation: blink 1s steps(1) infinite; }
       @keyframes blink { 50% { opacity: 0; } }
-      .case-meta { display: grid; gap: 1rem; justify-items: start; }
-      .case-kind { margin: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
-      .pill-red { border-color: var(--red); color: var(--red); }
-      .case-meta h3 { margin: 0; font: 600 clamp(2.4rem, 4.4vw, 4.4rem)/0.95 var(--font-clash); letter-spacing: -0.045em; }
-      .case-line { margin: 0; max-width: 34ch; font-size: clamp(1.05rem, 1.3vw, 1.2rem); line-height: 1.5; color: var(--mute); }
-      .case-did { list-style: none; margin: 0.4rem 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.4rem 1.2rem; font-size: 0.9rem; }
-      .case-did li::before { content: '✦ '; color: var(--red); }
 
       .steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1.5px solid var(--line); }
       .step { padding: 1.6rem 1.4rem 2rem 0; display: grid; gap: 0.6rem; align-content: start; border-right: 1px solid color-mix(in srgb, var(--line) 25%, transparent); }
@@ -435,12 +423,19 @@ const steps = [
         .hero-foot { grid-template-columns: minmax(0, 1fr); }
         .scroll-cue { display: none; }
         .sec-head { grid-template-columns: minmax(0, 1fr); }
-        .svc-grid, .case, .case-flip { grid-template-columns: minmax(0, 1fr); }
-        .case-flip .case-media { order: 0; }
-        .cases { gap: 9svh; }
-        .frame { box-shadow: 0.35rem 0.35rem 0 var(--ink); }
-        .frame-dark, .stage { box-shadow: 0.35rem 0.35rem 0 var(--red); }
-        .stage { aspect-ratio: 4 / 3.4; }
+        .svc-grid { grid-template-columns: minmax(0, 1fr); }
+        .posters { height: auto; overflow: visible; }
+        .poster-track { flex-direction: column; width: auto; padding: 0 4vw 4rem; gap: 1.2rem; }
+        .poster { width: 100%; height: auto; aspect-ratio: 3 / 4.4; }
+        .po-intro, .po-next { width: 100%; aspect-ratio: auto; padding: 14svh 0 2rem; }
+        .po-next { padding: 2.4rem 1.6rem; }
+        .po-count { display: none; }
+        .po-text { padding: 1.6rem; }
+        .po-luna { aspect-ratio: 3 / 5.3; }
+        .po-luna .m-luna { place-items: start center; padding: 8% 0 0; }
+        .po-luna .m-phone { height: 50%; }
+        .po-luna .po-text { right: 0; top: auto; }
+        .po-jarvis .m-term { font-size: 0.72rem; }
         .steps { grid-template-columns: minmax(0, 1fr); }
         .step, .step + .step { padding: 1.4rem 0; border-right: 0; border-bottom: 1px solid color-mix(in srgb, var(--line) 25%, transparent); }
         .talk-star { position: relative; display: block; right: auto; top: auto; translate: none; width: 46vw; margin: 0 0 2rem auto; }
@@ -448,6 +443,8 @@ const steps = [
       }
       @media (prefers-reduced-motion: reduce) {
         .scroll-cue span, .caret { animation: none; }
+        /* Without the scroll-driven slide, the posters scroll sideways by hand. */
+        .posters { overflow-x: auto; }
       }
     </style>
   </body>

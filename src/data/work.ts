@@ -1,4 +1,4 @@
-// Data and HTML helpers for the work lab page (kept out of the .astro frontmatter on purpose).
+// Work projects and their visuals, shared by the paper lab and work lab pages (kept out of .astro frontmatter on purpose).
 const shards = [
   'M241.495 0L313.808 125.25H169.182L241.495 0Z',
   'M25.887 148.966L168.723 126.283L116.949 261.325L25.887 148.966Z',
