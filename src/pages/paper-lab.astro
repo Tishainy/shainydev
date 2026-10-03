@@ -14,20 +14,31 @@ const shards = [
 ];
 const star = (cls: string) =>
   `<svg class="${cls}" viewBox="0 0 482 457" aria-hidden="true">${shards.map((d, i) => `<path class="sh sh${i}" d="${d}"/>`).join('')}</svg>`;
-// Each shard cropped to its own outline, so it shows full size on its own.
-const shardBoxes = ['169 0 145 126', '25 126 144 136', '312 126 144 136', '100 262 139 151', '242 262 139 151'];
-const shard = (i: number, cls: string) => `<svg class="${cls}" viewBox="${shardBoxes[i]}" aria-hidden="true"><path d="${shards[i]}"/></svg>`;
+// A small family of clean, flat marks that sit alongside the star (100×100 each).
+// Triangles only ever point straight up or straight down.
+const glyphs: Record<string, string> = {
+  sparkle: '<path d="M50 0C54 34 66 46 100 50C66 54 54 66 50 100C46 66 34 54 0 50C34 46 46 34 50 0Z"/>',
+  ring: '<path fill-rule="evenodd" d="M50 4a46 46 0 1 0 0 92a46 46 0 1 0 0-92Zm0 22a24 24 0 1 1 0 48a24 24 0 1 1 0-48Z"/>',
+  arch: '<path d="M8 96V50a42 42 0 0 1 84 0v46H68V50a18 18 0 0 0-36 0v46Z"/>',
+  plus: '<path d="M37 4h26v33h33v26H63v33H37V63H4V37h33Z"/>',
+  flower: '<circle cx="50" cy="26" r="23"/><circle cx="74" cy="50" r="23"/><circle cx="50" cy="74" r="23"/><circle cx="26" cy="50" r="23"/>',
+  half: '<path d="M4 58a46 46 0 0 1 92 0Z"/><rect x="4" y="68" width="92" height="20"/>',
+  diamond: '<path d="M50 2 98 50 50 98 2 50Z"/>',
+  triUp: '<path d="M50 8 96 90H4Z"/>',
+  triDown: '<path d="M4 10h92L50 92Z"/>',
+};
+const glyph = (name: string, cls: string) => `<svg class="glyph ${cls}" viewBox="0 0 100 100" aria-hidden="true">${glyphs[name]}</svg>`;
 
 const services = [
-  { name: 'Build', line: 'Websites and apps that look like you and work on every phone.', list: ['Business websites', 'Landing pages', 'Redesigns', 'Web apps'] },
-  { name: 'Automate', line: 'The tasks you repeat every week, done by themselves.', list: ['Workflows', 'Data & reports', 'Email design', 'Email flows'] },
-  { name: 'AI', line: 'Assistants and smart tools that actually help.', list: ['Chatbots', 'AI in your tools', 'Document sorting'] },
+  { glyph: 'arch', name: 'Build', line: 'Websites and apps that look like you and work on every phone.', list: ['Business websites', 'Landing pages', 'Redesigns', 'Web apps'] },
+  { glyph: 'ring', name: 'Automate', line: 'The tasks you repeat every week, done by themselves.', list: ['Workflows', 'Data & reports', 'Email design', 'Email flows'] },
+  { glyph: 'sparkle', name: 'AI', line: 'Assistants and smart tools that actually help.', list: ['Chatbots', 'AI in your tools', 'Document sorting'] },
 ];
 const steps = [
-  { name: 'Talk', line: "A chat about your business and what's in the way. No jargon." },
-  { name: 'Design', line: 'You see how it will look before anything gets built.' },
-  { name: 'Build', line: 'I build it and keep you posted, so nothing surprises you.' },
-  { name: 'Launch', line: "We go live, I show you everything, and I stay around after." },
+  { glyph: 'half', name: 'Talk', line: "A chat about your business and what's in the way. No jargon." },
+  { glyph: 'diamond', name: 'Design', line: 'You see how it will look before anything gets built.' },
+  { glyph: 'plus', name: 'Build', line: 'I build it and keep you posted, so nothing surprises you.' },
+  { glyph: 'triUp', name: 'Launch', line: "We go live, I show you everything, and I stay around after." },
 ];
 ---
 
@@ -55,25 +66,19 @@ const steps = [
 
     <!-- ===================== HERO: the star leads ===================== -->
     <section class="hero" data-hero>
-      <ul class="meta" data-meta>
-        <li>Freelance developer</li>
-        <li>Zoetermeer, NL · <span data-clock>--:--</span></li>
-        <li><span class="live"></span>Available for new projects</li>
-        <li>Since 2025</li>
-      </ul>
 
       <div class="hero-stage">
-        <Fragment set:html={star('hero-star')} />
+        <div class="hero-star-wrap" data-hero-star><Fragment set:html={star('hero-star')} /></div>
         <h1 class="hero-h">
           <span class="ln"><span class="in">Websites, apps</span></span>
-          <span class="ln"><span class="in"><em>&amp;</em> automations <Fragment set:html={shard(0, 'inl')} /></span></span>
+          <span class="ln"><span class="in"><em>&amp;</em> automations <Fragment set:html={glyph('sparkle', 'inl')} /></span></span>
           <span class="ln"><span class="in">that do the work</span></span>
           <span class="ln"><span class="in"><em>for you.</em></span></span>
         </h1>
       </div>
 
       <div class="hero-foot">
-        <p class="hero-note">Hi, I'm Shainy <em>(say "shiny")</em>. I build the tools small businesses wish they had, and explain every step in plain language.</p>
+        <p class="hero-note">Freelance developer for small businesses. I build the tools you wish you had, and explain every step in plain language.</p>
         <a class="btn" href="#talk">Let's talk <span aria-hidden="true">→</span></a>
         <p class="scroll-cue"><span></span>Scroll</p>
       </div>
@@ -83,8 +88,8 @@ const steps = [
     <section class="band" aria-label="Services">
       <div class="band-track" data-band>
         {[0, 1].map(() =>
-          ['Websites', 'Apps', 'Automations', 'Email', 'AI assistants'].map((w) => (
-            <span class="band-item">{w}<Fragment set:html={star('band-star')} /></span>
+          ['Websites', 'Apps', 'Automations', 'Email', 'AI assistants'].map((w, i) => (
+            <span class="band-item">{w}<Fragment set:html={i % 2 === 0 ? star('band-star spin') : glyph(['sparkle', 'flower'][(i - 1) / 2 % 2], 'band-glyph spin')} /></span>
           )),
         )}
       </div>
@@ -100,7 +105,7 @@ const steps = [
         {services.map((s, i) => (
           <article class="svc-col" data-col>
             <span class="rule" data-rule></span>
-            <Fragment set:html={shard(i * 2 % 5, 'svc-shard')} />
+            <Fragment set:html={glyph(s.glyph, 'svc-mark')} />
             <h3>{s.name}</h3>
             <p class="svc-line">{s.line}</p>
             <ul>{s.list.map((x) => <li>{x}</li>)}</ul>
@@ -139,7 +144,7 @@ const steps = [
       <ol class="steps">
         {steps.map((s, i) => (
           <li class="step" data-step>
-            <span class="step-n">0{i + 1}</span>
+            <span class="step-n"><Fragment set:html={glyph(s.glyph, 'step-mark')} />0{i + 1}</span>
             <h3>{s.name}</h3>
             <p>{s.line}</p>
           </li>
@@ -150,6 +155,10 @@ const steps = [
     <!-- ===================== CLOSING CTA ===================== -->
     <section class="talk" id="talk">
       <Fragment set:html={star('talk-star')} />
+      <p class="talk-marks" aria-hidden="true">
+        <Fragment set:html={star('talk-mark')} />
+        {['sparkle', 'ring', 'flower', 'plus', 'triDown', 'half'].map((g) => <Fragment set:html={glyph(g, 'talk-mark')} />)}
+      </p>
       <h2 class="talk-h" data-up>Let's make something that <em>shines</em>.</h2>
       <p class="talk-sub" data-up>Tell me what slows your business down. I'll reply within 48 hours with a clear plan and price.</p>
       <div class="talk-row" data-up>
@@ -197,14 +206,12 @@ const steps = [
         gsap.set(parts, { transformOrigin: '50% 50%' });
         const intro = gsap.timeline({ defaults: { ease: 'expo.out' } });
         intro
-          .from(parts, { x: (i) => dirs[i][0] * 260, y: (i) => dirs[i][1] * 260, rotation: (i) => (i % 2 ? 120 : -120), scale: 0.4, opacity: 0, duration: 1.4, stagger: 0.1 }, 0.1)
+          .from(parts, { x: (i) => dirs[i][0] * 260, y: (i) => dirs[i][1] * 260, scale: 0.5, opacity: 0, duration: 1.4, stagger: 0.1 }, 0.1)
           .from('.hero-h .in', { yPercent: 110, duration: 1.1, stagger: 0.1 }, 0.5)
-          .from('[data-meta] li', { y: -14, autoAlpha: 0, duration: 0.6, stagger: 0.06 }, 0.3)
           .from('.hero-foot > *', { y: 24, autoAlpha: 0, duration: 0.8, stagger: 0.08 }, 0.9);
+        // The star turns slowly on its own; the scroll is handled on its wrapper, so the two never fight.
         gsap.to('.hero-star', { rotation: 360, duration: 80, ease: 'none', repeat: -1 });
-        // Scroll: the star grows and drifts as the hero leaves; the shards spread a little.
-        gsap.to('.hero-star', { scale: 1.35, yPercent: 18, ease: 'none', scrollTrigger: { trigger: '[data-hero]', start: 'top top', end: 'bottom top', scrub: true } });
-        gsap.to(parts, { x: (i) => dirs[i][0] * 40, y: (i) => dirs[i][1] * 40, ease: 'none', scrollTrigger: { trigger: '[data-hero]', start: 'top top', end: 'bottom top', scrub: true } });
+        gsap.to('[data-hero-star]', { rotation: 120, scale: 0.88, ease: 'none', scrollTrigger: { trigger: '[data-hero]', start: 'top top', end: 'bottom top', scrub: true } });
 
         // Red band: drifts, and runs faster while you scroll.
         const band = gsap.to('[data-band]', { xPercent: -50, duration: 28, ease: 'none', repeat: -1 });
@@ -212,7 +219,7 @@ const steps = [
           trigger: '.band', start: 'top bottom', end: 'bottom top',
           onUpdate: (s) => gsap.to(band, { timeScale: 1 + Math.min(Math.abs(s.getVelocity()) / 250, 6), duration: 0.2, overwrite: true, onComplete: () => gsap.to(band, { timeScale: 1, duration: 1.2 }) }),
         });
-        gsap.to('.band-star .sh', { rotation: 360, transformOrigin: '241px 228px', duration: 10, ease: 'none', repeat: -1 });
+        gsap.to('.band .spin', { rotation: 360, transformOrigin: '50% 50%', duration: 10, ease: 'none', repeat: -1 });
 
         // Section headings and blocks rise in (and sink away again on the way back up).
         gsap.utils.toArray<HTMLElement>('[data-up]').forEach((el) =>
@@ -222,7 +229,7 @@ const steps = [
         gsap.utils.toArray<HTMLElement>('[data-col]').forEach((col, i) =>
           gsap.timeline({ scrollTrigger: { trigger: col, start: 'top 85%', toggleActions: 'play none none reverse' }, delay: i * 0.1 })
             .from(col.querySelector('[data-rule]'), { scaleX: 0, transformOrigin: '0 50%', duration: 0.9, ease: 'power3.inOut' })
-            .from(col.querySelector('.svc-shard'), { rotation: -180, scale: 0, duration: 0.8, ease: 'back.out(1.7)' }, 0.2)
+            .from(col.querySelector('.svc-mark'), { scale: 0, duration: 0.7, ease: 'back.out(2)' }, 0.2)
             .from(col.querySelectorAll('h3, .svc-line, li'), { y: 24, autoAlpha: 0, duration: 0.6, stagger: 0.05 }, 0.35),
         );
         // Process: the steps fill in one after another with the scroll.
@@ -230,6 +237,8 @@ const steps = [
         // Closing: the big star turns with the scroll.
         gsap.fromTo('.talk-star', { rotation: -40, scale: 0.7 }, { rotation: 30, scale: 1, ease: 'none', scrollTrigger: { trigger: '.talk', start: 'top bottom', end: 'bottom bottom', scrub: true } });
         gsap.to('.art-star', { rotation: 360, duration: 40, ease: 'none', repeat: -1 });
+        // The closing row of marks pops in one by one.
+        gsap.from('.talk-mark', { scale: 0, duration: 0.6, stagger: 0.07, ease: 'back.out(2)', scrollTrigger: { trigger: '.talk', start: 'top 70%', toggleActions: 'play none none reverse' } });
       }
     </script>
 
@@ -257,7 +266,9 @@ const steps = [
       body { background: var(--paper); color: var(--ink); font-family: var(--font-hanken); transition: background-color 0.5s, color 0.5s; }
       a { color: inherit; text-decoration: none; }
       em { font-family: var(--font-instrument); font-style: italic; font-weight: 400; letter-spacing: -0.01em; }
-      .sh, .inl path, .svc-shard path { fill: var(--red); }
+      .sh, .glyph { fill: var(--red); }
+      /* Spinning marks draw outside their box, so their points are never clipped. */
+      svg { overflow: visible; }
 
       /* ---------- Top bar ---------- */
       .bar {
@@ -272,16 +283,14 @@ const steps = [
 
       /* ---------- Hero ---------- */
       .hero { position: relative; min-height: calc(100svh - 4rem); display: flex; flex-direction: column; padding: 0 4vw 2rem; border-bottom: 1.5px solid var(--line); overflow: clip; }
-      .meta { list-style: none; margin: 0; padding: 0.9rem 0; display: grid; grid-template-columns: repeat(4, auto); justify-content: space-between; gap: 0.5rem 2rem; font-size: 0.9rem; color: var(--mute); border-bottom: 1px solid color-mix(in srgb, var(--line) 25%, transparent); }
-      .live { display: inline-block; width: 0.5rem; height: 0.5rem; margin-right: 0.45rem; border-radius: 50%; background: #2fb35a; box-shadow: 0 0 0 0 rgb(47 179 90 / 0.6); animation: pulse 2s infinite; }
-      @keyframes pulse { to { box-shadow: 0 0 0 10px rgb(47 179 90 / 0); } }
       .hero-stage { position: relative; flex: 1; display: grid; align-items: center; padding: 4vh 0; }
-      .hero-star { position: absolute; right: -2vw; top: 50%; width: min(58vw, 46rem); height: auto; translate: 0 -50%; mix-blend-mode: var(--blend); }
+      .hero-star-wrap { position: absolute; right: 3vw; top: 50%; width: min(48vw, 40rem); translate: 0 -50%; mix-blend-mode: var(--blend); }
+      .hero-star { display: block; width: 100%; height: auto; }
       .hero-h { position: relative; z-index: 2; margin: 0; font: 600 clamp(3rem, 8.6vw, 8.6rem)/0.92 var(--font-clash); letter-spacing: -0.05em; }
       .ln { display: block; overflow: clip; padding-bottom: 0.06em; }
       .in { display: inline-block; }
       .hero-h em { color: var(--red); }
-      .inl { display: inline-block; width: 0.5em; height: auto; vertical-align: 0.08em; }
+      .inl { display: inline-block; width: 0.55em; height: auto; vertical-align: 0.06em; }
       .hero-foot { position: relative; z-index: 2; display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: end; gap: 1.5rem 3rem; padding-top: 1.4rem; border-top: 1.5px solid var(--line); }
       .hero-note { margin: 0; max-width: 34rem; font-size: clamp(1.05rem, 1.4vw, 1.3rem); line-height: 1.45; }
       .hero-note em { color: var(--mute); }
@@ -293,12 +302,13 @@ const steps = [
       @keyframes cue { 0% { transform: scaleY(0); } 50% { transform: scaleY(1); } 100% { transform: scaleY(0); transform-origin: bottom; } }
 
       /* ---------- Red band ---------- */
-      .band { overflow: hidden; background: var(--red); color: #fff; padding: 1.4rem 0; border-bottom: 1.5px solid var(--line); }
+      .band { overflow: hidden; background: var(--red); color: #fff; padding: 1.8rem 0; border-bottom: 1.5px solid var(--line); }
       .band-track { display: flex; width: max-content; }
       .band-item { display: inline-flex; align-items: center; gap: 0.6em; padding-right: 0.6em; font: 600 clamp(2rem, 4.5vw, 4rem)/1 var(--font-clash); letter-spacing: -0.04em; white-space: nowrap; }
       .band-item:nth-child(even) { font-family: var(--font-instrument); font-style: italic; font-weight: 400; letter-spacing: -0.01em; }
       .band-star { width: 0.6em; height: auto; }
-      .band-star .sh { fill: #fff; }
+      .band-star .sh, .band-glyph { fill: #fff; }
+      .band-glyph { width: 0.55em; height: auto; }
 
       /* ---------- Sections ---------- */
       section.svc, section.work, section.how { padding: 14svh 4vw; border-bottom: 1.5px solid var(--line); }
@@ -310,7 +320,7 @@ const steps = [
       .svc-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 3rem 3vw; }
       .svc-col { position: relative; padding-top: 1.6rem; display: grid; gap: 0.9rem; align-content: start; }
       .rule { position: absolute; left: 0; right: 0; top: 0; height: 1.5px; background: var(--line); }
-      .svc-shard { width: 3rem; height: auto; }
+      .svc-mark { width: 3rem; height: auto; }
       .svc-col h3 { margin: 0; font: 600 clamp(2.4rem, 4vw, 3.8rem)/0.95 var(--font-clash); letter-spacing: -0.045em; }
       .svc-line { margin: 0; font-size: 1.1rem; line-height: 1.45; }
       .svc-col ul { list-style: none; margin: 0.4rem 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.4rem; }
@@ -337,12 +347,15 @@ const steps = [
       .step { padding: 1.6rem 1.4rem 2rem 0; display: grid; gap: 0.6rem; align-content: start; border-right: 1px solid color-mix(in srgb, var(--line) 25%, transparent); }
       .step + .step { padding-left: 1.4rem; }
       .step:last-child { border-right: 0; }
-      .step-n { font: 500 0.95rem var(--font-hanken); color: var(--red); }
+      .step-n { display: inline-flex; align-items: center; gap: 0.55rem; font: 500 0.95rem var(--font-hanken); color: var(--red); }
+      .step-mark { width: 1.4rem; height: auto; }
+      .talk-marks { position: relative; display: flex; flex-wrap: wrap; gap: 0.9rem; margin: 0 0 2.4rem; }
+      .talk-mark { width: clamp(2.2rem, 4vw, 3.4rem); height: auto; }
       .step h3 { margin: 0; font: 600 clamp(1.8rem, 2.6vw, 2.6rem)/1 var(--font-clash); letter-spacing: -0.035em; }
       .step p { margin: 0; color: var(--mute); line-height: 1.45; }
 
       .talk { position: relative; padding: 18svh 4vw; overflow: clip; border-bottom: 1.5px solid var(--line); }
-      .talk-star { position: absolute; right: -6vw; bottom: -10vw; width: min(55vw, 44rem); height: auto; opacity: 0.95; mix-blend-mode: var(--blend); }
+      .talk-star { position: absolute; right: 5vw; top: 50%; width: min(36vw, 30rem); height: auto; translate: 0 -50%; mix-blend-mode: var(--blend); }
       .talk-h { position: relative; margin: 0; max-width: 12ch; font: 600 clamp(3rem, 8vw, 8rem)/0.92 var(--font-clash); letter-spacing: -0.05em; }
       .talk-h em { color: var(--red); }
       .talk-sub { position: relative; margin: 2rem 0 0; max-width: 32rem; font-size: clamp(1.1rem, 1.5vw, 1.35rem); line-height: 1.45; color: var(--mute); }
@@ -354,9 +367,8 @@ const steps = [
       @media (max-width: 767px) {
         .nav { display: none; }
         .mode { margin-left: auto; }
-        .meta { grid-template-columns: repeat(2, auto); font-size: 0.8rem; }
-        .hero-stage { align-items: end; }
-        .hero-star { top: 34%; right: -12vw; width: 92vw; }
+          .hero-stage { align-items: end; }
+        .hero-star-wrap { top: 30%; right: 6vw; width: 80vw; }
         .hero-h { font-size: 12.5vw; }
         .hero-foot { grid-template-columns: minmax(0, 1fr); }
         .scroll-cue { display: none; }
@@ -364,11 +376,11 @@ const steps = [
         .svc-grid, .work-grid { grid-template-columns: minmax(0, 1fr); }
         .steps { grid-template-columns: minmax(0, 1fr); }
         .step, .step + .step { padding: 1.4rem 0; border-right: 0; border-bottom: 1px solid color-mix(in srgb, var(--line) 25%, transparent); }
-        .talk-star { width: 90vw; right: -20vw; bottom: -20vw; opacity: 0.35; }
+        .talk-star { position: relative; display: block; right: auto; top: auto; translate: none; width: 46vw; margin: 0 0 2rem auto; }
         .foot { flex-direction: column; align-items: flex-start; }
       }
       @media (prefers-reduced-motion: reduce) {
-        .live, .scroll-cue span, .sk { animation: none; }
+        .scroll-cue span, .sk { animation: none; }
       }
     </style>
   </body>
