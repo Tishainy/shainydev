@@ -44,6 +44,11 @@ const chores = [
   { task: 'Explaining your opening hours on the phone', tag: 'Website', hours: 1 },
 ];
 const choreHours = chores.reduce((n, c) => n + c.hours, 0);
+const promises = [
+  { glyph: 'ring', text: 'Reply within 48 hours' },
+  { glyph: 'diamond', text: 'Clear plan and price upfront' },
+  { glyph: 'half', text: 'Plain language, always' },
+];
 const steps = [
   { glyph: 'half', name: 'Talk', line: "A chat about your business and what's in the way. No jargon." },
   { glyph: 'diamond', name: 'Design', line: 'You see how it will look before anything gets built.' },
@@ -188,27 +193,22 @@ const steps = [
       </ol>
     </section>
 
-    <!-- ===================== CONTACT: a letter from Shainy ===================== -->
+    <!-- ===================== CONTACT: the address is the centrepiece ===================== -->
     <section class="talk" id="talk">
-      <header class="talk-top">
+      <div class="talk-top">
         <p class="sec-no">Contact</p>
-        <h2 class="talk-h" data-up>Let's make something that <em>shines</em>.</h2>
-      </header>
-      <div class="letter" data-letter>
-        <div class="stamp" data-stamp aria-hidden="true">
-          <Fragment set:html={star('stamp-star')} />
-          <span>48h reply</span>
-        </div>
-        <p class="ll" data-ll>Hi there,</p>
-        <p class="ll" data-ll>Tell me what's <u>slowing your business down</u>. The task you repeat every week, the website you'd rather not send people to, the idea you never find time for.</p>
-        <p class="ll" data-ll>I'll reply within <u>48 hours</u> with a clear plan and a <u>fixed price</u>. No jargon, no strings attached.</p>
-        <p class="ll" data-ll>Talk soon,</p>
-        <p class="sign" data-ll>Shainy</p>
-        <p class="ps" data-ll>P.S. Not sure what you need yet? That's the best time to ask.</p>
-        <div class="letter-send" data-ll>
-          <a class="btn btn-red" href="mailto:shainydev@gmail.com?subject=Project%20enquiry">Email me <span aria-hidden="true">→</span></a>
-          <button class="copy" type="button" data-copy="shainydev@gmail.com"><span class="copy-addr">shainydev@gmail.com</span><span class="copy-label" data-copy-label>Copy</span></button>
-          <a class="link" href="https://www.linkedin.com/in/shainy-naar-79618b358/">LinkedIn ↗</a>
+        <h2 class="talk-h">Got something in mind? <em>Say hi.</em></h2>
+      </div>
+      <a class="talk-mail" href="mailto:shainydev@gmail.com" data-talk-mail aria-label="Email shainydev@gmail.com">
+        {[...'shainydev'].map((c) => <span class="ch">{c}</span>)}<span class="ch at">@</span>{[...'gmail.com'].map((c) => <span class="ch">{c}</span>)}
+      </a>
+      <div class="talk-foot">
+        <ul class="talk-promises">
+          {promises.map((p) => <li><Fragment set:html={glyph(p.glyph, 'pm')} />{p.text}</li>)}
+        </ul>
+        <div class="talk-actions">
+          <button class="pill-btn" type="button" data-copy="shainydev@gmail.com"><span data-copy-label>Copy address</span></button>
+          <a class="pill-btn" href="https://www.linkedin.com/in/shainy-naar-79618b358/">LinkedIn ↗</a>
         </div>
       </div>
     </section>
@@ -235,7 +235,7 @@ const steps = [
         sync();
       });
 
-      // Contact: copy the email address (falls back to selecting it when the clipboard is refused).
+      // Contact: copy the email address (shows the address itself when the clipboard is refused).
       const copyBtn = document.querySelector<HTMLButtonElement>('[data-copy]')!;
       const copyLabel = copyBtn.querySelector<HTMLElement>('[data-copy-label]')!;
       copyBtn.addEventListener('click', async () => {
@@ -243,10 +243,9 @@ const steps = [
           await navigator.clipboard.writeText(copyBtn.dataset.copy!);
           copyLabel.textContent = 'Copied ✓';
         } catch {
-          getSelection()?.selectAllChildren(copyBtn.querySelector('.copy-addr')!);
-          copyLabel.textContent = 'Selected';
+          copyLabel.textContent = copyBtn.dataset.copy!;
         }
-        setTimeout(() => (copyLabel.textContent = 'Copy'), 2000);
+        setTimeout(() => (copyLabel.textContent = 'Copy address'), 2200);
       });
 
       if (!reduce) {
@@ -322,9 +321,9 @@ const steps = [
             .fromTo(c.querySelector('.chore-tag'), { scale: 0.4, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 0.5, ease: 'back.out(2)' }, i + 0.5)
             .to(hours, { n: total, duration: 0.8, ease: 'none', onUpdate: () => (hoursEl.textContent = String(Math.round(hours.n))) }, i + 0.3);
         });
-        // Contact: the letter's lines arrive one after another; the stamp lands last.
-        gsap.from('[data-ll]', { y: 26, autoAlpha: 0, duration: 0.7, stagger: 0.08, ease: 'power3.out', scrollTrigger: { trigger: '[data-letter]', start: 'top 75%', toggleActions: 'play none none reverse' } });
-        gsap.from('[data-stamp]', { scale: 2.2, autoAlpha: 0, duration: 0.6, ease: 'back.out(2.2)', scrollTrigger: { trigger: '[data-letter]', start: 'top 55%', toggleActions: 'play none none reverse' } });
+        // Contact: the address types itself in, letter by letter; the promises follow.
+        gsap.from('[data-talk-mail] .ch', { yPercent: 100, autoAlpha: 0, duration: 0.7, stagger: 0.035, ease: 'power3.out', scrollTrigger: { trigger: '[data-talk-mail]', start: 'top 85%', toggleActions: 'play none none reverse' } });
+        gsap.from('.talk-promises li, .talk-actions > *', { y: 20, autoAlpha: 0, duration: 0.6, stagger: 0.07, ease: 'power2.out', scrollTrigger: { trigger: '.talk-foot', start: 'top 90%', toggleActions: 'play none none reverse' } });
       }
     </script>
 
@@ -485,25 +484,22 @@ const steps = [
       .chore-tag { padding: 0.3rem 0.8rem; border-radius: 999px; background: var(--red); color: #fff; font-size: 0.85rem; font-weight: 600; }
       .chore-time { font-size: 0.85rem; color: var(--mute); white-space: nowrap; }
 
-      /* ---------- Contact: a letter from Shainy ---------- */
-      .talk { display: grid; gap: 4rem; padding: 16svh 4vw 14svh; border-bottom: 1.5px solid var(--line); }
-      .talk-top { display: grid; gap: 1.2rem; }
-      .talk-h { margin: 0; max-width: 14ch; font: 600 clamp(3rem, 7.4vw, 7.4rem)/0.92 var(--font-clash); letter-spacing: -0.05em; }
+      /* ---------- Contact: the address is the centrepiece ---------- */
+      .talk { padding: 16svh 4vw 14svh; border-bottom: 1.5px solid var(--line); }
+      .talk-top { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2.2fr); gap: 1rem 4vw; align-items: end; }
+      .talk-h { margin: 0; font: 600 clamp(2rem, 3.6vw, 3.4rem)/1 var(--font-clash); letter-spacing: -0.04em; }
       .talk-h em { color: var(--red); }
-      .letter { position: relative; display: grid; gap: 1.3rem; max-width: 58rem; padding-right: 8rem; font: 500 clamp(1.3rem, 2.2vw, 2.1rem)/1.38 var(--font-clash); letter-spacing: -0.025em; }
-      .ll { margin: 0; }
-      .letter u { text-decoration: none; padding: 0 0.1em; border-bottom: 2px solid var(--red); color: var(--red); font: italic 400 1.08em/1.1 var(--font-instrument); letter-spacing: 0; }
-      .sign { margin: -0.6rem 0 0; color: var(--red); font: italic 400 clamp(3rem, 6vw, 5.4rem)/1 var(--font-instrument); letter-spacing: -0.01em; }
-      .ps { margin: 0; font: 500 clamp(1rem, 1.3vw, 1.15rem)/1.45 var(--font-hanken); letter-spacing: 0; color: var(--mute); }
-      .letter-send { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.6rem; margin-top: 1rem; font: 500 1rem var(--font-hanken); letter-spacing: 0; }
-      .copy { display: inline-flex; align-items: center; gap: 0.8rem; padding: 0.55rem 0.6rem 0.55rem 1.2rem; border: 1.5px solid var(--line); border-radius: 999px; background: none; color: var(--ink); font: 600 1rem var(--font-hanken); cursor: pointer; }
-      .copy-addr { user-select: all; }
-      .copy-label { padding: 0.35rem 0.8rem; border-radius: 999px; background: var(--ink); color: var(--paper); font-size: 0.85rem; }
-      /* A postage stamp in the corner of the letter; the dotted paper-coloured border reads as perforation. */
-      .stamp { position: absolute; right: 0; top: -0.4rem; width: 5.8rem; aspect-ratio: 4 / 5; display: grid; place-items: center; align-content: center; gap: 0.4rem; padding: 0.5rem; background: var(--red); color: #fff; border: 0.4rem dotted var(--paper); outline: 1.5px solid var(--red); outline-offset: -0.55rem; }
-      .stamp-star { width: 62%; height: auto; }
-      .stamp-star .sh { fill: #fff; }
-      .stamp span { font: 600 0.62rem var(--font-hanken); letter-spacing: 0.08em; text-transform: uppercase; }
+      .talk-mail { display: block; margin: 7svh 0 6svh; padding-bottom: 0.08em; overflow: hidden; white-space: nowrap; font: 600 clamp(2rem, 8.6vw, 12rem)/1.05 var(--font-clash); letter-spacing: -0.055em; border-bottom: 1.5px solid var(--line); }
+      .ch { display: inline-block; transition: color 0.3s; }
+      .talk-mail:hover .ch { color: var(--red); }
+      .talk-mail .at { color: var(--red); font: italic 400 1.02em/1 var(--font-instrument); letter-spacing: 0; padding: 0 0.04em; }
+      .talk-foot { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1.6rem 3rem; }
+      .talk-promises { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.8rem 2.6rem; font-weight: 600; font-size: 1.05rem; }
+      .talk-promises li { display: inline-flex; align-items: center; gap: 0.6rem; }
+      .pm { width: 1.2rem; height: auto; }
+      .talk-actions { display: flex; flex-wrap: wrap; gap: 0.8rem; }
+      .pill-btn { display: inline-flex; align-items: center; padding: 0.85rem 1.4rem; border: 1.5px solid var(--line); border-radius: 999px; background: none; color: var(--ink); font: 600 1rem var(--font-hanken); cursor: pointer; transition: background-color 0.25s, color 0.25s; }
+      .pill-btn:hover { background: var(--ink); color: var(--paper); }
       .link { font-weight: 600; text-decoration: underline; text-decoration-color: var(--red); text-underline-offset: 0.3em; }
       .foot { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 1.6rem 4vw; font-size: 0.9rem; color: var(--mute); }
 
@@ -543,12 +539,13 @@ const steps = [
         .chores-note { order: 5; }
         .chore { grid-template-columns: minmax(0, 1fr); gap: 0.8rem; padding: 1.4rem 0; }
         .chore-meta { grid-auto-flow: column; justify-content: start; align-items: center; gap: 0.8rem; }
-        .letter { padding-right: 0; padding-top: 7rem; }
-        .stamp { top: 0; right: auto; left: 0; width: 4.8rem; }
+        .talk-top { grid-template-columns: minmax(0, 1fr); }
+        .talk-mail { font-size: 8.7vw; letter-spacing: -0.05em; }
         .foot { flex-direction: column; align-items: flex-start; }
       }
       @media (prefers-reduced-motion: reduce) {
         .scroll-cue span, .caret { animation: none; }
+        .ch, .pill-btn { transition: none; }
         .chore { --strike: 1; }
         /* Without the scroll-driven slide, the posters scroll sideways by hand. */
         .posters { overflow-x: auto; }
