@@ -76,15 +76,14 @@ export function initServices() {
     };
   });
 
-  // Phones: stacking cards. Each service card sticks to the top (CSS); as the next one slides up
-  // over it, the card underneath shrinks back and dims. Each demo plays by itself as its card settles.
+  // Phones: stacking cards. Each service card sticks to the top (CSS) and the next one slides up over
+  // it. Each demo plays by itself as its card settles.
   mm.add('(max-width: 767px) and (prefers-reduced-motion: no-preference)', () => {
     section.classList.add('is-cards');
     const frames = gsap.utils.toArray<HTMLElement>('[data-svc-frame]', section);
 
     // ScrollTrigger measures a stuck (sticky) card where it currently is, not where it sits in the
-    // page, which made the timing run backwards. So each card gets a zero-height marker just before
-    // it: never sticky, it always reports the card's true position.
+    // page. So each card gets a zero-height marker just before it that always reports its true position.
     const markers = frames.map((frame) => {
       const marker = document.createElement('div');
       marker.setAttribute('aria-hidden', 'true');
@@ -92,18 +91,9 @@ export function initServices() {
       return marker;
     });
 
+    // No scroll-tied effect on the cards themselves: the stacking is pure CSS (sticky), which keeps
+    // phone scrolling native and smooth. (A scroll-tied dim on the card underneath misfired on phones.)
     frames.forEach((frame, i) => {
-      // As the next card slides up over this one, this one shrinks back a little and dims slightly.
-      const next = markers[i + 1];
-      if (next) {
-        gsap.to(frame, {
-          scale: 0.94,
-          filter: 'brightness(0.82)',
-          ease: 'none',
-          scrollTrigger: { trigger: next, start: 'top bottom', end: 'top top', scrub: true },
-        });
-      }
-
       const demo = demoFor(frame).pause().duration(2.6);
       ScrollTrigger.create({
         trigger: markers[i],
