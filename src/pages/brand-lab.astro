@@ -1,0 +1,364 @@
+---
+// Rebrand directions (Shainy → shiny → a star). Three animated directions, standalone (no site
+// header or old palette). Hidden (noindex), not linked. Open one alone with /brand-lab/#d1, #d2, #d3.
+import '../styles/global.css';
+import { Font } from 'astro:assets';
+
+// Shainy's star: five separate shards (from her own logo SVG).
+const shards = [
+  'M241.495 0L313.808 125.25H169.182L241.495 0Z',
+  'M25.887 148.966L168.723 126.283L116.949 261.325L25.887 148.966Z',
+  'M455.819 148.966L312.983 126.283L364.757 261.325L455.819 148.966Z',
+  'M100.669 412.326L118.069 262.146L238.748 350.753L100.669 412.326Z',
+  'M380.321 412.326L362.922 262.146L242.243 350.753L380.321 412.326Z',
+];
+const star = (cls: string) =>
+  `<svg class="${cls}" viewBox="0 0 482 457" aria-hidden="true">${shards.map((d, i) => `<path class="sh sh${i}" d="${d}"/>`).join('')}</svg>`;
+const services = [
+  { name: 'Build', line: 'Websites & apps that look like you and work on every phone.' },
+  { name: 'Automate', line: 'The tasks you repeat every week, done by themselves.' },
+  { name: 'AI', line: 'Assistants that answer your customers, day and night.' },
+];
+const statement = `I'm Shainy, pronounced *shiny*. I build websites, apps and automations for small businesses ✦ the kind that quietly do the work for you. You tell me what slows you down ✦ I build the thing that fixes it, and explain every step in plain language.`;
+const words = statement.split(' ');
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Brand lab — ShainyDev</title>
+    <Font cssVariable="--font-clash" preload />
+    <Font cssVariable="--font-hanken" preload />
+    <Font cssVariable="--font-instrument" preload />
+  </head>
+  <body>
+    <!-- ============================ D1 · SHARDS (dark) ============================ -->
+    <div class="dir d1" id="d1">
+      <p class="tag">1 · Shards · dark</p>
+      <section class="d1-hero" data-d1-hero>
+        <header class="d1-top"><Fragment set:html={star('mini')} /><span>ShainyDev</span></header>
+        <div class="d1-copy">
+          <h1 class="d1-name">Shainy</h1>
+          <p class="d1-say"><em>pronounced</em> shiny.</p>
+          <p class="d1-lead">Websites, apps &amp; automations that do the work for you.</p>
+          <a class="d1-cta" href="#">Let's talk</a>
+        </div>
+        <Fragment set:html={star('d1-star')} />
+      </section>
+      <section class="d1-statement" data-d1-statement>
+        <p class="d1-text">
+          {words.map((w) =>
+            w === '✦' ? <span class="d1-glyph w" set:html={star('glyph')} /> : w.startsWith('*') ? <em class="w">{w.replace(/\*/g, '')} </em> : <span class="w">{w} </span>,
+          )}
+        </p>
+      </section>
+      <section class="d1-services">
+        {services.map((s, i) => (
+          <article class="d1-row" data-d1-row>
+            <svg class="d1-bullet" viewBox="0 0 482 457" aria-hidden="true"><path d={shards[i]} /></svg>
+            <h3>{s.name}</h3>
+            <p>{s.line}</p>
+          </article>
+        ))}
+      </section>
+    </div>
+
+    <!-- ============================ D2 · SHINE (dark gold) ============================ -->
+    <div class="dir d2" id="d2">
+      <p class="tag">2 · Shine · dark</p>
+      <section class="d2-hero" data-d2-hero>
+        <canvas class="d2-sky" data-d2-sky aria-hidden="true"></canvas>
+        <header class="d2-top"><Fragment set:html={star('d2-logo')} /><span>ShainyDev</span></header>
+        <h1 class="d2-h">
+          <span class="d2-l1"><em>Make it</em></span>
+          <span class="d2-l2 d2-glint">shine.</span>
+        </h1>
+        <p class="d2-sub">Websites, apps and automations by Shainy, built for small businesses that want to work smarter.</p>
+        <a class="d2-cta" href="#">Let's talk <span aria-hidden="true">✦</span></a>
+      </section>
+      <section class="d2-ticker" data-d2-ticker>
+        <div class="d2-track" data-d2-track>
+          {[0, 1].map(() => services.map((s) => <span class="d2-item">{s.name}<span class="d2-spark" set:html={star('spark')} /></span>))}
+        </div>
+      </section>
+      <section class="d2-cols">
+        {services.map((s) => (
+          <article class="d2-col" data-d2-col><h3><em>{s.name}</em></h3><p>{s.line}</p></article>
+        ))}
+      </section>
+    </div>
+
+    <!-- ============================ D3 · PAPER (light) ============================ -->
+    <div class="dir d3" id="d3">
+      <p class="tag">3 · Paper · light</p>
+      <section class="d3-hero">
+        <header class="d3-top"><span class="d3-mark">ShainyDev</span><span>Freelance developer, NL</span></header>
+        <h1 class="d3-big" aria-label="Shainy">
+          <span class="d3-mask"><span class="d3-in">Shai</span></span><span class="d3-mask"><span class="d3-in">ny</span></span>
+        </h1>
+        <Fragment set:html={star('d3-star')} />
+        <div class="d3-foot">
+          <p class="d3-lead"><span class="d3-mask"><span class="d3-in">Websites, apps &amp; automations</span></span><span class="d3-mask"><span class="d3-in">that do the work for you.</span></span></p>
+          <a class="d3-cta" href="#">Let's talk →</a>
+        </div>
+      </section>
+      <section class="d3-slide" data-d3-slide>
+        <p class="d3-row d3-r1">Build things <em>people use</em></p>
+        <p class="d3-row d3-r2"><em>Automate</em> the boring part</p>
+        <p class="d3-row d3-r3">AI that <em>actually helps</em></p>
+      </section>
+      <section class="d3-services">
+        {services.map((s, i) => (
+          <article class="d3-svc" data-d3-svc>
+            <svg class="d3-bullet" viewBox="0 0 482 457" aria-hidden="true"><path d={shards[i * 2 % 5]} /></svg>
+            <h3>{s.name}</h3>
+            <p>{s.line}</p>
+            <span class="d3-rule" data-d3-rule></span>
+          </article>
+        ))}
+      </section>
+    </div>
+
+    <script is:inline>
+      const only = location.hash.slice(1);
+      if (['d1', 'd2', 'd3'].includes(only)) document.querySelectorAll('.dir').forEach((el) => { if (el.id !== only) el.remove(); });
+    </script>
+
+    <script>
+      import gsap from 'gsap';
+      import { ScrollTrigger } from 'gsap/ScrollTrigger';
+      import Lenis from 'lenis';
+      gsap.registerPlugin(ScrollTrigger);
+      const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!reduce) {
+        const lenis = new Lenis();
+        lenis.on('scroll', ScrollTrigger.update);
+        gsap.ticker.add((t) => lenis.raf(t * 1000));
+        gsap.ticker.lagSmoothing(0);
+      }
+      // Each shard's direction away from the star's centre (from the logo's geometry).
+      const dirs = [[0, -1], [-1, -0.35], [1, -0.35], [-0.7, 0.85], [0.7, 0.85]];
+
+      // ---------------- D1 · Shards ----------------
+      const d1 = document.querySelector<HTMLElement>('[data-d1-hero]');
+      if (d1 && !reduce) {
+        const parts = d1.querySelectorAll<SVGPathElement>('.d1-star .sh');
+        gsap.set(parts, { transformOrigin: '50% 50%' });
+        // Load: the shards fly in from scattered spots and snap into the star.
+        gsap.from(parts, {
+          x: (i) => dirs[i][0] * 520, y: (i) => dirs[i][1] * 520, rotation: (i) => (i % 2 ? 140 : -160), opacity: 0,
+          duration: 1.6, ease: 'expo.out', stagger: 0.09, delay: 0.2,
+        });
+        gsap.from('.d1-copy > *', { y: 40, autoAlpha: 0, duration: 1, stagger: 0.1, ease: 'power3.out', delay: 0.6 });
+        gsap.to('.d1-star', { rotation: 6, y: -10, duration: 4, ease: 'sine.inOut', yoyo: true, repeat: -1 });
+        // Scroll: the star bursts apart as the hero leaves.
+        gsap.to(parts, {
+          x: (i) => dirs[i][0] * 380, y: (i) => dirs[i][1] * 380, rotation: (i) => (i % 2 ? 90 : -90), opacity: 0.25,
+          ease: 'none', scrollTrigger: { trigger: d1, start: 'top top', end: 'bottom top', scrub: 0.6 },
+        });
+        gsap.to('.d1-copy', { y: -120, autoAlpha: 0, ease: 'none', scrollTrigger: { trigger: d1, start: 'top top', end: '70% top', scrub: 0.6 } });
+      }
+      // The statement lights up word by word as you scroll through it.
+      const stmt = document.querySelector<HTMLElement>('[data-d1-statement]');
+      if (stmt && !reduce) {
+        gsap.fromTo(stmt.querySelectorAll('.w'), { opacity: 0.14 }, {
+          opacity: 1, stagger: 0.05, ease: 'none',
+          scrollTrigger: { trigger: stmt, start: 'top 75%', end: 'bottom 55%', scrub: true },
+        });
+        gsap.utils.toArray<SVGElement>('.glyph', stmt).forEach((g) =>
+          gsap.from(g.querySelectorAll('.sh'), { scale: 0, transformOrigin: '50% 50%', stagger: 0.05, scrollTrigger: { trigger: g, start: 'top 70%', end: 'top 45%', scrub: true } }),
+        );
+      }
+      gsap.utils.toArray<HTMLElement>('[data-d1-row]').forEach((row) => {
+        if (reduce) return;
+        gsap.timeline({ scrollTrigger: { trigger: row, start: 'top 85%', toggleActions: 'play none none reverse' } })
+          .from(row.querySelector('.d1-bullet'), { rotation: -120, scale: 0, duration: 0.8, ease: 'back.out(1.7)' })
+          .from(row.querySelectorAll('h3, p'), { x: -40, autoAlpha: 0, duration: 0.7, stagger: 0.1, ease: 'power3.out' }, 0.15);
+      });
+
+      // ---------------- D2 · Shine ----------------
+      const d2 = document.querySelector<HTMLElement>('[data-d2-hero]');
+      if (d2) {
+        // A sky of small four-point stars that twinkle (and gather where the pointer goes).
+        const sky = d2.querySelector<HTMLCanvasElement>('[data-d2-sky]')!;
+        const ctx = sky.getContext('2d')!;
+        let stars: { x: number; y: number; r: number; p: number; s: number }[] = [];
+        const trail: { x: number; y: number; life: number; r: number }[] = [];
+        const size = () => {
+          const dpr = Math.min(devicePixelRatio || 1, 2);
+          sky.width = d2.clientWidth * dpr; sky.height = d2.clientHeight * dpr;
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          const n = Math.round((d2.clientWidth * d2.clientHeight) / 9000);
+          stars = Array.from({ length: n }, () => ({ x: Math.random() * d2.clientWidth, y: Math.random() * d2.clientHeight, r: Math.random() * 2.2 + 0.6, p: Math.random() * 6.28, s: Math.random() * 1.5 + 0.5 }));
+        };
+        const sparkle = (x: number, y: number, r: number, a: number) => {
+          ctx.globalAlpha = a;
+          ctx.beginPath();
+          ctx.moveTo(x, y - r * 3); ctx.quadraticCurveTo(x, y, x + r * 3, y); ctx.quadraticCurveTo(x, y, x, y + r * 3); ctx.quadraticCurveTo(x, y, x - r * 3, y); ctx.quadraticCurveTo(x, y, x, y - r * 3);
+          ctx.fill();
+        };
+        size(); addEventListener('resize', size);
+        d2.addEventListener('pointermove', (e) => {
+          const b = d2.getBoundingClientRect();
+          if (Math.random() < 0.6) trail.push({ x: e.clientX - b.left + (Math.random() - 0.5) * 20, y: e.clientY - b.top + (Math.random() - 0.5) * 20, life: 1, r: Math.random() * 2 + 1.2 });
+        });
+        gsap.ticker.add((t) => {
+          ctx.clearRect(0, 0, sky.width, sky.height);
+          ctx.fillStyle = '#e9cf98';
+          for (const s of stars) sparkle(s.x, s.y, s.r, reduce ? 0.5 : 0.25 + 0.6 * Math.max(0, Math.sin(t * s.s + s.p)));
+          ctx.fillStyle = '#fff3d6';
+          for (let i = trail.length - 1; i >= 0; i--) {
+            const p = trail[i]; p.life -= 0.025; p.y -= 0.3;
+            if (p.life <= 0) { trail.splice(i, 1); continue; }
+            sparkle(p.x, p.y, p.r * p.life, p.life);
+          }
+          ctx.globalAlpha = 1;
+        });
+        if (!reduce) {
+          // The star draws itself in gold, then fills.
+          const logo = d2.querySelectorAll<SVGPathElement>('.d2-logo .sh');
+          logo.forEach((p) => { const l = p.getTotalLength(); gsap.set(p, { strokeDasharray: l, strokeDashoffset: l, fillOpacity: 0 }); });
+          gsap.timeline({ delay: 0.2 }).to(logo, { strokeDashoffset: 0, duration: 1.2, stagger: 0.12, ease: 'power2.inOut' }).to(logo, { fillOpacity: 1, duration: 0.6 }, '-=0.3');
+          gsap.from('.d2-h > span', { yPercent: 110, autoAlpha: 0, duration: 1.3, stagger: 0.15, ease: 'expo.out', delay: 0.4 });
+          gsap.from('.d2-sub, .d2-cta', { y: 24, autoAlpha: 0, duration: 1, stagger: 0.1, delay: 1, ease: 'power3.out' });
+        }
+      }
+      // Ticker: drifts on its own and speeds up with the scroll.
+      const track = document.querySelector<HTMLElement>('[data-d2-track]');
+      if (track && !reduce) {
+        const loop = gsap.to(track, { xPercent: -50, duration: 22, ease: 'none', repeat: -1 });
+        ScrollTrigger.create({
+          trigger: track, start: 'top bottom', end: 'bottom top',
+          onUpdate: (self) => gsap.to(loop, { timeScale: 1 + Math.min(Math.abs(self.getVelocity()) / 300, 5), duration: 0.2, overwrite: true, onComplete: () => gsap.to(loop, { timeScale: 1, duration: 1 }) }),
+        });
+        gsap.to('.d2-spark .sh', { rotation: 360, transformOrigin: '241px 228px', duration: 8, repeat: -1, ease: 'none' });
+      }
+      gsap.utils.toArray<HTMLElement>('[data-d2-col]').forEach((col, i) => {
+        if (reduce) return;
+        gsap.from(col, { y: 60, autoAlpha: 0, duration: 1, delay: i * 0.12, ease: 'power3.out', scrollTrigger: { trigger: col, start: 'top 88%', toggleActions: 'play none none reverse' } });
+      });
+
+      // ---------------- D3 · Paper ----------------
+      if (document.querySelector('.d3') && !reduce) {
+        gsap.from('.d3-in', { yPercent: 110, duration: 1.2, stagger: 0.12, ease: 'expo.out', delay: 0.2 });
+        gsap.from('.d3-star .sh', { scale: 0, transformOrigin: '50% 50%', duration: 1, stagger: 0.08, ease: 'back.out(1.6)', delay: 0.5 });
+        gsap.to('.d3-star', { rotation: 360, duration: 60, ease: 'none', repeat: -1 });
+        gsap.to('.d3-star', { yPercent: 40, scale: 1.25, ease: 'none', scrollTrigger: { trigger: '.d3-hero', start: 'top top', end: 'bottom top', scrub: true } });
+        // Lines slide in from alternating sides, tied to the scroll.
+        gsap.utils.toArray<HTMLElement>('.d3-row').forEach((row, i) => {
+          gsap.fromTo(row, { xPercent: i % 2 ? 30 : -30 }, { xPercent: i % 2 ? -8 : 8, ease: 'none', scrollTrigger: { trigger: '[data-d3-slide]', start: 'top bottom', end: 'bottom top', scrub: true } });
+        });
+        gsap.utils.toArray<HTMLElement>('[data-d3-svc]').forEach((svc) => {
+          gsap.timeline({ scrollTrigger: { trigger: svc, start: 'top 85%', toggleActions: 'play none none reverse' } })
+            .from(svc.querySelector('[data-d3-rule]'), { scaleX: 0, transformOrigin: '0 50%', duration: 0.9, ease: 'power3.inOut' })
+            .from(svc.querySelector('.d3-bullet'), { rotation: 180, scale: 0, duration: 0.7, ease: 'back.out(1.7)' }, 0.2)
+            .from(svc.querySelectorAll('h3, p'), { y: 30, autoAlpha: 0, duration: 0.6, stagger: 0.08 }, 0.3);
+        });
+      }
+    </script>
+
+    <style is:global>
+      * { box-sizing: border-box; }
+      html, body { margin: 0; }
+      body { font-family: var(--font-hanken); }
+      .dir { position: relative; overflow: clip; }
+      .tag { position: absolute; right: 1rem; top: 1rem; z-index: 50; margin: 0; font: 600 0.75rem var(--font-hanken); padding: 0.3rem 0.6rem; border-radius: 0.4rem; background: rgb(127 127 127 / 0.25); color: #fff; }
+      a { text-decoration: none; }
+      .mini { width: 1.6rem; height: auto; }
+
+      /* =================== D1 · SHARDS =================== */
+      .d1 { --bg: #0d0e10; --fg: #ecedf0; --mute: #8a8f99; --steel: #5886b1; --steel-hi: #9cc0e2; background: var(--bg); color: var(--fg); }
+      .d1 .sh { fill: var(--steel); }
+      .d1-hero { position: relative; min-height: 100svh; display: grid; align-items: center; padding: 6rem 6vw 4rem; }
+      .d1-top { position: absolute; top: 1.4rem; left: 6vw; display: flex; align-items: center; gap: 0.6rem; font: 600 1.1rem var(--font-clash); letter-spacing: -0.02em; }
+      .d1-copy { position: relative; z-index: 2; max-width: 40rem; }
+      .d1-name { margin: 0; font: 600 clamp(4.5rem, 14vw, 13rem)/0.85 var(--font-clash); letter-spacing: -0.055em; }
+      .d1-say { margin: 0.6rem 0 0; font: 400 clamp(1.6rem, 3vw, 2.8rem) var(--font-instrument); }
+      .d1-say em { color: var(--mute); }
+      .d1-lead { margin: 2rem 0 0; max-width: 24ch; font-size: clamp(1.15rem, 1.6vw, 1.5rem); line-height: 1.4; color: var(--mute); }
+      .d1-cta { display: inline-block; margin-top: 2rem; padding: 0.95rem 1.8rem; border-radius: 999px; background: var(--fg); color: var(--bg); font-weight: 600; }
+      .d1-star { position: absolute; right: 4vw; top: 50%; width: min(46vw, 34rem); height: auto; translate: 0 -50%; filter: drop-shadow(0 0 40px rgb(88 134 177 / 0.35)); }
+      .d1-statement { padding: 22svh 6vw; }
+      .d1-text { margin: 0 auto; max-width: 58rem; font: 500 clamp(1.8rem, 3.6vw, 3.4rem)/1.18 var(--font-hanken); letter-spacing: -0.02em; }
+      .d1-text em { font-family: var(--font-instrument); font-weight: 400; color: var(--steel-hi); }
+      .d1-glyph { display: inline-block; vertical-align: -0.08em; margin-right: 0.3em; }
+      .glyph { width: 0.95em; height: auto; }
+      .d1-services { padding: 4svh 6vw 22svh; max-width: 70rem; margin: 0 auto; }
+      .d1-row { display: grid; grid-template-columns: auto minmax(0, 1fr) minmax(0, 1.1fr); align-items: center; gap: 1rem 3vw; padding: 2.2rem 0; border-top: 1px solid rgb(255 255 255 / 0.1); }
+      .d1-bullet { width: clamp(2.4rem, 4vw, 3.4rem); height: auto; }
+      .d1-bullet path { fill: var(--steel); }
+      .d1-row h3 { margin: 0; font: 600 clamp(2.6rem, 6vw, 5.5rem)/0.9 var(--font-clash); letter-spacing: -0.05em; }
+      .d1-row p { margin: 0; font-size: clamp(1.05rem, 1.4vw, 1.3rem); color: var(--mute); line-height: 1.45; }
+
+      /* =================== D2 · SHINE =================== */
+      .d2 { --bg: #050505; --fg: #f6f1e7; --gold: #e3c27e; --gold-hi: #fff1cf; --mute: #9b9488; background: var(--bg); color: var(--fg); }
+      .d2-hero { position: relative; min-height: 100svh; padding: 6rem 6vw 4rem; display: flex; flex-direction: column; justify-content: center; }
+      .d2-sky { position: absolute; inset: 0; width: 100%; height: 100%; }
+      .d2-top { position: absolute; top: 1.4rem; left: 6vw; z-index: 2; display: flex; align-items: center; gap: 0.6rem; font: 600 1.1rem var(--font-clash); letter-spacing: -0.02em; }
+      .d2-logo { width: 1.8rem; height: auto; }
+      .d2-logo .sh { fill: var(--gold); stroke: var(--gold); stroke-width: 10; }
+      .d2-h { position: relative; z-index: 2; margin: 0; line-height: 0.88; }
+      .d2-h > span { display: block; }
+      .d2-l1 { font: 400 clamp(3rem, 9vw, 8.5rem) var(--font-instrument); color: var(--mute); }
+      .d2-l2 { font: 600 clamp(5rem, 20vw, 19rem) var(--font-clash); letter-spacing: -0.06em; padding-right: 0.08em; }
+      .d2-glint {
+        background: linear-gradient(100deg, var(--gold) 0%, var(--gold) 40%, var(--gold-hi) 50%, var(--gold) 60%, var(--gold) 100%);
+        background-size: 250% 100%; -webkit-background-clip: text; background-clip: text; color: transparent;
+        animation: glint 4.5s ease-in-out infinite 1.6s;
+      }
+      @keyframes glint { 0% { background-position: 120% 0; } 45%, 100% { background-position: -30% 0; } }
+      .d2-sub { position: relative; z-index: 2; margin: 2rem 0 0; max-width: 32ch; font-size: clamp(1.1rem, 1.5vw, 1.4rem); line-height: 1.45; color: var(--mute); }
+      .d2-cta { position: relative; z-index: 2; align-self: flex-start; margin-top: 2rem; padding: 0.95rem 1.8rem; border-radius: 999px; border: 1px solid var(--gold); color: var(--gold); font-weight: 600; }
+      .d2-ticker { overflow: hidden; padding: 6svh 0; border-block: 1px solid rgb(227 194 126 / 0.2); }
+      .d2-track { display: flex; width: max-content; }
+      .d2-item { display: inline-flex; align-items: center; gap: 0.25em; padding-right: 0.3em; font: 600 clamp(4rem, 11vw, 10rem)/1 var(--font-clash); letter-spacing: -0.05em; white-space: nowrap; }
+      .d2-item:nth-child(even) { font-family: var(--font-instrument); font-style: italic; font-weight: 400; letter-spacing: -0.01em; color: var(--gold); }
+      .spark { width: 0.5em; height: auto; }
+      .spark .sh { fill: var(--gold); }
+      .d2-cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 3rem 4vw; padding: 14svh 6vw 20svh; }
+      .d2-col h3 { margin: 0 0 0.8rem; font: 400 clamp(2.2rem, 3.4vw, 3.2rem)/1 var(--font-instrument); color: var(--gold); }
+      .d2-col p { margin: 0; font-size: 1.1rem; line-height: 1.5; color: var(--mute); }
+
+      /* =================== D3 · PAPER (light) =================== */
+      .d3 { --bg: #f1ede4; --ink: #121110; --red: #e3342a; --mute: #6a655d; background: var(--bg); color: var(--ink); }
+      .d3-hero { position: relative; min-height: 100svh; padding: 1.4rem 4vw 3rem; display: flex; flex-direction: column; border-bottom: 1.5px solid var(--ink); }
+      .d3-top { display: flex; justify-content: space-between; align-items: center; padding-bottom: 1rem; border-bottom: 1.5px solid var(--ink); font-size: 0.95rem; }
+      .d3-mark { font: 600 1.15rem var(--font-clash); letter-spacing: -0.02em; }
+      .d3-big { position: relative; z-index: 1; margin: auto 0 0; font: 600 clamp(6rem, 31vw, 30rem)/0.8 var(--font-clash); letter-spacing: -0.07em; display: flex; }
+      .d3-mask { display: block; overflow: clip; padding-bottom: 0.04em; }
+      .d3-in { display: block; }
+      .d3-star { position: absolute; z-index: 2; right: 8vw; top: 16%; width: min(40vw, 30rem); height: auto; mix-blend-mode: multiply; }
+      .d3-star .sh { fill: var(--red); }
+      .d3-foot { position: relative; z-index: 3; display: flex; justify-content: space-between; align-items: flex-end; gap: 1.5rem; margin-top: 1.6rem; padding-top: 1.2rem; border-top: 1.5px solid var(--ink); }
+      .d3-lead { margin: 0; font-size: clamp(1.15rem, 1.8vw, 1.6rem); line-height: 1.25; font-weight: 500; }
+      .d3-cta { flex: none; padding: 0.95rem 1.8rem; border-radius: 999px; background: var(--ink); color: var(--bg); font-weight: 600; }
+      .d3-slide { padding: 16svh 0; overflow: clip; border-bottom: 1.5px solid var(--ink); }
+      .d3-row { margin: 0; white-space: nowrap; font: 600 clamp(3rem, 8.5vw, 8rem)/1.02 var(--font-clash); letter-spacing: -0.05em; }
+      .d3-row em { font-family: var(--font-instrument); font-weight: 400; letter-spacing: -0.01em; color: var(--red); }
+      .d3-r2 { text-align: right; }
+      .d3-services { padding: 12svh 4vw 20svh; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 3rem 3vw; }
+      .d3-svc { position: relative; padding-top: 1.4rem; display: grid; gap: 0.8rem; align-content: start; }
+      .d3-rule { position: absolute; left: 0; right: 0; top: 0; height: 1.5px; background: var(--ink); }
+      .d3-bullet { width: 2.6rem; height: auto; }
+      .d3-bullet path { fill: var(--red); }
+      .d3-svc h3 { margin: 0; font: 600 clamp(2.4rem, 4vw, 3.6rem)/0.95 var(--font-clash); letter-spacing: -0.04em; }
+      .d3-svc p { margin: 0; color: var(--mute); font-size: 1.1rem; line-height: 1.45; }
+
+      /* =================== Phones =================== */
+      @media (max-width: 767px) {
+        .d1-hero { align-items: end; padding-bottom: 3rem; }
+        .d1-star { top: 24%; right: 50%; translate: 50% -50%; width: 62vw; }
+        .d1-row { grid-template-columns: auto minmax(0, 1fr); }
+        .d1-row p { grid-column: 2; }
+        .d2-cols, .d3-services { grid-template-columns: minmax(0, 1fr); }
+        .d3-star { top: 14%; right: 6vw; width: 58vw; }
+        .d3-foot { flex-direction: column; align-items: flex-start; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .d2-glint { animation: none; }
+      }
+    </style>
+  </body>
+</html>
