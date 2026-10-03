@@ -33,7 +33,9 @@ export function initHero() {
   const phone = matchMedia('(max-width: 767px)').matches;
   startWaveLines(hero, base, glow, {
     canDraw: () => window.scrollY < hero.offsetHeight * 0.1,
-    ...(phone ? { spacing: 24, amplitude: 0.42, frequency: 3.2, halo: 30, softness: 28 } : {}),
+    // Phones: lines are dense, so a wide empty zone reads as a hole. Instead a thin clear zone hugs
+    // the letters and a long, soft falloff thins the lines out gradually as they approach.
+    ...(phone ? { spacing: 26, amplitude: 0.42, frequency: 3.2, halo: 14, softness: 32 } : {}),
   });
   startHeaderState(hero);
   placeOrb(giant);
