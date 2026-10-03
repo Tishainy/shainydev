@@ -2,7 +2,7 @@
 import { site } from '../../data/content';
 // Services (ticket 06, with the showcases from tickets 07–09): a film strip. Scrolling down slides
 // the services sideways, one full-screen frame each: the lit word across the top, the details around a live demo that the scroll plays.
-// Phones get an index instead: the three words as a list, each opening as you scroll to it.
+// Phones pick a service with three orbs instead; the chosen one's details and demo show below.
 // Animation lives in src/scripts/services.ts. Reduced motion and no-JS get the frames stacked,
 // with each demo shown complete.
 
@@ -12,12 +12,21 @@ const { build, automate, ai } = site.interludes;
 
 <section id="services" class="svc" data-services>
   <h2 class="svc-heading">{heading}</h2>
+  <!-- Phones: pick a service with one of three orbs (shown by services.ts). -->
+  <div class="svc-picker" role="tablist" aria-label={heading}>
+    {items.map((item, index) => (
+      <button class="svc-pick" type="button" role="tab" aria-selected={index === 0 ? 'true' : 'false'} data-svc-pick={index}>
+        <span class="svc-pick-orb glass-orb" aria-hidden="true"></span>
+        <span class="svc-pick-label">{item.name}</span>
+      </button>
+    ))}
+  </div>
   <div class="svc-viewport">
     <div class="svc-strip" data-svc-strip>
       {items.map((item, index) => (
         <article class="svc-frame" data-svc-frame={index}>
           <p class="svc-word" aria-hidden="true" data-svc-word>
-            {item.name}<span class="svc-word-fill" data-svc-fill>{item.name}</span><span class="svc-word-orb glass-orb" data-svc-orb></span>
+            {item.name}
           </p>
 
           <!-- Layout-neutral everywhere except the phone index, where it opens as you reach it. -->
@@ -134,8 +143,7 @@ const { build, automate, ai } = site.interludes;
   .svc-body {
     display: contents;
   }
-  .svc-word-orb,
-  .svc-word-fill {
+  .svc-picker {
     display: none;
   }
   .svc-heading {
@@ -568,95 +576,81 @@ const { build, automate, ai } = site.interludes;
     display: flex;
   }
 
-  /* ---------- Phones: the index plays like a film. The section holds in place while you scroll:
-     Build opens, then closes as Automate opens, then AI; scrolling back up plays it in reverse.
-     Everything is driven by one scroll timeline (services.ts), so nothing flickers. ---------- */
+  /* ---------- Phones: three orbs pick the service; the chosen one grows and lights up and its
+     subtitle, description and demo show below. ---------- */
   @media (max-width: 767px) {
-    .svc:global(.is-index) {
-      height: 100svh;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
+    .svc:global(.is-picker) {
+      padding: 0 0 5rem;
     }
-    .svc:global(.is-index) .svc-heading {
-      padding: 5rem 6vw 0.6rem;
+    .svc:global(.is-picker) .svc-heading {
+      padding: 6rem 6vw 1.2rem;
       font-size: 1.5rem;
     }
-    .svc:global(.is-index) .svc-strip {
+    .svc:global(.is-picker) .svc-picker {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+      padding: 0 4vw 1.6rem;
+    }
+    .svc-pick {
+      display: grid;
+      justify-items: center;
+      gap: 0.7rem;
+      padding: 0.9rem 0;
+      border: 0;
+      background: none;
+      color: var(--color-muted);
+      cursor: pointer;
+    }
+    .svc-pick-orb {
+      width: 2.3rem;
+      height: 2.3rem;
+      font-size: 14.4rem;
+      filter: grayscale(1) brightness(0.5);
+      transition: transform 0.45s cubic-bezier(0.3, 1.6, 0.5, 1), filter 0.45s;
+    }
+    .svc-pick[aria-selected='true'] .svc-pick-orb {
+      transform: scale(1.55);
+      filter: none;
+    }
+    .svc-pick-label {
+      font-family: var(--font-display);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      font-size: 1.15rem;
+      transition: color 0.3s;
+    }
+    .svc-pick[aria-selected='true'] .svc-pick-label {
+      color: var(--color-fg);
+    }
+    .svc:global(.is-picker) .svc-strip {
       padding: 0 6vw;
     }
-    .svc:global(.is-index) .svc-frame {
-      display: block;
+    .svc:global(.is-picker) .svc-frame {
+      display: none;
       padding: 0;
-      border-top: 1px solid var(--color-line);
+      gap: 0.9rem;
     }
-    .svc:global(.is-index) .svc-frame:last-child {
-      border-bottom: 1px solid var(--color-line);
-    }
-    .svc:global(.is-index) .svc-word {
-      position: relative;
-      display: flex;
-      align-items: baseline;
-      justify-self: stretch;
-      padding: 0.5rem 0;
-      font-size: 3.2rem;
-      background: none;
-      color: color-mix(in srgb, var(--color-fg) 28%, transparent);
-    }
-    /* The light sits exactly over the grey word; the timeline fades it in and out. */
-    .svc:global(.is-index) .svc-word-fill {
-      display: block;
-      position: absolute;
-      left: 0;
-      top: 0.5rem;
-      padding-right: 0.06em;
-      background: var(--light-fill);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      opacity: 0;
-    }
-    .svc:global(.is-index) .svc-word-orb {
-      display: inline-block;
-      width: 0.16em;
-      height: 0.16em;
-      margin-left: 0.05em;
-      transform: scale(0);
-    }
-    .svc:global(.is-index) .svc-body {
+    .svc:global(.is-picker) .svc-frame:global(.is-current) {
       display: grid;
-      gap: 0.8rem;
-      height: 0;
-      overflow: hidden;
     }
-    .svc:global(.is-index) .svc-body > :last-child {
-      margin-bottom: 1.2rem;
-    }
-    .svc:global(.is-index) .svc-sum {
-      font-size: 1.6rem;
-    }
-    .svc:global(.is-index) .svc-sum-line {
-      display: inline;
-    }
-    .svc:global(.is-index) .svc-sum-indent {
-      padding-left: 0.25em;
-    }
-    /* Kept lean on phones: one line of subtitle and the demo. */
-    .svc:global(.is-index) .svc-desc,
-    .svc:global(.is-index) .svc-inc,
-    .svc:global(.is-index) .svc-demo-caption {
+    /* The orb's label names the service, so the big word isn't repeated here. */
+    .svc:global(.is-picker) .svc-word,
+    .svc:global(.is-picker) .svc-inc,
+    .svc:global(.is-picker) .svc-demo-caption {
       display: none;
     }
-    .svc:global(.is-index) .svc-demo {
+    .svc:global(.is-picker) .svc-sum {
+      font-size: 2rem;
+    }
+    .svc:global(.is-picker) .svc-desc {
+      font-size: 1.02rem;
+    }
+    .svc:global(.is-picker) .svc-demo {
       min-height: 0;
+      margin-top: 0.4rem;
     }
-    .svc:global(.is-index) .mock-img {
-      min-height: 3.2rem;
-    }
-    .svc:global(.is-index) .mock-row > span {
-      height: 2.2rem;
-    }
-    .svc:global(.is-index) .chat-typing {
+    .svc:global(.is-picker) .chat-typing {
       display: flex;
     }
     .flow {

@@ -76,62 +76,55 @@ export function initServices() {
     };
   });
 
-  // Phones: the index plays like a film. The section holds in place while one scroll timeline opens
-  // each service (its word lights up, the orb pops on, its subtitle and demo slide open and the demo
-  // plays), then closes it as the next opens. Scrolling back up plays it all in reverse.
+  // Phones: three orbs pick the service. The chosen one's details rise in and its demo plays. It
+  // cycles on its own while on screen, until a visitor taps an orb.
   mm.add('(max-width: 767px) and (prefers-reduced-motion: no-preference)', () => {
-    section.classList.add('is-index');
+    section.classList.add('is-picker');
     const frames = gsap.utils.toArray<HTMLElement>('[data-svc-frame]', section);
-    const parts = frames.map((frame) => ({
-      fill: frame.querySelector<HTMLElement>('[data-svc-fill]')!,
-      orb: frame.querySelector<HTMLElement>('[data-svc-orb]')!,
-      body: frame.querySelector<HTMLElement>('[data-svc-body]')!,
-      demo: demoFor(frame),
-    }));
+    const picks = gsap.utils.toArray<HTMLButtonElement>('[data-svc-pick]', section);
+    const demos = frames.map(demoFor).map((demo) => demo.pause().duration(2.4));
+    let current = -1;
+    let cycling = true;
+    let timer: gsap.core.Tween | undefined;
 
-    const tl = gsap.timeline({
-      defaults: { ease: 'power2.inOut' },
-      scrollTrigger: {
-        trigger: section,
-        start: 'top top',
-        end: () => `+=${frames.length * 130}%`,
-        scrub: 0.8,
-        pin: true,
-        anticipatePin: 1,
-        invalidateOnRefresh: true,
-        snap: { snapTo: 'labelsDirectional', duration: { min: 0.25, max: 0.7 }, delay: 0.1, ease: 'power1.inOut' },
-      },
-    });
-
-    const open = (i: number, at: number) => {
-      const p = parts[i];
-      tl.to(p.fill, { opacity: 1, duration: 0.4 }, at)
-        .to(p.orb, { scale: 1, duration: 0.35, ease: 'back.out(2)' }, at + 0.15)
-        .fromTo(p.body, { height: 0 }, { height: 'auto', duration: 0.6 }, at)
-        .fromTo(p.body.children, { y: 16, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.4, stagger: 0.08 }, at + 0.2)
-        .add(p.demo.duration(1), at + 0.55);
+    const select = (i: number) => {
+      if (i === current) return;
+      current = i;
+      picks.forEach((pick, k) => pick.setAttribute('aria-selected', String(k === i)));
+      frames.forEach((frame, k) => frame.classList.toggle('is-current', k === i));
+      const parts = frames[i].querySelectorAll('[data-svc-part], [data-svc-demo]');
+      gsap.fromTo(parts, { y: 18, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.55, stagger: 0.08, ease: 'power2.out' });
+      demos[i].play(0);
     };
-    const close = (i: number, at: number) => {
-      const p = parts[i];
-      tl.to(p.body.children, { autoAlpha: 0, duration: 0.25 }, at)
-        .to(p.body, { height: 0, duration: 0.5 }, at)
-        .to(p.orb, { scale: 0, duration: 0.25 }, at)
-        .to(p.fill, { opacity: 0, duration: 0.35 }, at);
+    const next = () => {
+      timer?.kill();
+      if (!cycling) return;
+      timer = gsap.delayedCall(6, () => {
+        select((current + 1) % frames.length);
+        next();
+      });
     };
 
-    tl.addLabel('start', 0);
-    frames.forEach((_, i) => {
-      const at = i === 0 ? 0.1 : tl.duration();
-      if (i > 0) close(i - 1, at);
-      open(i, i > 0 ? at + 0.2 : at);
-      tl.addLabel(`s${i}`, tl.duration());
-      // A short hold on each finished service before the next takes over.
-      tl.to({}, { duration: 0.35 });
+    picks.forEach((pick, i) =>
+      pick.addEventListener('click', () => {
+        cycling = false;
+        timer?.kill();
+        select(i);
+      }),
+    );
+    select(0);
+    // Only cycle while the section is on screen.
+    ScrollTrigger.create({
+      trigger: section,
+      start: 'top 60%',
+      end: 'bottom 40%',
+      onToggle: (self) => (self.isActive ? next() : timer?.kill()),
     });
 
     return () => {
-      section.classList.remove('is-index');
-      parts.forEach((p) => gsap.set([p.fill, p.orb, p.body, ...p.body.children], { clearProps: 'all' }));
+      timer?.kill();
+      section.classList.remove('is-picker');
+      frames.forEach((frame) => frame.classList.remove('is-current'));
     };
   });
 }

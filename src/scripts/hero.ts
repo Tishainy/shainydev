@@ -19,7 +19,6 @@ export function initHero() {
   const base = q<HTMLCanvasElement>('[data-hero-lines]');
   const glow = q<HTMLCanvasElement>('[data-hero-glow]');
   const mobileOrb = q('[data-hero-m-orb]');
-  const mobileHi = q('.hero-m-hi');
 
   const pointer = { x: innerWidth / 2, y: innerHeight / 2, active: false };
   addEventListener('pointermove', (e) => {
@@ -29,14 +28,10 @@ export function initHero() {
   });
 
   // Measure at rest: once the visitor has scrolled, the scroll animation has moved the letters.
-  // Phones get their own tuning: closer, gentler lines with more waves across the narrow width.
-  const phone = matchMedia('(max-width: 767px)').matches;
-  startWaveLines(hero, base, glow, {
-    canDraw: () => window.scrollY < hero.offsetHeight * 0.1,
-    // Phones: lines are dense, so a wide empty zone reads as a hole. Instead a thin clear zone hugs
-    // the letters and a long, soft falloff thins the lines out gradually as they approach.
-    ...(phone ? { spacing: 26, amplitude: 0.42, frequency: 3.2, halo: 14, softness: 32 } : {}),
-  });
+  // Laptop and up only: phones get the orb with its ripples instead.
+  if (matchMedia('(min-width: 768px)').matches) {
+    startWaveLines(hero, base, glow, { canDraw: () => window.scrollY < hero.offsetHeight * 0.1 });
+  }
   startHeaderState(hero);
   placeOrb(giant);
 
@@ -73,9 +68,8 @@ export function initHero() {
         )
         .to(giant, { yPercent: desktop ? -42 : -30, scale: 1.06, duration: 1 }, 0.05)
         .to(orb, { y: () => -innerHeight * 0.18, duration: 0.8, ease: 'power3.inOut' }, 0.25)
-        // Phones: the orb rises and grows a little as the hero scrolls away; the hello fades.
-        .to(mobileOrb, { yPercent: -45, scale: 1.15, duration: 1 }, 0.05)
-        .to(mobileHi, { y: -30, autoAlpha: 0, duration: 0.5 }, 0);
+        // Phones: the orb rises and grows a little as the hero scrolls away.
+        .to(mobileOrb, { yPercent: -45, scale: 1.2, duration: 1 }, 0.05);
 
       // ---- Intro: waits for the fonts so nothing jumps, then plays once ----
       let intro: gsap.core.Timeline | undefined;
@@ -98,8 +92,7 @@ export function initHero() {
             },
             0.35,
           )
-          .fromTo(mobileOrb, { scale: 0.4, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 1.4, ease: 'expo.out' }, 0.5)
-          .from(mobileHi, { y: 20, autoAlpha: 0, duration: 0.9 }, 0.9)
+          .fromTo(mobileOrb, { scale: 0.4, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 1.4, ease: 'expo.out' }, 0.2)
           // Explicit end value: tweening a filter toward "none" dips through black.
           .fromTo(
             ball,

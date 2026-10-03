@@ -5,7 +5,6 @@ import { site } from '../../data/content';
 // Without JS or with reduced motion, this markup is the full, readable composition.
 
 const { lines, cta, name } = site.hero;
-const { intro } = site.about;
 // The name stays one plain text run: Safari won't paint clipped-background text inside a nested,
 // positioned element, so the "i" can't be wrapped. The orb and the patch hiding the i's square dot
 // are siblings, positioned by hero.ts from where the "i" actually lands.
@@ -32,10 +31,10 @@ const { intro } = site.about;
     {name}<span class="hero-dot-cover" aria-hidden="true"></span><span class="hero-orb" data-hero-orb data-lines-avoid><span class="hero-orb-ball glass-orb" data-hero-orb-ball></span></span>
   </p>
 
-  <!-- Phones: instead of the giant name, the glass orb leads, with a short hello under it. -->
-  <div class="hero-m" data-hero-m>
-    <span class="hero-m-orb glass-orb" aria-hidden="true" data-hero-m-orb data-lines-avoid></span>
-    <p class="hero-m-hi">{intro}</p>
+  <!-- Phones: instead of the giant name, the glass orb leads, with ripples spreading from it. -->
+  <div class="hero-m" data-hero-m aria-hidden="true">
+    <span class="hero-m-ring"></span><span class="hero-m-ring"></span><span class="hero-m-ring"></span>
+    <span class="hero-m-orb glass-orb" data-hero-m-orb></span>
   </div>
 </section>
 
@@ -184,42 +183,62 @@ const { intro } = site.about;
     display: none;
   }
 
+  /* Phones: the orb sits up top with ripples spreading from it; the headline is centred beneath. */
   @media (max-width: 767px) {
-    .hero-headline { top: 19%; font-size: 11.5vw; }
-    /* The button sits under the headline on phones. */
-    .hero-l4 .hero-l-inner { flex-direction: column; align-items: flex-start; }
+    .wave-lines { display: none; }
     .hero-giant { display: none; }
+    .hero-headline {
+      top: 46%;
+      width: 90vw;
+      font-size: 10.5vw;
+      text-align: center;
+    }
+    .hero-l { padding-left: 0.12em; }
+    .hero-l-inner { justify-content: center; }
+    .hero-l2, .hero-l4 { padding-left: 0.12em; }
+    .hero-it { color: color-mix(in srgb, var(--hero-fg) 80%, var(--color-accent)); }
+    .hero-l4 .hero-l-inner { flex-direction: column; align-items: center; }
+    .hero-pill {
+      margin: 1.8rem 0 0;
+      padding: 0.9rem 2rem;
+      border: 0;
+      background: var(--color-accent);
+      color: var(--color-on-accent);
+      font-size: 1.05rem;
+    }
     .hero-m {
-      display: block;
+      display: grid;
+      place-items: center;
       position: absolute;
-      inset: 0;
+      left: 50%;
+      top: 13%;
+      width: min(62vw, 16rem);
+      aspect-ratio: 1;
+      margin-left: max(-31vw, -8rem);
       z-index: 1;
       pointer-events: none;
     }
     /* The orb's shading is sized in em (0.16em wide elsewhere), so its font-size sets its proportions. */
     .hero-m-orb {
-      position: absolute;
-      left: 50%;
-      bottom: 18svh;
-      width: min(36vw, 11rem);
-      height: min(36vw, 11rem);
-      margin-left: max(-18vw, -5.5rem);
-      font-size: min(225vw, 69rem);
+      width: 46%;
+      height: 46%;
+      font-size: min(178vw, 46rem);
     }
-    .hero-m-hi {
+    .hero-m-ring {
       position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 9svh;
-      margin: 0;
-      text-align: center;
-      font-family: var(--font-serif);
-      font-style: italic;
-      font-size: 1.8rem;
-      line-height: 1.1;
+      inset: 27%;
+      border-radius: 50%;
+      border: 1px solid color-mix(in srgb, var(--color-accent) 70%, transparent);
+      animation: hero-ripple 3.6s ease-out infinite;
     }
-    .hero-l2 { padding-left: 22%; }
-    .hero-l4 { padding-left: 12%; }
-    .hero-pill { margin: 1.6rem 0 0 -0.1em; font-size: 1rem; padding: 0.8rem 1.5rem; }
+    .hero-m-ring:nth-child(2) { animation-delay: 1.2s; }
+    .hero-m-ring:nth-child(3) { animation-delay: 2.4s; }
+  }
+  @keyframes hero-ripple {
+    from { transform: scale(1); opacity: 0.8; }
+    to { transform: scale(2.3); opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero-m-ring { animation: none; opacity: 0; }
   }
 </style>
