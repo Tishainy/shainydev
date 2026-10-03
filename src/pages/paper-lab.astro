@@ -150,7 +150,7 @@ const steps = [
           ))}
           <article class="poster po-next">
             <Fragment set:html={star('po-star')} />
-            <h3>Your project <em>next?</em></h3>
+            <h3>Your project next?</h3>
             <a class="po-btn" href="#talk">Let's talk</a>
           </article>
         </div>
@@ -341,7 +341,8 @@ const steps = [
         --night: #0b0c0f;
       }
       :root[data-mode='dark'] {
-        --paper: #121110;
+        /* A warm charcoal rather than near-black. */
+        --paper: #1f1d1b;
         --ink: #f1ede4;
         --red: #ff4536;
         --mute: #a39d92;
@@ -433,12 +434,13 @@ const steps = [
       .po-luna .po-text { top: 0; right: 45%; align-content: end; color: var(--sage-ink); }
       .po-jarvis .m-term { padding: 3.5% 4% 0; font-size: clamp(0.8rem, 1.15vw, 1.1rem); }
       .po-jarvis .po-text { color: #f1ede4; }
-      :root[data-mode='dark'] .po-jarvis { box-shadow: inset 0 0 0 1.5px rgb(241 237 228 / 0.18); }
-      .po-next { width: min(48vw, 40rem); background: var(--red); color: #fff; display: grid; align-content: center; justify-items: start; gap: 1.6rem; padding: 3rem; }
+      :root[data-mode='dark'] .po-jarvis, :root[data-mode='dark'] .po-next { box-shadow: inset 0 0 0 1.5px rgb(241 237 228 / 0.18); }
+      .po-next { width: min(48vw, 40rem); background: #121110; color: #f1ede4; display: grid; align-content: center; justify-items: start; gap: 1.6rem; padding: 3rem; }
       .po-next h3 { margin: 0; font: 600 clamp(2.6rem, 5vw, 5rem)/0.95 var(--font-clash); letter-spacing: -0.045em; }
       .po-star { width: 5rem; height: auto; }
-      .po-star .sh { fill: #fff; }
-      .po-btn { display: inline-flex; padding: 0.95rem 1.5rem; border-radius: 999px; background: #fff; color: var(--red); font-weight: 600; }
+      .po-star .sh { fill: var(--red); }
+      .po-btn { display: inline-flex; padding: 0.95rem 1.5rem; border-radius: 999px; background: #f1ede4; color: #121110; font-weight: 600; transition: transform 0.25s; }
+      .po-btn:hover { transform: translateY(-2px); }
       .po-count { position: absolute; right: 4vw; top: 2.6rem; margin: 0; padding: 0.4rem 0.8rem; border-radius: 999px; background: var(--paper); font-weight: 600; font-variant-numeric: tabular-nums; }
       /* Project visuals (from src/data/work.ts). Each project keeps its own colours in both modes. */
       .m-shot { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top; }
@@ -510,6 +512,7 @@ const steps = [
           .hero-stage { align-items: end; }
         .hero-star-wrap { top: 30%; right: 6vw; width: 80vw; }
         .hero-h { font-size: 12.5vw; }
+        .hero { padding-bottom: 3.5rem; }
         .hero-foot { grid-template-columns: minmax(0, 1fr); }
         .scroll-cue { display: none; }
         .sec-head { grid-template-columns: minmax(0, 1fr); }
