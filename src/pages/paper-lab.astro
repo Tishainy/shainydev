@@ -44,7 +44,6 @@ const chores = [
   { task: 'Explaining your opening hours on the phone', tag: 'Website', hours: 1 },
 ];
 const choreHours = chores.reduce((n, c) => n + c.hours, 0);
-const helpWith = ['a website', 'an app', 'an automation', 'email', 'AI', 'not sure yet'];
 const steps = [
   { glyph: 'half', name: 'Talk', line: "A chat about your business and what's in the way. No jargon." },
   { glyph: 'diamond', name: 'Design', line: 'You see how it will look before anything gets built.' },
@@ -189,37 +188,29 @@ const steps = [
       </ol>
     </section>
 
-    <!-- ===================== CONTACT: a letter you fill in ===================== -->
+    <!-- ===================== CONTACT: a letter from Shainy ===================== -->
     <section class="talk" id="talk">
       <header class="talk-top">
         <p class="sec-no">Contact</p>
         <h2 class="talk-h" data-up>Let's make something that <em>shines</em>.</h2>
       </header>
-      <form class="letter" data-letter action="/api/contact" method="post" novalidate>
+      <div class="letter" data-letter>
         <div class="stamp" data-stamp aria-hidden="true">
           <Fragment set:html={star('stamp-star')} />
           <span>48h reply</span>
         </div>
-        <p class="ll" data-ll>Hi Shainy,</p>
-        <p class="ll" data-ll>I'm <input class="blank" name="name" placeholder="your name" autocomplete="name" required aria-label="Your name" /> from <input class="blank" name="company" placeholder="your business" autocomplete="organization" aria-label="Your business" />.</p>
-        <p class="ll" data-ll>I'd love some help with</p>
-        <div class="chips" data-ll role="group" aria-label="What you need help with">
-          {helpWith.map((h) => <button type="button" class="chip" data-chip aria-pressed="false">{h}</button>)}
-        </div>
-        <p class="ll" data-ll>In short: <input class="blank blank-long" name="message" placeholder="what slows your business down" required aria-label="Your message" /></p>
-        <p class="ll" data-ll>You can reach me at <input class="blank" type="email" name="email" placeholder="you@email.com" autocomplete="email" required aria-label="Your email" />.</p>
-        <input class="trap" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
+        <p class="ll" data-ll>Hi there,</p>
+        <p class="ll" data-ll>Tell me what's <u>slowing your business down</u>. The task you repeat every week, the website you'd rather not send people to, the idea you never find time for.</p>
+        <p class="ll" data-ll>I'll reply within <u>48 hours</u> with a clear plan and a <u>fixed price</u>. No jargon, no strings attached.</p>
+        <p class="ll" data-ll>Talk soon,</p>
+        <p class="sign" data-ll>Shainy</p>
+        <p class="ps" data-ll>P.S. Not sure what you need yet? That's the best time to ask.</p>
         <div class="letter-send" data-ll>
-          <button class="btn btn-red" type="submit">Send it <span aria-hidden="true">→</span></button>
-          <p class="letter-status" data-status aria-live="polite"></p>
+          <a class="btn btn-red" href="mailto:shainydev@gmail.com?subject=Project%20enquiry">Email me <span aria-hidden="true">→</span></a>
+          <button class="copy" type="button" data-copy="shainydev@gmail.com"><span class="copy-addr">shainydev@gmail.com</span><span class="copy-label" data-copy-label>Copy</span></button>
+          <a class="link" href="https://www.linkedin.com/in/shainy-naar-79618b358/">LinkedIn ↗</a>
         </div>
-      </form>
-      <aside class="talk-side">
-        <p>Rather write it yourself?</p>
-        <p class="talk-mail">shainydev@gmail.com</p>
-        <p><a class="link" href="mailto:shainydev@gmail.com">Open in your email app</a> · <a class="link" href="https://www.linkedin.com/in/shainy-naar-79618b358/">LinkedIn ↗</a></p>
-        <p class="talk-promise">I reply within 48 hours with a clear plan and a fixed price.</p>
-      </aside>
+      </div>
     </section>
 
     <footer class="foot">
@@ -244,52 +235,18 @@ const steps = [
         sync();
       });
 
-      // Contact letter: blanks grow with what's typed, chips toggle, and it posts to /api/contact.
-      // If mail isn't set up on the server yet, it falls back to opening the visitor's email app.
-      const letter = document.querySelector<HTMLFormElement>('[data-letter]')!;
-      const status = letter.querySelector<HTMLElement>('[data-status]')!;
-      const started = Date.now();
-      const fit = (el: HTMLInputElement) => (el.size = Math.max(4, (el.value || el.placeholder).length + 1));
-      letter.querySelectorAll<HTMLInputElement>('.blank').forEach((el) => { fit(el); el.addEventListener('input', () => fit(el)); });
-      letter.querySelectorAll<HTMLButtonElement>('[data-chip]').forEach((b) =>
-        b.addEventListener('click', () => b.setAttribute('aria-pressed', String(b.getAttribute('aria-pressed') !== 'true'))),
-      );
-      letter.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const f = new FormData(letter);
-        const val = (k: string) => String(f.get(k) ?? '').trim();
-        const missing = ['name', 'message', 'email'].find((k) => !val(k));
-        if (missing) {
-          status.textContent = 'Just fill in the blanks first.';
-          letter.querySelector<HTMLInputElement>(`[name="${missing}"]`)!.focus();
-          return;
-        }
-        const help = [...letter.querySelectorAll('[data-chip][aria-pressed="true"]')].map((b) => b.textContent);
-        const lines: string[] = [];
-        if (val('company')) lines.push(`Business: ${val('company')}`);
-        if (help.length) lines.push(`Help with: ${help.join(', ')}`);
-        if (lines.length) lines.push('');
-        lines.push(val('message'));
-        const message = lines.join('\n');
-        status.textContent = 'Sending…';
-        let code = 'failed';
+      // Contact: copy the email address (falls back to selecting it when the clipboard is refused).
+      const copyBtn = document.querySelector<HTMLButtonElement>('[data-copy]')!;
+      const copyLabel = copyBtn.querySelector<HTMLElement>('[data-copy-label]')!;
+      copyBtn.addEventListener('click', async () => {
         try {
-          const res = await fetch('/api/contact', {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name: val('name'), email: val('email'), message, website: val('website'), started }),
-          });
-          code = (await res.json()).code ?? 'failed';
-        } catch {}
-        if (code === 'ok') {
-          letter.classList.add('sent');
-          status.textContent = `Sent. Talk soon, ${val('name')}!`;
-          gsap.fromTo('[data-stamp]', { scale: 2.4, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 0.5, ease: 'back.out(2.5)' });
-        } else if (code === 'bad-email') {
-          status.textContent = 'That email address looks off. Could you check it?';
-        } else {
-          status.textContent = 'Opening your email app with your letter…';
-          location.href = `mailto:shainydev@gmail.com?subject=${encodeURIComponent('Project enquiry from ' + val('name'))}&body=${encodeURIComponent(message + '\n\n' + val('name') + ' · ' + val('email'))}`;
+          await navigator.clipboard.writeText(copyBtn.dataset.copy!);
+          copyLabel.textContent = 'Copied ✓';
+        } catch {
+          getSelection()?.selectAllChildren(copyBtn.querySelector('.copy-addr')!);
+          copyLabel.textContent = 'Selected';
         }
+        setTimeout(() => (copyLabel.textContent = 'Copy'), 2000);
       });
 
       if (!reduce) {
@@ -528,35 +485,25 @@ const steps = [
       .chore-tag { padding: 0.3rem 0.8rem; border-radius: 999px; background: var(--red); color: #fff; font-size: 0.85rem; font-weight: 600; }
       .chore-time { font-size: 0.85rem; color: var(--mute); white-space: nowrap; }
 
-      /* ---------- Contact: the letter ---------- */
-      .talk { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: 4rem 6vw; padding: 16svh 4vw 14svh; border-bottom: 1.5px solid var(--line); }
-      .talk-top { grid-column: 1 / -1; display: grid; gap: 1.2rem; }
+      /* ---------- Contact: a letter from Shainy ---------- */
+      .talk { display: grid; gap: 4rem; padding: 16svh 4vw 14svh; border-bottom: 1.5px solid var(--line); }
+      .talk-top { display: grid; gap: 1.2rem; }
       .talk-h { margin: 0; max-width: 14ch; font: 600 clamp(3rem, 7.4vw, 7.4rem)/0.92 var(--font-clash); letter-spacing: -0.05em; }
       .talk-h em { color: var(--red); }
-      .letter { position: relative; display: grid; gap: 1.1rem; padding-right: 7rem; font: 500 clamp(1.4rem, 2.5vw, 2.4rem)/1.35 var(--font-clash); letter-spacing: -0.025em; }
+      .letter { position: relative; display: grid; gap: 1.3rem; max-width: 58rem; padding-right: 8rem; font: 500 clamp(1.3rem, 2.2vw, 2.1rem)/1.38 var(--font-clash); letter-spacing: -0.025em; }
       .ll { margin: 0; }
-      .blank { min-width: 0; max-width: 100%; padding: 0 0.15em; border: 0; border-bottom: 2px solid var(--red); background: none; color: var(--red); font: italic 400 1.08em/1.1 var(--font-instrument); letter-spacing: 0; border-radius: 0; }
-      .blank::placeholder { color: color-mix(in srgb, var(--red) 45%, transparent); }
-      .blank:focus { outline: none; background: color-mix(in srgb, var(--red) 8%, transparent); }
-      .chips { display: flex; flex-wrap: wrap; gap: 0.6rem; }
-      .chip { padding: 0.5rem 1.1rem; border: 1.5px solid var(--line); border-radius: 999px; background: none; color: var(--ink); font: 600 clamp(0.95rem, 1.2vw, 1.1rem) var(--font-hanken); cursor: pointer; transition: background-color 0.25s, color 0.25s, border-color 0.25s, transform 0.25s; }
-      .chip:hover { transform: translateY(-2px); }
-      .chip[aria-pressed='true'] { background: var(--red); border-color: var(--red); color: #fff; }
-      .chip[aria-pressed='true']::before { content: '✓ '; }
-      .letter-send { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.6rem; margin-top: 1rem; }
-      .letter-send .btn { border: 0; font: 600 1rem var(--font-hanken); cursor: pointer; }
-      .letter-status { margin: 0; font: 500 1rem var(--font-hanken); color: var(--mute); letter-spacing: 0; }
-      .letter.sent .ll, .letter.sent .chips { opacity: 0.45; pointer-events: none; }
-      .trap { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+      .letter u { text-decoration: none; padding: 0 0.1em; border-bottom: 2px solid var(--red); color: var(--red); font: italic 400 1.08em/1.1 var(--font-instrument); letter-spacing: 0; }
+      .sign { margin: -0.6rem 0 0; color: var(--red); font: italic 400 clamp(3rem, 6vw, 5.4rem)/1 var(--font-instrument); letter-spacing: -0.01em; }
+      .ps { margin: 0; font: 500 clamp(1rem, 1.3vw, 1.15rem)/1.45 var(--font-hanken); letter-spacing: 0; color: var(--mute); }
+      .letter-send { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.6rem; margin-top: 1rem; font: 500 1rem var(--font-hanken); letter-spacing: 0; }
+      .copy { display: inline-flex; align-items: center; gap: 0.8rem; padding: 0.55rem 0.6rem 0.55rem 1.2rem; border: 1.5px solid var(--line); border-radius: 999px; background: none; color: var(--ink); font: 600 1rem var(--font-hanken); cursor: pointer; }
+      .copy-addr { user-select: all; }
+      .copy-label { padding: 0.35rem 0.8rem; border-radius: 999px; background: var(--ink); color: var(--paper); font-size: 0.85rem; }
       /* A postage stamp in the corner of the letter; the dotted paper-coloured border reads as perforation. */
       .stamp { position: absolute; right: 0; top: -0.4rem; width: 5.8rem; aspect-ratio: 4 / 5; display: grid; place-items: center; align-content: center; gap: 0.4rem; padding: 0.5rem; background: var(--red); color: #fff; border: 0.4rem dotted var(--paper); outline: 1.5px solid var(--red); outline-offset: -0.55rem; }
       .stamp-star { width: 62%; height: auto; }
       .stamp-star .sh { fill: #fff; }
       .stamp span { font: 600 0.62rem var(--font-hanken); letter-spacing: 0.08em; text-transform: uppercase; }
-      .talk-side { align-self: end; display: grid; gap: 0.8rem; padding-left: 2rem; border-left: 1.5px solid var(--line); }
-      .talk-side p { margin: 0; line-height: 1.45; }
-      .talk-mail { font: 600 clamp(1.2rem, 1.8vw, 1.6rem) var(--font-clash); letter-spacing: -0.02em; user-select: all; }
-      .talk-promise { color: var(--mute); }
       .link { font-weight: 600; text-decoration: underline; text-decoration-color: var(--red); text-underline-offset: 0.3em; }
       .foot { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 1.6rem 4vw; font-size: 0.9rem; color: var(--mute); }
 
@@ -586,12 +533,18 @@ const steps = [
         .steps { grid-template-columns: minmax(0, 1fr); }
         .step, .step + .step { padding: 1.4rem 0; border-right: 0; border-bottom: 1px solid color-mix(in srgb, var(--line) 25%, transparent); }
         .chores, .talk { grid-template-columns: minmax(0, 1fr); }
-        .chores-side { position: static; }
+        /* The side column dissolves so the counter can stick under the bar while the list scrolls. */
+        .chores { gap: 1.6rem; }
+        .chores-side { display: contents; }
+        .chores-side > .sec-no, .chores-side > h2 { margin: 0; }
+        .chores-count { position: sticky; top: var(--bar, 68px); z-index: 3; align-self: start; margin: 0 -4vw; padding: 0.8rem 4vw; background: var(--paper); border-bottom: 1.5px solid var(--line); transition: background-color 0.5s; }
+        .chores-n { font-size: 3.6rem; }
+        .chores-unit { font-size: 1rem; }
+        .chores-note { order: 5; }
         .chore { grid-template-columns: minmax(0, 1fr); gap: 0.8rem; padding: 1.4rem 0; }
         .chore-meta { grid-auto-flow: column; justify-content: start; align-items: center; gap: 0.8rem; }
-        .letter { padding-right: 0; padding-top: 6.4rem; }
+        .letter { padding-right: 0; padding-top: 7rem; }
         .stamp { top: 0; right: auto; left: 0; width: 4.8rem; }
-        .talk-side { padding: 1.6rem 0 0; border-left: 0; border-top: 1.5px solid var(--line); }
         .foot { flex-direction: column; align-items: flex-start; }
       }
       @media (prefers-reduced-motion: reduce) {
