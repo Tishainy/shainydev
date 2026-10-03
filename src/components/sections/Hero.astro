@@ -5,6 +5,7 @@ import { site } from '../../data/content';
 // Without JS or with reduced motion, this markup is the full, readable composition.
 
 const { lines, cta, name } = site.hero;
+const { intro } = site.about;
 // The name stays one plain text run: Safari won't paint clipped-background text inside a nested,
 // positioned element, so the "i" can't be wrapped. The orb and the patch hiding the i's square dot
 // are siblings, positioned by hero.ts from where the "i" actually lands.
@@ -30,6 +31,12 @@ const { lines, cta, name } = site.hero;
   <p class="hero-giant" aria-hidden="true" data-hero-giant>
     {name}<span class="hero-dot-cover" aria-hidden="true"></span><span class="hero-orb" data-hero-orb data-lines-avoid><span class="hero-orb-ball glass-orb" data-hero-orb-ball></span></span>
   </p>
+
+  <!-- Phones: instead of the giant name, the glass orb leads, with a short hello under it. -->
+  <div class="hero-m" data-hero-m>
+    <span class="hero-m-orb glass-orb" aria-hidden="true" data-hero-m-orb data-lines-avoid></span>
+    <p class="hero-m-hi">{intro}</p>
+  </div>
 </section>
 
 <style>
@@ -173,15 +180,45 @@ const { lines, cta, name } = site.hero;
     inset: 0;
   }
 
+  .hero-m {
+    display: none;
+  }
+
   @media (max-width: 767px) {
-    /* Sits lower on phones, closing the gap above the name. */
-    .hero-headline { top: 27%; font-size: 12vw; }
+    .hero-headline { top: 13%; font-size: 11.5vw; }
+    .hero-giant { display: none; }
+    .hero-m {
+      display: block;
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+    }
+    /* The orb's shading is sized in em (0.16em wide elsewhere), so its font-size sets its proportions. */
+    .hero-m-orb {
+      position: absolute;
+      left: 50%;
+      bottom: 19svh;
+      width: min(44vw, 13rem);
+      height: min(44vw, 13rem);
+      margin-left: max(-22vw, -6.5rem);
+      font-size: min(275vw, 81rem);
+    }
+    .hero-m-hi {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 9svh;
+      margin: 0;
+      text-align: center;
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 1.8rem;
+      line-height: 1.1;
+    }
     .hero-l2 { padding-left: 22%; }
     .hero-l4 { padding-left: 12%; }
     .hero-l4 .hero-l-inner { flex-wrap: wrap; row-gap: 1rem; }
     .hero-pill { margin-left: 0.8em; font-size: 1rem; padding: 0.75rem 1.4rem; }
-    /* Sized so the whole name fits the screen width, rather than being cut off at the edges. */
-    .hero-giant { font-size: 30vw; bottom: 3%; }
-    .wave-lines { display: none; }
   }
 </style>

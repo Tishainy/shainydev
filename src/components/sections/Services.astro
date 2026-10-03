@@ -2,8 +2,9 @@
 import { site } from '../../data/content';
 // Services (ticket 06, with the showcases from tickets 07–09): a film strip. Scrolling down slides
 // the services sideways, one full-screen frame each: the lit word across the top, the details around a live demo that the scroll plays.
-// Animation lives in src/scripts/services.ts. Phones, reduced motion and no-JS get the frames
-// stacked, with each demo shown complete.
+// Phones get an index instead: the three words as a list, each opening as you scroll to it.
+// Animation lives in src/scripts/services.ts. Reduced motion and no-JS get the frames stacked,
+// with each demo shown complete.
 
 const { heading, includesLabel, items } = site.services;
 const { build, automate, ai } = site.interludes;
@@ -16,9 +17,11 @@ const { build, automate, ai } = site.interludes;
       {items.map((item, index) => (
         <article class="svc-frame" data-svc-frame={index}>
           <p class="svc-word" aria-hidden="true" data-svc-word>
-            {item.name}
+            {item.name}<span class="svc-word-orb glass-orb"></span>
           </p>
 
+          <!-- Layout-neutral everywhere except the phone index, where it opens as you reach it. -->
+          <div class="svc-body" data-svc-body>
           <h3 class="svc-sum" data-svc-part>
             <span class="svc-sr">{item.name}: </span>
             {item.summaryLines.map((line, lineIndex) => (
@@ -92,6 +95,7 @@ const { build, automate, ai } = site.interludes;
               {site.interludes[item.interlude as keyof typeof site.interludes].caption}
             </figcaption>
           </figure>
+          </div>
         </article>
       ))}
     </div>
@@ -125,6 +129,12 @@ const { build, automate, ai } = site.interludes;
     padding: 4rem 5vw 5rem;
   }
   .svc-hud {
+    display: none;
+  }
+  .svc-body {
+    display: contents;
+  }
+  .svc-word-orb {
     display: none;
   }
   .svc-heading {
@@ -557,67 +567,70 @@ const { build, automate, ai } = site.interludes;
     display: flex;
   }
 
-  /* ---------- Phones: stacking cards. Each service is a full-screen card that sticks to the top;
-     the next card slides up over it (the script shrinks and dims the one underneath). ---------- */
+  /* ---------- Phones: an index. The three words as a list; each opens as you scroll to it
+     (the script animates its body open), and the one you're on glows with the orb as its full stop.
+     Opened services stay open, so nothing above you ever changes height. ---------- */
   @media (max-width: 767px) {
-    .svc:global(.is-cards) .svc-frame {
-      position: sticky;
-      top: 0;
-      height: 100svh;
-      display: flex;
-      flex-direction: column;
-      gap: 0.8rem;
-      padding: 4.6rem 5vw 2.2rem;
-      background: var(--color-bg);
+    .svc:global(.is-index) .svc-strip {
+      padding: 0 5vw 3rem;
+    }
+    .svc:global(.is-index) .svc-frame {
+      display: block;
+      padding: 0;
       border-top: 1px solid var(--color-line);
-      border-radius: 1.6rem 1.6rem 0 0;
-      box-shadow: 0 -12px 30px rgb(0 0 0 / 0.14);
-      transform-origin: 50% 0;
+    }
+    .svc:global(.is-index) .svc-frame:last-child {
+      border-bottom: 1px solid var(--color-line);
+    }
+    .svc:global(.is-index) .svc-word {
+      display: flex;
+      align-items: baseline;
+      padding: 0.7rem 0;
+      font-size: 3.6rem;
+      background: none;
+      color: color-mix(in srgb, var(--color-fg) 30%, transparent);
+      transition: color 0.4s;
+    }
+    .svc:global(.is-index) .svc-frame:global(.is-active) .svc-word {
+      background: var(--light-fill);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .svc:global(.is-index) .svc-word-orb {
+      display: inline-block;
+      width: 0.16em;
+      height: 0.16em;
+      margin-left: 0.05em;
+      transform: scale(0);
+      transition: transform 0.45s cubic-bezier(0.3, 1.6, 0.5, 1);
+    }
+    .svc:global(.is-index) .svc-frame:global(.is-active) .svc-word-orb {
+      transform: scale(1);
+    }
+    .svc:global(.is-index) .svc-body {
+      display: grid;
+      gap: 0.9rem;
+      height: 0;
       overflow: hidden;
     }
-    .svc:global(.is-cards) .chat-typing {
-      display: flex;
+    .svc:global(.is-index) .svc-body > :last-child {
+      margin-bottom: 1.8rem;
     }
-    .svc:global(.is-cards) .svc-word,
-    .svc:global(.is-cards) .svc-sum,
-    .svc:global(.is-cards) .svc-desc,
-    .svc:global(.is-cards) .svc-demo,
-    .svc:global(.is-cards) .svc-inc {
-      position: static;
-      width: auto;
-      height: auto;
+    .svc:global(.is-index) .svc-sum {
+      font-size: 1.8rem;
     }
-    .svc:global(.is-cards) .svc-word {
-      font-size: 3.2rem;
-    }
-    .svc:global(.is-cards) .svc-sum {
-      font-size: 2rem;
-    }
-    .svc:global(.is-cards) .svc-desc {
+    .svc:global(.is-index) .svc-desc {
       font-size: 1rem;
-      line-height: 1.45;
+      line-height: 1.5;
     }
-    .svc:global(.is-cards) .svc-demo {
-      flex: 1;
-      min-height: 0;
-    }
-    .svc:global(.is-cards) .svc-demo-caption {
+    /* Kept lean on phones: no "what's included" list, no caption under the demo. */
+    .svc:global(.is-index) .svc-inc,
+    .svc:global(.is-index) .svc-demo-caption {
       display: none;
     }
-    /* The list becomes one compact line. */
-    .svc:global(.is-cards) .svc-inc-label {
-      display: none;
-    }
-    .svc:global(.is-cards) .svc-list {
+    .svc:global(.is-index) .chat-typing {
       display: flex;
-      flex-wrap: wrap;
-      gap: 0.2rem 0.9rem;
-    }
-    .svc:global(.is-cards) .svc-list li {
-      padding: 0;
-      border: 0;
-      font-size: 0.9rem;
-      color: var(--color-muted);
     }
     .flow {
       grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);

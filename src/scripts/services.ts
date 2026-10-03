@@ -76,36 +76,45 @@ export function initServices() {
     };
   });
 
-  // Phones: stacking cards. Each service card sticks to the top (CSS) and the next one slides up over
-  // it. Each demo plays by itself as its card settles.
+  // Phones: an index. Each service opens by itself as you scroll to it (no tapping) and plays its
+  // demo; the one you're on glows. Opened services stay open, so the page never jumps under a thumb.
   mm.add('(max-width: 767px) and (prefers-reduced-motion: no-preference)', () => {
-    section.classList.add('is-cards');
+    section.classList.add('is-index');
     const frames = gsap.utils.toArray<HTMLElement>('[data-svc-frame]', section);
+    const setActive = (i: number) => frames.forEach((f, k) => f.classList.toggle('is-active', k === i));
 
-    // ScrollTrigger measures a stuck (sticky) card where it currently is, not where it sits in the
-    // page. So each card gets a zero-height marker just before it that always reports its true position.
-    const markers = frames.map((frame) => {
-      const marker = document.createElement('div');
-      marker.setAttribute('aria-hidden', 'true');
-      frame.before(marker);
-      return marker;
-    });
-
-    // No scroll-tied effect on the cards themselves: the stacking is pure CSS (sticky), which keeps
-    // phone scrolling native and smooth. (A scroll-tied dim on the card underneath misfired on phones.)
     frames.forEach((frame, i) => {
-      const demo = demoFor(frame).pause().duration(2.6);
+      const body = frame.querySelector<HTMLElement>('[data-svc-body]')!;
+      const demo = demoFor(frame).pause().duration(2.4);
+
       ScrollTrigger.create({
-        trigger: markers[i],
-        start: 'top 35%',
-        onEnter: () => demo.play(0),
-        onLeaveBack: () => demo.pause(0),
+        trigger: frame,
+        start: 'top 62%',
+        once: true,
+        onEnter: () => {
+          setActive(i);
+          gsap.fromTo(body, { height: 0 }, {
+            height: 'auto',
+            duration: 0.8,
+            ease: 'power3.out',
+            onComplete: () => ScrollTrigger.refresh(),
+          });
+          gsap.from(body.children, { y: 18, autoAlpha: 0, duration: 0.6, stagger: 0.08, delay: 0.15, ease: 'power2.out' });
+          gsap.delayedCall(0.5, () => demo.play(0));
+        },
+      });
+      // The glow follows whichever service is in the middle of the screen, also when scrolling back up.
+      ScrollTrigger.create({
+        trigger: frame,
+        start: 'top 62%',
+        end: 'bottom 62%',
+        onToggle: (self) => self.isActive && setActive(i),
       });
     });
 
     return () => {
-      markers.forEach((marker) => marker.remove());
-      section.classList.remove('is-cards');
+      section.classList.remove('is-index');
+      frames.forEach((f) => f.classList.remove('is-active'));
     };
   });
 }

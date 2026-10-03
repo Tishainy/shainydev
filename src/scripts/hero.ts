@@ -18,6 +18,8 @@ export function initHero() {
   const ball = q('[data-hero-orb-ball]');
   const base = q<HTMLCanvasElement>('[data-hero-lines]');
   const glow = q<HTMLCanvasElement>('[data-hero-glow]');
+  const mobileOrb = q('[data-hero-m-orb]');
+  const mobileHi = q('.hero-m-hi');
 
   const pointer = { x: innerWidth / 2, y: innerHeight / 2, active: false };
   addEventListener('pointermove', (e) => {
@@ -27,10 +29,12 @@ export function initHero() {
   });
 
   // Measure at rest: once the visitor has scrolled, the scroll animation has moved the letters.
-  // Not on phones: at that size the lines read as clutter.
-  if (matchMedia('(min-width: 768px)').matches) {
-    startWaveLines(hero, base, glow, { canDraw: () => window.scrollY < hero.offsetHeight * 0.1 });
-  }
+  // Phones get their own tuning: closer, gentler lines with more waves across the narrow width.
+  const phone = matchMedia('(max-width: 767px)').matches;
+  startWaveLines(hero, base, glow, {
+    canDraw: () => window.scrollY < hero.offsetHeight * 0.1,
+    ...(phone ? { spacing: 24, amplitude: 0.42, frequency: 3.2, halo: 20 } : {}),
+  });
   startHeaderState(hero);
   placeOrb(giant);
 
@@ -66,7 +70,10 @@ export function initHero() {
           0,
         )
         .to(giant, { yPercent: desktop ? -42 : -30, scale: 1.06, duration: 1 }, 0.05)
-        .to(orb, { y: () => -innerHeight * 0.18, duration: 0.8, ease: 'power3.inOut' }, 0.25);
+        .to(orb, { y: () => -innerHeight * 0.18, duration: 0.8, ease: 'power3.inOut' }, 0.25)
+        // Phones: the orb rises and grows a little as the hero scrolls away; the hello fades.
+        .to(mobileOrb, { yPercent: -45, scale: 1.15, duration: 1 }, 0.05)
+        .to(mobileHi, { y: -30, autoAlpha: 0, duration: 0.5 }, 0);
 
       // ---- Intro: waits for the fonts so nothing jumps, then plays once ----
       let intro: gsap.core.Timeline | undefined;
@@ -89,6 +96,8 @@ export function initHero() {
             },
             0.35,
           )
+          .fromTo(mobileOrb, { scale: 0.4, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 1.4, ease: 'expo.out' }, 0.5)
+          .from(mobileHi, { y: 20, autoAlpha: 0, duration: 0.9 }, 0.9)
           // Explicit end value: tweening a filter toward "none" dips through black.
           .fromTo(
             ball,
@@ -98,21 +107,25 @@ export function initHero() {
           );
       });
 
-      // ---- The orb floats, leans toward the cursor and turns its shine to face it ----
-      const float = gsap.to(ball, { y: -5, duration: 2.2, ease: 'sine.inOut', yoyo: true, repeat: -1, delay: 2.6 });
+      // ---- The orb floats, leans toward the cursor (or finger) and turns its shine to face it ----
+      // On phones the big orb plays that part.
+      const shiner = desktop ? ball : mobileOrb;
+      const float = desktop
+        ? gsap.to(ball, { y: -5, duration: 2.2, ease: 'sine.inOut', yoyo: true, repeat: -1, delay: 2.6 })
+        : gsap.to(hero.querySelector('[data-hero-m]'), { y: -8, duration: 2.6, ease: 'sine.inOut', yoyo: true, repeat: -1, delay: 2 });
       const leanX = gsap.quickTo(orb, 'x', { duration: 0.8, ease: 'power3' });
       const shine = { x: 34, y: 28 };
       const light = { x: 50, y: 50 };
       const tick = () => {
-        const rect = ball.getBoundingClientRect();
+        const rect = shiner.getBoundingClientRect();
         const dx = pointer.x - (rect.left + rect.width / 2);
         const dy = pointer.y - (rect.top + rect.height / 2);
         const dist = Math.hypot(dx, dy) || 1;
         if (pointer.active) leanX(gsap.utils.clamp(-14, 14, dx * 0.03));
         shine.x += ((pointer.active ? 50 + (dx / dist) * 22 : 34) - shine.x) * 0.12;
         shine.y += ((pointer.active ? 50 + (dy / dist) * 22 : 28) - shine.y) * 0.12;
-        ball.style.setProperty('--sx', `${shine.x}%`);
-        ball.style.setProperty('--sy', `${shine.y}%`);
+        shiner.style.setProperty('--sx', `${shine.x}%`);
+        shiner.style.setProperty('--sy', `${shine.y}%`);
 
         // The light inside the name drifts toward the cursor.
         const h = hero.getBoundingClientRect();
