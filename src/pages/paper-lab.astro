@@ -1,0 +1,375 @@
+---
+// "Paper" direction, round 2: the star leads, a fuller homepage, light and dark.
+// Hidden (noindex), not linked. Toggle the mode with the button; /paper-lab/#dark opens in dark.
+import '../styles/global.css';
+import { Font } from 'astro:assets';
+
+// Shainy's star: five separate shards (from her own logo SVG).
+const shards = [
+  'M241.495 0L313.808 125.25H169.182L241.495 0Z',
+  'M25.887 148.966L168.723 126.283L116.949 261.325L25.887 148.966Z',
+  'M455.819 148.966L312.983 126.283L364.757 261.325L455.819 148.966Z',
+  'M100.669 412.326L118.069 262.146L238.748 350.753L100.669 412.326Z',
+  'M380.321 412.326L362.922 262.146L242.243 350.753L380.321 412.326Z',
+];
+const star = (cls: string) =>
+  `<svg class="${cls}" viewBox="0 0 482 457" aria-hidden="true">${shards.map((d, i) => `<path class="sh sh${i}" d="${d}"/>`).join('')}</svg>`;
+// Each shard cropped to its own outline, so it shows full size on its own.
+const shardBoxes = ['169 0 145 126', '25 126 144 136', '312 126 144 136', '100 262 139 151', '242 262 139 151'];
+const shard = (i: number, cls: string) => `<svg class="${cls}" viewBox="${shardBoxes[i]}" aria-hidden="true"><path d="${shards[i]}"/></svg>`;
+
+const services = [
+  { name: 'Build', line: 'Websites and apps that look like you and work on every phone.', list: ['Business websites', 'Landing pages', 'Redesigns', 'Web apps'] },
+  { name: 'Automate', line: 'The tasks you repeat every week, done by themselves.', list: ['Workflows', 'Data & reports', 'Email design', 'Email flows'] },
+  { name: 'AI', line: 'Assistants and smart tools that actually help.', list: ['Chatbots', 'AI in your tools', 'Document sorting'] },
+];
+const steps = [
+  { name: 'Talk', line: "A chat about your business and what's in the way. No jargon." },
+  { name: 'Design', line: 'You see how it will look before anything gets built.' },
+  { name: 'Build', line: 'I build it and keep you posted, so nothing surprises you.' },
+  { name: 'Launch', line: "We go live, I show you everything, and I stay around after." },
+];
+---
+
+<html lang="en" data-mode="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Paper lab — ShainyDev</title>
+    <Font cssVariable="--font-clash" preload />
+    <Font cssVariable="--font-hanken" preload />
+    <Font cssVariable="--font-instrument" preload />
+    <script is:inline>
+      if (location.hash === '#dark') document.documentElement.dataset.mode = 'dark';
+    </script>
+  </head>
+  <body>
+    <header class="bar">
+      <a class="brand" href="#"><Fragment set:html={star('brand-star')} /><span>ShainyDev</span></a>
+      <nav class="nav"><a href="#svc">Services</a><a href="#work">Work</a><a href="#how">Process</a><a href="#talk">Contact</a></nav>
+      <button class="mode" type="button" data-mode-toggle aria-label="Switch light or dark">
+        <span class="mode-dot"></span><span data-mode-label>Dark</span>
+      </button>
+    </header>
+
+    <!-- ===================== HERO: the star leads ===================== -->
+    <section class="hero" data-hero>
+      <ul class="meta" data-meta>
+        <li>Freelance developer</li>
+        <li>Zoetermeer, NL · <span data-clock>--:--</span></li>
+        <li><span class="live"></span>Available for new projects</li>
+        <li>Since 2025</li>
+      </ul>
+
+      <div class="hero-stage">
+        <Fragment set:html={star('hero-star')} />
+        <h1 class="hero-h">
+          <span class="ln"><span class="in">Websites, apps</span></span>
+          <span class="ln"><span class="in"><em>&amp;</em> automations <Fragment set:html={shard(0, 'inl')} /></span></span>
+          <span class="ln"><span class="in">that do the work</span></span>
+          <span class="ln"><span class="in"><em>for you.</em></span></span>
+        </h1>
+      </div>
+
+      <div class="hero-foot">
+        <p class="hero-note">Hi, I'm Shainy <em>(say "shiny")</em>. I build the tools small businesses wish they had, and explain every step in plain language.</p>
+        <a class="btn" href="#talk">Let's talk <span aria-hidden="true">→</span></a>
+        <p class="scroll-cue"><span></span>Scroll</p>
+      </div>
+    </section>
+
+    <!-- ===================== RED BAND TICKER ===================== -->
+    <section class="band" aria-label="Services">
+      <div class="band-track" data-band>
+        {[0, 1].map(() =>
+          ['Websites', 'Apps', 'Automations', 'Email', 'AI assistants'].map((w) => (
+            <span class="band-item">{w}<Fragment set:html={star('band-star')} /></span>
+          )),
+        )}
+      </div>
+    </section>
+
+    <!-- ===================== SERVICES ===================== -->
+    <section class="svc" id="svc">
+      <header class="sec-head" data-up>
+        <p class="sec-no">What I do</p>
+        <h2>Three ways I make your business <em>shine</em>.</h2>
+      </header>
+      <div class="svc-grid">
+        {services.map((s, i) => (
+          <article class="svc-col" data-col>
+            <span class="rule" data-rule></span>
+            <Fragment set:html={shard(i * 2 % 5, 'svc-shard')} />
+            <h3>{s.name}</h3>
+            <p class="svc-line">{s.line}</p>
+            <ul>{s.list.map((x) => <li>{x}</li>)}</ul>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <!-- ===================== WORK PREVIEW ===================== -->
+    <section class="work" id="work">
+      <header class="sec-head" data-up>
+        <p class="sec-no">Selected work</p>
+        <h2>Things I've <em>built</em>.</h2>
+      </header>
+      <div class="work-grid">
+        <article class="proj proj-big" data-up>
+          <div class="proj-art art-jarvis">
+            <Fragment set:html={star('art-star')} />
+            <p class="art-quote"><em>"I require a time, Shainy. Even butlers have standards."</em></p>
+          </div>
+          <div class="proj-meta"><span class="pill">AI assistant · Personal</span><h3>Jarvis</h3><p>A voice assistant that runs fully offline on my own server.</p></div>
+        </article>
+        <article class="proj" data-up>
+          <div class="proj-art art-soon"><span class="sk"></span><span class="sk s2"></span><span class="sk s3"></span><b>Launching soon</b></div>
+          <div class="proj-meta"><span class="pill">Website · Client</span><h3>Travel agency</h3><p>A brand-new site, live shortly.</p></div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ===================== PROCESS ===================== -->
+    <section class="how" id="how">
+      <header class="sec-head" data-up>
+        <p class="sec-no">How it works</p>
+        <h2>From first chat to <em>launch</em>.</h2>
+      </header>
+      <ol class="steps">
+        {steps.map((s, i) => (
+          <li class="step" data-step>
+            <span class="step-n">0{i + 1}</span>
+            <h3>{s.name}</h3>
+            <p>{s.line}</p>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <!-- ===================== CLOSING CTA ===================== -->
+    <section class="talk" id="talk">
+      <Fragment set:html={star('talk-star')} />
+      <h2 class="talk-h" data-up>Let's make something that <em>shines</em>.</h2>
+      <p class="talk-sub" data-up>Tell me what slows your business down. I'll reply within 48 hours with a clear plan and price.</p>
+      <div class="talk-row" data-up>
+        <a class="btn btn-red" href="mailto:shainydev@gmail.com">shainydev@gmail.com</a>
+        <a class="link" href="https://www.linkedin.com/in/shainy-naar-79618b358/">LinkedIn ↗</a>
+      </div>
+    </section>
+
+    <footer class="foot">
+      <span class="brand"><Fragment set:html={star('brand-star')} /><span>ShainyDev</span></span>
+      <span>Designed &amp; built by Shainy · © 2026</span>
+    </footer>
+
+    <script>
+      import gsap from 'gsap';
+      import { ScrollTrigger } from 'gsap/ScrollTrigger';
+      import Lenis from 'lenis';
+      gsap.registerPlugin(ScrollTrigger);
+      const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      // Mode toggle.
+      const root = document.documentElement;
+      const label = document.querySelector<HTMLElement>('[data-mode-label]')!;
+      const sync = () => (label.textContent = root.dataset.mode === 'dark' ? 'Light' : 'Dark');
+      sync();
+      document.querySelector('[data-mode-toggle]')!.addEventListener('click', () => {
+        root.dataset.mode = root.dataset.mode === 'dark' ? 'light' : 'dark';
+        sync();
+      });
+
+      // Live local time in Zoetermeer.
+      const clock = document.querySelector<HTMLElement>('[data-clock]')!;
+      const tick = () => (clock.textContent = new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Amsterdam' }).format(new Date()));
+      tick(); setInterval(tick, 30000);
+
+      if (!reduce) {
+        const lenis = new Lenis();
+        lenis.on('scroll', ScrollTrigger.update);
+        gsap.ticker.add((t) => lenis.raf(t * 1000));
+        gsap.ticker.lagSmoothing(0);
+
+        // Hero: the star assembles shard by shard, then the headline rises in line by line.
+        const dirs = [[0, -1], [-1, -0.35], [1, -0.35], [-0.7, 0.85], [0.7, 0.85]];
+        const parts = gsap.utils.toArray<SVGPathElement>('.hero-star .sh');
+        gsap.set(parts, { transformOrigin: '50% 50%' });
+        const intro = gsap.timeline({ defaults: { ease: 'expo.out' } });
+        intro
+          .from(parts, { x: (i) => dirs[i][0] * 260, y: (i) => dirs[i][1] * 260, rotation: (i) => (i % 2 ? 120 : -120), scale: 0.4, opacity: 0, duration: 1.4, stagger: 0.1 }, 0.1)
+          .from('.hero-h .in', { yPercent: 110, duration: 1.1, stagger: 0.1 }, 0.5)
+          .from('[data-meta] li', { y: -14, autoAlpha: 0, duration: 0.6, stagger: 0.06 }, 0.3)
+          .from('.hero-foot > *', { y: 24, autoAlpha: 0, duration: 0.8, stagger: 0.08 }, 0.9);
+        gsap.to('.hero-star', { rotation: 360, duration: 80, ease: 'none', repeat: -1 });
+        // Scroll: the star grows and drifts as the hero leaves; the shards spread a little.
+        gsap.to('.hero-star', { scale: 1.35, yPercent: 18, ease: 'none', scrollTrigger: { trigger: '[data-hero]', start: 'top top', end: 'bottom top', scrub: true } });
+        gsap.to(parts, { x: (i) => dirs[i][0] * 40, y: (i) => dirs[i][1] * 40, ease: 'none', scrollTrigger: { trigger: '[data-hero]', start: 'top top', end: 'bottom top', scrub: true } });
+
+        // Red band: drifts, and runs faster while you scroll.
+        const band = gsap.to('[data-band]', { xPercent: -50, duration: 28, ease: 'none', repeat: -1 });
+        ScrollTrigger.create({
+          trigger: '.band', start: 'top bottom', end: 'bottom top',
+          onUpdate: (s) => gsap.to(band, { timeScale: 1 + Math.min(Math.abs(s.getVelocity()) / 250, 6), duration: 0.2, overwrite: true, onComplete: () => gsap.to(band, { timeScale: 1, duration: 1.2 }) }),
+        });
+        gsap.to('.band-star .sh', { rotation: 360, transformOrigin: '241px 228px', duration: 10, ease: 'none', repeat: -1 });
+
+        // Section headings and blocks rise in (and sink away again on the way back up).
+        gsap.utils.toArray<HTMLElement>('[data-up]').forEach((el) =>
+          gsap.from(el, { y: 50, autoAlpha: 0, duration: 1, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none reverse' } }),
+        );
+        // Service columns: the rule draws, the shard spins in, the text follows.
+        gsap.utils.toArray<HTMLElement>('[data-col]').forEach((col, i) =>
+          gsap.timeline({ scrollTrigger: { trigger: col, start: 'top 85%', toggleActions: 'play none none reverse' }, delay: i * 0.1 })
+            .from(col.querySelector('[data-rule]'), { scaleX: 0, transformOrigin: '0 50%', duration: 0.9, ease: 'power3.inOut' })
+            .from(col.querySelector('.svc-shard'), { rotation: -180, scale: 0, duration: 0.8, ease: 'back.out(1.7)' }, 0.2)
+            .from(col.querySelectorAll('h3, .svc-line, li'), { y: 24, autoAlpha: 0, duration: 0.6, stagger: 0.05 }, 0.35),
+        );
+        // Process: the steps fill in one after another with the scroll.
+        gsap.from('[data-step]', { y: 40, autoAlpha: 0, stagger: 0.15, ease: 'power2.out', scrollTrigger: { trigger: '.steps', start: 'top 80%', end: 'bottom 70%', scrub: 0.6 } });
+        // Closing: the big star turns with the scroll.
+        gsap.fromTo('.talk-star', { rotation: -40, scale: 0.7 }, { rotation: 30, scale: 1, ease: 'none', scrollTrigger: { trigger: '.talk', start: 'top bottom', end: 'bottom bottom', scrub: true } });
+        gsap.to('.art-star', { rotation: 360, duration: 40, ease: 'none', repeat: -1 });
+      }
+    </script>
+
+    <style is:global>
+      :root {
+        --paper: #f1ede4;
+        --ink: #121110;
+        --red: #e3342a;
+        --mute: #6a655d;
+        --line: #121110;
+        --soft: rgb(18 17 16 / 0.06);
+        --blend: multiply;
+      }
+      :root[data-mode='dark'] {
+        --paper: #121110;
+        --ink: #f1ede4;
+        --red: #ff4536;
+        --mute: #a39d92;
+        --line: rgb(241 237 228 / 0.85);
+        --soft: rgb(241 237 228 / 0.06);
+        --blend: normal;
+      }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; }
+      body { background: var(--paper); color: var(--ink); font-family: var(--font-hanken); transition: background-color 0.5s, color 0.5s; }
+      a { color: inherit; text-decoration: none; }
+      em { font-family: var(--font-instrument); font-style: italic; font-weight: 400; letter-spacing: -0.01em; }
+      .sh, .inl path, .svc-shard path { fill: var(--red); }
+
+      /* ---------- Top bar ---------- */
+      .bar {
+        position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: 2rem;
+        padding: 1rem 4vw; background: var(--paper); border-bottom: 1.5px solid var(--line); transition: background-color 0.5s;
+      }
+      .brand { display: inline-flex; align-items: center; gap: 0.5rem; font: 600 1.1rem var(--font-clash); letter-spacing: -0.02em; }
+      .brand-star { width: 1.5rem; height: auto; }
+      .nav { margin-left: auto; display: flex; gap: 1.8rem; font-weight: 500; }
+      .mode { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.9rem; border: 1.5px solid var(--line); border-radius: 999px; background: none; color: var(--ink); font: 600 0.9rem var(--font-hanken); cursor: pointer; }
+      .mode-dot { width: 0.6rem; height: 0.6rem; border-radius: 50%; background: var(--ink); }
+
+      /* ---------- Hero ---------- */
+      .hero { position: relative; min-height: calc(100svh - 4rem); display: flex; flex-direction: column; padding: 0 4vw 2rem; border-bottom: 1.5px solid var(--line); overflow: clip; }
+      .meta { list-style: none; margin: 0; padding: 0.9rem 0; display: grid; grid-template-columns: repeat(4, auto); justify-content: space-between; gap: 0.5rem 2rem; font-size: 0.9rem; color: var(--mute); border-bottom: 1px solid color-mix(in srgb, var(--line) 25%, transparent); }
+      .live { display: inline-block; width: 0.5rem; height: 0.5rem; margin-right: 0.45rem; border-radius: 50%; background: #2fb35a; box-shadow: 0 0 0 0 rgb(47 179 90 / 0.6); animation: pulse 2s infinite; }
+      @keyframes pulse { to { box-shadow: 0 0 0 10px rgb(47 179 90 / 0); } }
+      .hero-stage { position: relative; flex: 1; display: grid; align-items: center; padding: 4vh 0; }
+      .hero-star { position: absolute; right: -2vw; top: 50%; width: min(58vw, 46rem); height: auto; translate: 0 -50%; mix-blend-mode: var(--blend); }
+      .hero-h { position: relative; z-index: 2; margin: 0; font: 600 clamp(3rem, 8.6vw, 8.6rem)/0.92 var(--font-clash); letter-spacing: -0.05em; }
+      .ln { display: block; overflow: clip; padding-bottom: 0.06em; }
+      .in { display: inline-block; }
+      .hero-h em { color: var(--red); }
+      .inl { display: inline-block; width: 0.5em; height: auto; vertical-align: 0.08em; }
+      .hero-foot { position: relative; z-index: 2; display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: end; gap: 1.5rem 3rem; padding-top: 1.4rem; border-top: 1.5px solid var(--line); }
+      .hero-note { margin: 0; max-width: 34rem; font-size: clamp(1.05rem, 1.4vw, 1.3rem); line-height: 1.45; }
+      .hero-note em { color: var(--mute); }
+      .btn { display: inline-flex; gap: 0.6rem; align-items: center; padding: 0.95rem 1.8rem; border-radius: 999px; background: var(--ink); color: var(--paper); font-weight: 600; white-space: nowrap; transition: transform 0.25s; }
+      .btn:hover { transform: translateY(-2px); }
+      .btn-red { background: var(--red); color: #fff; }
+      .scroll-cue { margin: 0; display: flex; align-items: center; gap: 0.6rem; font-size: 0.85rem; color: var(--mute); }
+      .scroll-cue span { width: 1px; height: 2.4rem; background: var(--ink); animation: cue 1.8s ease-in-out infinite; transform-origin: top; }
+      @keyframes cue { 0% { transform: scaleY(0); } 50% { transform: scaleY(1); } 100% { transform: scaleY(0); transform-origin: bottom; } }
+
+      /* ---------- Red band ---------- */
+      .band { overflow: hidden; background: var(--red); color: #fff; padding: 1.4rem 0; border-bottom: 1.5px solid var(--line); }
+      .band-track { display: flex; width: max-content; }
+      .band-item { display: inline-flex; align-items: center; gap: 0.6em; padding-right: 0.6em; font: 600 clamp(2rem, 4.5vw, 4rem)/1 var(--font-clash); letter-spacing: -0.04em; white-space: nowrap; }
+      .band-item:nth-child(even) { font-family: var(--font-instrument); font-style: italic; font-weight: 400; letter-spacing: -0.01em; }
+      .band-star { width: 0.6em; height: auto; }
+      .band-star .sh { fill: #fff; }
+
+      /* ---------- Sections ---------- */
+      section.svc, section.work, section.how { padding: 14svh 4vw; border-bottom: 1.5px solid var(--line); }
+      .sec-head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2.2fr); gap: 1rem 4vw; align-items: end; margin-bottom: 4rem; }
+      .sec-no { margin: 0; font-size: 0.95rem; color: var(--mute); }
+      .sec-head h2 { margin: 0; font: 600 clamp(2.4rem, 5.2vw, 5rem)/0.98 var(--font-clash); letter-spacing: -0.045em; }
+      .sec-head em { color: var(--red); }
+
+      .svc-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 3rem 3vw; }
+      .svc-col { position: relative; padding-top: 1.6rem; display: grid; gap: 0.9rem; align-content: start; }
+      .rule { position: absolute; left: 0; right: 0; top: 0; height: 1.5px; background: var(--line); }
+      .svc-shard { width: 3rem; height: auto; }
+      .svc-col h3 { margin: 0; font: 600 clamp(2.4rem, 4vw, 3.8rem)/0.95 var(--font-clash); letter-spacing: -0.045em; }
+      .svc-line { margin: 0; font-size: 1.1rem; line-height: 1.45; }
+      .svc-col ul { list-style: none; margin: 0.4rem 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.4rem; }
+      .svc-col li { padding: 0.3rem 0.75rem; border: 1px solid color-mix(in srgb, var(--line) 40%, transparent); border-radius: 999px; font-size: 0.85rem; color: var(--mute); }
+
+      .work-grid { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 2rem; }
+      .proj { display: grid; gap: 1.2rem; align-content: start; }
+      .proj-art { position: relative; aspect-ratio: 16 / 10; border: 1.5px solid var(--line); border-radius: 1rem; overflow: hidden; background: var(--soft); }
+      .proj-big .proj-art { aspect-ratio: 16 / 9.4; }
+      .art-jarvis { background: var(--ink); }
+      .art-star { position: absolute; left: 8%; top: 12%; width: 34%; height: auto; }
+      .art-quote { position: absolute; right: 6%; bottom: 8%; max-width: 55%; margin: 0; color: var(--paper); font-size: clamp(1.2rem, 2vw, 1.9rem); line-height: 1.15; text-align: right; }
+      .art-soon { display: grid; align-content: center; gap: 0.7rem; padding: 10%; }
+      .art-soon b { font: 600 1rem var(--font-hanken); color: var(--red); margin-top: 0.4rem; }
+      .sk { display: block; height: 0.9rem; width: 70%; border-radius: 0.3rem; background: linear-gradient(90deg, var(--soft), color-mix(in srgb, var(--ink) 14%, transparent), var(--soft)); background-size: 200% 100%; animation: shimmer 2.2s linear infinite; }
+      .sk.s2 { width: 45%; } .sk.s3 { height: 4rem; width: 100%; }
+      @keyframes shimmer { to { background-position: -200% 0; } }
+      .proj-meta { display: grid; gap: 0.4rem; justify-items: start; }
+      .pill { padding: 0.3rem 0.75rem; border: 1px solid color-mix(in srgb, var(--line) 40%, transparent); border-radius: 999px; font-size: 0.85rem; }
+      .proj-meta h3 { margin: 0.3rem 0 0; font: 600 clamp(2rem, 3.4vw, 3.2rem)/1 var(--font-clash); letter-spacing: -0.04em; }
+      .proj-meta p { margin: 0; color: var(--mute); }
+
+      .steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1.5px solid var(--line); }
+      .step { padding: 1.6rem 1.4rem 2rem 0; display: grid; gap: 0.6rem; align-content: start; border-right: 1px solid color-mix(in srgb, var(--line) 25%, transparent); }
+      .step + .step { padding-left: 1.4rem; }
+      .step:last-child { border-right: 0; }
+      .step-n { font: 500 0.95rem var(--font-hanken); color: var(--red); }
+      .step h3 { margin: 0; font: 600 clamp(1.8rem, 2.6vw, 2.6rem)/1 var(--font-clash); letter-spacing: -0.035em; }
+      .step p { margin: 0; color: var(--mute); line-height: 1.45; }
+
+      .talk { position: relative; padding: 18svh 4vw; overflow: clip; border-bottom: 1.5px solid var(--line); }
+      .talk-star { position: absolute; right: -6vw; bottom: -10vw; width: min(55vw, 44rem); height: auto; opacity: 0.95; mix-blend-mode: var(--blend); }
+      .talk-h { position: relative; margin: 0; max-width: 12ch; font: 600 clamp(3rem, 8vw, 8rem)/0.92 var(--font-clash); letter-spacing: -0.05em; }
+      .talk-h em { color: var(--red); }
+      .talk-sub { position: relative; margin: 2rem 0 0; max-width: 32rem; font-size: clamp(1.1rem, 1.5vw, 1.35rem); line-height: 1.45; color: var(--mute); }
+      .talk-row { position: relative; display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 2rem; margin-top: 2.4rem; }
+      .link { font-weight: 600; text-decoration: underline; text-decoration-color: var(--red); text-underline-offset: 0.3em; }
+      .foot { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 1.6rem 4vw; font-size: 0.9rem; color: var(--mute); }
+
+      /* ---------- Phones ---------- */
+      @media (max-width: 767px) {
+        .nav { display: none; }
+        .mode { margin-left: auto; }
+        .meta { grid-template-columns: repeat(2, auto); font-size: 0.8rem; }
+        .hero-stage { align-items: end; }
+        .hero-star { top: 34%; right: -12vw; width: 92vw; }
+        .hero-h { font-size: 12.5vw; }
+        .hero-foot { grid-template-columns: minmax(0, 1fr); }
+        .scroll-cue { display: none; }
+        .sec-head { grid-template-columns: minmax(0, 1fr); }
+        .svc-grid, .work-grid { grid-template-columns: minmax(0, 1fr); }
+        .steps { grid-template-columns: minmax(0, 1fr); }
+        .step, .step + .step { padding: 1.4rem 0; border-right: 0; border-bottom: 1px solid color-mix(in srgb, var(--line) 25%, transparent); }
+        .talk-star { width: 90vw; right: -20vw; bottom: -20vw; opacity: 0.35; }
+        .foot { flex-direction: column; align-items: flex-start; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .live, .scroll-cue span, .sk { animation: none; }
+      }
+    </style>
+  </body>
+</html>
