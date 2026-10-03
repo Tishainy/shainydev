@@ -114,58 +114,51 @@ const steps = [
       </div>
     </section>
 
-    <!-- ===================== LAPTOP: opens as you scroll ===================== -->
-    <section class="lap" data-lap>
-      <div class="lap-stage">
-        <header class="lap-head">
-          <p class="sec-no">Selected work</p>
-          <h2>Open it <em>up</em>.</h2>
-        </header>
-        <div class="lap-scene">
-          <div class="laptop" data-laptop>
-            <div class="lid" data-lid>
-              <div class="lid-front">
-                <div class="screen" data-screen>
-                  <div class="boot" data-boot><Fragment set:html={star('boot-star')} /></div>
-                  <div class="term" data-term>
-                    <p class="term-bar"><span></span><span></span><span></span><em>jarvis.py</em></p>
-                  <p class="tl acc" data-tl>[voice] wake word "hey jarvis" detected</p>
-                  <p class="tl " data-tl>[stt] 'remind me to call the client at three'</p>
-                  <p class="tl " data-tl>[orchestrator] reminder scheduled for 3:00 PM</p>
-                  <p class="tl ok" data-tl>→ Sent to TTS: Alarm scheduled for 3:00 PM.</p>
-                  <p class="tl dim" data-tl>[presence] person left the room</p>
-                  <p class="tl " data-tl>[presence] person entered: desk zone</p>
-                  <p class="tl ok" data-tl>Jarvis: Reminder: call the client.</p>
-                  </div>
-                </div>
-              </div>
-              <div class="lid-back"><Fragment set:html={star('lid-star')} /></div>
-            </div>
-            <div class="base"><span class="keys"></span><span class="pad"></span></div>
-            <div class="base-front"></div>
-          </div>
-        </div>
-        <p class="lap-cap" data-lap-cap><b>Jarvis</b> · a voice assistant that runs fully offline on my own server.</p>
-      </div>
-    </section>
-
     <!-- ===================== WORK PREVIEW ===================== -->
     <section class="work" id="work">
       <header class="sec-head" data-up>
         <p class="sec-no">Selected work</p>
         <h2>Things I've <em>built</em>.</h2>
       </header>
-      <div class="work-grid">
-        <article class="proj proj-big" data-up>
-          <div class="proj-art art-jarvis">
-            <Fragment set:html={star('art-star')} />
-            <p class="art-quote"><em>"I require a time, Shainy. Even butlers have standards."</em></p>
+      <div class="cases">
+        <article class="case" data-case="elsewhere">
+          <div class="case-media">
+            <div class="frame">
+              <p class="frame-bar"><span></span><span></span><span></span><em>elsewhere · travel</em></p>
+              <div class="frame-view">
+              <img class="shot" src="/images/work/elsewhere-home-1440.webp" srcset="/images/work/elsewhere-home-800.webp 800w, /images/work/elsewhere-home-1440.webp 1440w" sizes="(max-width: 767px) 92vw, 60vw" width="1440" height="900" alt="Elsewhere travel website, Home page" />
+              </div>
+            </div>
           </div>
-          <div class="proj-meta"><span class="pill">AI assistant · Personal</span><h3>Jarvis</h3><p>A voice assistant that runs fully offline on my own server.</p></div>
+          <div class="case-meta" data-up>
+            <p class="case-kind"><span class="pill">Website · Client</span><span class="pill pill-red">Launching soon</span></p>
+            <h3>Elsewhere</h3>
+            <p class="case-line">A travel agency site for trips planned around one person. Full-screen film, destination pages and quiet scroll motion.</p>
+            <ul class="case-did"><li>Design</li><li>Build</li><li>Motion</li><li>Destination pages</li></ul>
+          </div>
         </article>
-        <article class="proj" data-up>
-          <div class="proj-art art-soon"><span class="sk"></span><span class="sk s2"></span><span class="sk s3"></span><b>Launching soon</b></div>
-          <div class="proj-meta"><span class="pill">Website · Client</span><h3>Travel agency</h3><p>A brand-new site, live shortly.</p></div>
+        <article class="case case-flip" data-case="jarvis">
+          <div class="case-media">
+            <div class="frame frame-dark">
+              <p class="frame-bar"><span></span><span></span><span></span><em>jarvis.py · home server</em></p>
+              <div class="frame-view term" data-term>
+              <p class="tl acc" data-tl>[voice] wake word "hey jarvis" detected</p>
+              <p class="tl " data-tl>[stt] 'remind me to call the client at three'</p>
+              <p class="tl " data-tl>[orchestrator] reminder scheduled for 15:00</p>
+              <p class="tl ok" data-tl>→ tts: "Alarm scheduled for 3 PM."</p>
+              <p class="tl dim" data-tl>[presence] desk zone: empty</p>
+              <p class="tl " data-tl>[presence] desk zone: person entered</p>
+              <p class="tl ok" data-tl>jarvis: "Welcome back. You have one reminder."</p>
+                <p class="tl cur" data-tl>&gt; <span class="caret"></span></p>
+              </div>
+            </div>
+          </div>
+          <div class="case-meta" data-up>
+            <p class="case-kind"><span class="pill">AI assistant · Personal</span></p>
+            <h3>Jarvis</h3>
+            <p class="case-line">A voice assistant that runs fully offline on my own server. It hears its name, sets reminders, and knows which part of the room you're in.</p>
+            <ul class="case-did"><li>Python</li><li>Speech to text</li><li>Local AI</li><li>Presence zones</li></ul>
+          </div>
         </article>
       </div>
     </section>
@@ -249,9 +242,8 @@ const steps = [
           trigger: '.band', start: 'top bottom', end: 'bottom top',
           onUpdate: (s) => gsap.to(band, { timeScale: 1 + Math.min(Math.abs(s.getVelocity()) / 250, 6), duration: 0.2, overwrite: true, onComplete: () => gsap.to(band, { timeScale: 1, duration: 1.2 }) }),
         });
-        // Each triangle of the band's stars turns around the star's centre, so they tumble together.
-        gsap.to('.band-star .sh', { rotation: 360, transformOrigin: '241px 228px', duration: 10, ease: 'none', repeat: -1 });
-        gsap.to('.band-glyph', { rotation: 360, transformOrigin: '50% 50%', duration: 10, ease: 'none', repeat: -1 });
+        // The band's marks spin whole, the star staying in one piece.
+        gsap.to('.band .spin', { rotation: 360, transformOrigin: '50% 50%', duration: 10, ease: 'none', repeat: -1 });
 
         // Section headings and blocks rise in (and sink away again on the way back up).
         gsap.utils.toArray<HTMLElement>('[data-up]').forEach((el) =>
@@ -268,24 +260,13 @@ const steps = [
         gsap.from('[data-step]', { y: 40, autoAlpha: 0, stagger: 0.15, ease: 'power2.out', scrollTrigger: { trigger: '.steps', start: 'top 80%', end: 'bottom 70%', scrub: 0.6 } });
         // Closing: the big star turns with the scroll.
         gsap.fromTo('.talk-star', { rotation: -40, scale: 0.7 }, { rotation: 30, scale: 1, ease: 'none', scrollTrigger: { trigger: '.talk', start: 'top bottom', end: 'bottom bottom', scrub: true } });
-        gsap.to('.art-star', { rotation: 360, duration: 40, ease: 'none', repeat: -1 });
+        // Elsewhere: the screenshot drifts slightly inside its frame as you scroll past.
+        gsap.fromTo('.shot', { yPercent: -4, scale: 1.08 }, { yPercent: 4, scale: 1.08, ease: 'none', scrollTrigger: { trigger: '[data-case="elsewhere"]', start: 'top bottom', end: 'bottom top', scrub: true } });
+        gsap.from('[data-case="elsewhere"] .frame', { y: 50, autoAlpha: 0, duration: 1, ease: 'power3.out', scrollTrigger: { trigger: '[data-case="elsewhere"]', start: 'top 85%', toggleActions: 'play none none reverse' } });
+        // Jarvis: the console lines arrive one by one, tied to the scroll.
+        gsap.from('[data-case="jarvis"] .frame', { y: 50, autoAlpha: 0, duration: 1, ease: 'power3.out', scrollTrigger: { trigger: '[data-case="jarvis"]', start: 'top 85%', toggleActions: 'play none none reverse' } });
+        gsap.fromTo('[data-tl]', { autoAlpha: 0, x: -10 }, { autoAlpha: 1, x: 0, stagger: 0.3, ease: 'none', scrollTrigger: { trigger: '[data-term]', start: 'top 80%', end: 'bottom 45%', scrub: 0.6 } });
 
-        // Laptop: the section holds while the lid swings open, the screen boots to the star,
-        // then Jarvis's console types itself out. Scrolling back closes it again.
-        const lap = gsap.timeline({
-          defaults: { ease: 'power2.inOut' },
-          scrollTrigger: { trigger: '[data-lap]', start: 'top top', end: '+=220%', scrub: 0.8, pin: true, anticipatePin: 1 },
-        });
-        lap
-          .fromTo('[data-lid]', { rotateX: 88 }, { rotateX: -14, duration: 1.2 })
-          .fromTo('[data-laptop]', { scale: 0.86, y: 40 }, { scale: 1, y: 0, duration: 1.2 }, 0)
-          .fromTo('[data-screen]', { filter: 'brightness(0)' }, { filter: 'brightness(1)', duration: 0.5 }, 0.8)
-          .fromTo('[data-boot]', { autoAlpha: 0, scale: 0.6 }, { autoAlpha: 1, scale: 1, duration: 0.4, ease: 'back.out(1.7)' }, 1.05)
-          .to('[data-boot]', { autoAlpha: 0, scale: 1.2, duration: 0.3 }, 1.6)
-          .fromTo('[data-term]', { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.2 }, 1.7)
-          .fromTo('[data-tl]', { autoAlpha: 0, x: -8 }, { autoAlpha: 1, x: 0, duration: 0.15, stagger: 0.18, ease: 'none' }, 1.8)
-          .fromTo('[data-lap-cap]', { autoAlpha: 0, y: 20 }, { autoAlpha: 1, y: 0, duration: 0.4 }, 2.2)
-          .to({}, { duration: 0.4 });
         // The closing row of marks pops in one by one.
         gsap.from('.talk-mark', { scale: 0, duration: 0.6, stagger: 0.07, ease: 'back.out(2)', scrollTrigger: { trigger: '.talk', start: 'top 70%', toggleActions: 'play none none reverse' } });
       }
@@ -375,57 +356,36 @@ const steps = [
       .svc-col ul { list-style: none; margin: 0.4rem 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.4rem; }
       .svc-col li { padding: 0.3rem 0.75rem; border: 1px solid color-mix(in srgb, var(--line) 40%, transparent); border-radius: 999px; font-size: 0.85rem; color: var(--mute); }
 
-      /* ---------- Laptop (CSS 3D): the lid hinges on the base's back edge ---------- */
-      .lap { height: 100svh; border-bottom: 1.5px solid var(--line); overflow: clip; }
-      .lap-stage { height: 100%; display: grid; grid-template-rows: auto 1fr auto; padding: 8svh 4vw 5svh; }
-      .lap-head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2.2fr); gap: 1rem 4vw; align-items: end; }
-      .lap-head h2 { margin: 0; font: 600 clamp(2.4rem, 5.2vw, 5rem)/0.98 var(--font-clash); letter-spacing: -0.045em; }
-      .lap-head em { color: var(--red); }
-      .lap-scene { display: grid; justify-items: center; align-content: start; padding-top: 3svh; perspective: 1900px; perspective-origin: 50% -10%; }
-      .laptop { --w: min(46vw, 36rem, 62svh); --h: calc(var(--w) * 0.62); position: relative; width: var(--w); height: var(--h); transform-style: preserve-3d; }
-      .lid { position: absolute; inset: 0; transform-origin: 50% 100%; transform-style: preserve-3d; }
-      .lid-front, .lid-back { position: absolute; inset: 0; border-radius: 1.2rem 1.2rem 0.4rem 0.4rem; backface-visibility: hidden; }
-      .lid-front { background: #1b1a19; padding: 3.2% 3.2% 4.5%; box-shadow: inset 0 0 0 2px #2c2a28; }
-      .lid-back { transform: rotateY(180deg); background: var(--ink); display: grid; place-items: center; box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--line) 30%, transparent); }
-      :root[data-mode='dark'] .lid-back { background: #2a2826; }
-      .lid-star { width: 22%; height: auto; }
-      .screen { position: relative; width: 100%; height: 100%; border-radius: 0.5rem; overflow: hidden; background: #07090c; }
-      .boot { position: absolute; inset: 0; display: grid; place-items: center; }
-      .boot-star { width: 26%; height: auto; filter: drop-shadow(0 0 1.4rem rgb(227 52 42 / 0.6)); }
-      .term { position: absolute; inset: 0; padding: 4% 5%; display: grid; align-content: start; gap: 0.5em; font: 400 clamp(0.6rem, 1.05vw, 0.95rem)/1.4 ui-monospace, 'Cascadia Code', Consolas, monospace; color: #d6dae6; }
-      .term-bar { margin: 0 0 0.6em; display: flex; align-items: center; gap: 0.4em; color: #6d7385; font-size: 0.85em; }
-      .term-bar span { width: 0.6em; height: 0.6em; border-radius: 50%; background: #2a2f3c; }
-      .term-bar em { margin-left: auto; font-style: normal; font-family: inherit; }
+      .cases { display: grid; gap: 12svh; }
+      .case { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr); gap: 2rem 4vw; align-items: center; }
+      .case-flip { grid-template-columns: minmax(0, 1fr) minmax(0, 1.65fr); }
+      .case-flip .case-media { order: 2; }
+      .case-media { display: grid; gap: 1rem; min-width: 0; }
+      .frame { border: 1.5px solid var(--line); border-radius: 1rem; overflow: hidden; background: var(--paper); box-shadow: 0.6rem 0.6rem 0 var(--ink); }
+      .frame-dark { background: #0b0c0f; box-shadow: 0.6rem 0.6rem 0 var(--red); }
+      .frame-bar { margin: 0; display: flex; align-items: center; gap: 0.45rem; padding: 0.7rem 1rem; border-bottom: 1.5px solid var(--line); font-size: 0.8rem; color: var(--mute); }
+      .frame-bar span { width: 0.65rem; height: 0.65rem; border-radius: 50%; border: 1.5px solid var(--line); }
+      .frame-bar span:first-child { background: var(--red); border-color: var(--red); }
+      .frame-bar em { margin-left: auto; font-style: normal; font-family: ui-monospace, 'Cascadia Code', Consolas, monospace; }
+      .frame-dark .frame-bar { color: #7b8194; border-color: #23262e; }
+      .frame-dark .frame-bar span { border-color: #3a3f4b; }
+      .frame-dark .frame-bar span:first-child { background: var(--red); border-color: var(--red); }
+      .frame-view { position: relative; aspect-ratio: 16 / 10; overflow: hidden; }
+      .shot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
+      .term { padding: 5% 5.5%; display: grid; align-content: start; gap: 0.75em; font: 400 clamp(0.72rem, 1.05vw, 1rem)/1.45 ui-monospace, 'Cascadia Code', Consolas, monospace; color: #d6dae6; }
       .tl { margin: 0; }
       .tl.acc { color: #ff8a80; }
       .tl.ok { color: #9fe0a8; }
       .tl.dim { color: #5b6276; }
-      /* The base lies flat, hinged at the lid's bottom edge and reaching toward you. */
-      .base { position: absolute; left: -4%; right: -4%; top: 100%; height: calc(var(--h) * 0.92); transform-origin: 50% 0; transform: rotateX(90deg) translateZ(-1px); background: #cfcac0; border-radius: 0.6rem 0.6rem 1.4rem 1.4rem; box-shadow: inset 0 0 0 2px #b9b3a8; }
-      :root[data-mode='dark'] .base { background: #3a3734; box-shadow: inset 0 0 0 2px #4a4643; }
-      .keys { position: absolute; left: 8%; right: 8%; top: 8%; height: 52%; border-radius: 0.5rem; background: repeating-linear-gradient(90deg, rgb(0 0 0 / 0.14) 0 6%, transparent 6% 7%), repeating-linear-gradient(0deg, rgb(0 0 0 / 0.14) 0 16%, transparent 16% 20%); }
-      .pad { position: absolute; left: 36%; right: 36%; bottom: 8%; height: 26%; border-radius: 0.5rem; background: rgb(0 0 0 / 0.1); }
-      .base-front { position: absolute; left: -4%; right: -4%; top: calc(100% - 2px); height: 1.1rem; transform-origin: 50% 0; transform: translateZ(calc(var(--h) * 0.92)) ; background: #b9b3a8; border-radius: 0 0 1rem 1rem; }
-      :root[data-mode='dark'] .base-front { background: #4a4643; }
-      .lap-cap { position: relative; z-index: 2; margin: 0; text-align: center; font-size: clamp(1rem, 1.4vw, 1.25rem); color: var(--mute); }
-      .lap-cap b { color: var(--ink); font-family: var(--font-clash); font-weight: 600; }
-
-      .work-grid { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 2rem; }
-      .proj { display: grid; gap: 1.2rem; align-content: start; }
-      .proj-art { position: relative; aspect-ratio: 16 / 10; border: 1.5px solid var(--line); border-radius: 1rem; overflow: hidden; background: var(--soft); }
-      .proj-big .proj-art { aspect-ratio: 16 / 9.4; }
-      .art-jarvis { background: var(--ink); }
-      .art-star { position: absolute; left: 8%; top: 12%; width: 34%; height: auto; }
-      .art-quote { position: absolute; right: 6%; bottom: 8%; max-width: 55%; margin: 0; color: var(--paper); font-size: clamp(1.2rem, 2vw, 1.9rem); line-height: 1.15; text-align: right; }
-      .art-soon { display: grid; align-content: center; gap: 0.7rem; padding: 10%; }
-      .art-soon b { font: 600 1rem var(--font-hanken); color: var(--red); margin-top: 0.4rem; }
-      .sk { display: block; height: 0.9rem; width: 70%; border-radius: 0.3rem; background: linear-gradient(90deg, var(--soft), color-mix(in srgb, var(--ink) 14%, transparent), var(--soft)); background-size: 200% 100%; animation: shimmer 2.2s linear infinite; }
-      .sk.s2 { width: 45%; } .sk.s3 { height: 4rem; width: 100%; }
-      @keyframes shimmer { to { background-position: -200% 0; } }
-      .proj-meta { display: grid; gap: 0.4rem; justify-items: start; }
-      .pill { padding: 0.3rem 0.75rem; border: 1px solid color-mix(in srgb, var(--line) 40%, transparent); border-radius: 999px; font-size: 0.85rem; }
-      .proj-meta h3 { margin: 0.3rem 0 0; font: 600 clamp(2rem, 3.4vw, 3.2rem)/1 var(--font-clash); letter-spacing: -0.04em; }
-      .proj-meta p { margin: 0; color: var(--mute); }
+      .caret { display: inline-block; width: 0.6em; height: 1.1em; vertical-align: -0.2em; background: #d6dae6; animation: blink 1s steps(1) infinite; }
+      @keyframes blink { 50% { opacity: 0; } }
+      .case-meta { display: grid; gap: 1rem; justify-items: start; }
+      .case-kind { margin: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+      .pill-red { border-color: var(--red); color: var(--red); }
+      .case-meta h3 { margin: 0; font: 600 clamp(2.4rem, 4.4vw, 4.4rem)/0.95 var(--font-clash); letter-spacing: -0.045em; }
+      .case-line { margin: 0; max-width: 34ch; font-size: clamp(1.05rem, 1.3vw, 1.2rem); line-height: 1.5; color: var(--mute); }
+      .case-did { list-style: none; margin: 0.4rem 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.4rem 1.2rem; font-size: 0.9rem; }
+      .case-did li::before { content: '✦ '; color: var(--red); }
 
       .steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1.5px solid var(--line); }
       .step { padding: 1.6rem 1.4rem 2rem 0; display: grid; gap: 0.6rem; align-content: start; border-right: 1px solid color-mix(in srgb, var(--line) 25%, transparent); }
@@ -457,16 +417,18 @@ const steps = [
         .hero-foot { grid-template-columns: minmax(0, 1fr); }
         .scroll-cue { display: none; }
         .sec-head { grid-template-columns: minmax(0, 1fr); }
-        .lap-head { grid-template-columns: minmax(0, 1fr); }
-        .laptop { --w: min(80vw, 52svh); }
-        .svc-grid, .work-grid { grid-template-columns: minmax(0, 1fr); }
+        .svc-grid, .case, .case-flip { grid-template-columns: minmax(0, 1fr); }
+        .case-flip .case-media { order: 0; }
+        .cases { gap: 9svh; }
+        .frame { box-shadow: 0.35rem 0.35rem 0 var(--ink); }
+        .frame-dark { box-shadow: 0.35rem 0.35rem 0 var(--red); }
         .steps { grid-template-columns: minmax(0, 1fr); }
         .step, .step + .step { padding: 1.4rem 0; border-right: 0; border-bottom: 1px solid color-mix(in srgb, var(--line) 25%, transparent); }
         .talk-star { position: relative; display: block; right: auto; top: auto; translate: none; width: 46vw; margin: 0 0 2rem auto; }
         .foot { flex-direction: column; align-items: flex-start; }
       }
       @media (prefers-reduced-motion: reduce) {
-        .scroll-cue span, .sk { animation: none; }
+        .scroll-cue span, .caret { animation: none; }
       }
     </style>
   </body>
