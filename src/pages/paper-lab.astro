@@ -35,6 +35,16 @@ const services = [
   { glyph: 'ring', name: 'Automate', line: 'The tasks you repeat every week, done by themselves.', list: ['Workflows', 'Data & reports', 'Email design', 'Email flows'] },
   { glyph: 'sparkle', name: 'AI', line: 'Assistants and smart tools that actually help.', list: ['Chatbots', 'AI in your tools', 'Document sorting'] },
 ];
+// Chores the services take off a client's plate. Hours are example estimates for a small business.
+const chores = [
+  { task: 'Copying orders from your inbox into a spreadsheet', tag: 'Automate', hours: 2 },
+  { task: 'Answering the same five customer questions', tag: 'AI', hours: 3 },
+  { task: 'Chasing unpaid invoices one email at a time', tag: 'Automate', hours: 1 },
+  { task: 'Writing the newsletter from scratch every week', tag: 'Email', hours: 2 },
+  { task: 'Explaining your opening hours on the phone', tag: 'Website', hours: 1 },
+];
+const choreHours = chores.reduce((n, c) => n + c.hours, 0);
+const helpWith = ['a website', 'an app', 'an automation', 'email', 'AI', 'not sure yet'];
 const steps = [
   { glyph: 'half', name: 'Talk', line: "A chat about your business and what's in the way. No jargon." },
   { glyph: 'diamond', name: 'Design', line: 'You see how it will look before anything gets built.' },
@@ -161,19 +171,55 @@ const steps = [
       </ol>
     </section>
 
-    <!-- ===================== CLOSING CTA ===================== -->
-    <section class="talk" id="talk">
-      <Fragment set:html={star('talk-star')} />
-      <p class="talk-marks" aria-hidden="true">
-        <Fragment set:html={star('talk-mark')} />
-        {['sparkle', 'ring', 'flower', 'plus', 'triDown', 'half'].map((g) => <Fragment set:html={glyph(g, 'talk-mark')} />)}
-      </p>
-      <h2 class="talk-h" data-up>Let's make something that <em>shines</em>.</h2>
-      <p class="talk-sub" data-up>Tell me what slows your business down. I'll reply within 48 hours with a clear plan and price.</p>
-      <div class="talk-row" data-up>
-        <a class="btn btn-red" href="mailto:shainydev@gmail.com">shainydev@gmail.com</a>
-        <a class="link" href="https://www.linkedin.com/in/shainy-naar-79618b358/">LinkedIn ↗</a>
+    <!-- ===================== CHORES: crossed off as you scroll ===================== -->
+    <section class="chores" data-chores>
+      <div class="chores-side">
+        <p class="sec-no">What changes</p>
+        <h2>Things you'll <em>stop</em> doing.</h2>
+        <p class="chores-count"><span class="chores-n" data-hours>{choreHours}</span><span class="chores-unit">hours back,<br />every week</span></p>
+        <p class="chores-note">Example estimates for a small business. Yours will differ, and I'll tell you honestly what's worth automating.</p>
       </div>
+      <ol class="chore-list">
+        {chores.map((c) => (
+          <li class="chore" data-chore data-hours={c.hours}>
+            <span class="chore-task"><span class="chore-text">{c.task}</span></span>
+            <span class="chore-meta"><span class="chore-tag">{c.tag}</span><span class="chore-time">~{c.hours} h / week</span></span>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <!-- ===================== CONTACT: a letter you fill in ===================== -->
+    <section class="talk" id="talk">
+      <header class="talk-top">
+        <p class="sec-no">Contact</p>
+        <h2 class="talk-h" data-up>Let's make something that <em>shines</em>.</h2>
+      </header>
+      <form class="letter" data-letter action="/api/contact" method="post" novalidate>
+        <div class="stamp" data-stamp aria-hidden="true">
+          <Fragment set:html={star('stamp-star')} />
+          <span>48h reply</span>
+        </div>
+        <p class="ll" data-ll>Hi Shainy,</p>
+        <p class="ll" data-ll>I'm <input class="blank" name="name" placeholder="your name" autocomplete="name" required aria-label="Your name" /> from <input class="blank" name="company" placeholder="your business" autocomplete="organization" aria-label="Your business" />.</p>
+        <p class="ll" data-ll>I'd love some help with</p>
+        <div class="chips" data-ll role="group" aria-label="What you need help with">
+          {helpWith.map((h) => <button type="button" class="chip" data-chip aria-pressed="false">{h}</button>)}
+        </div>
+        <p class="ll" data-ll>In short: <input class="blank blank-long" name="message" placeholder="what slows your business down" required aria-label="Your message" /></p>
+        <p class="ll" data-ll>You can reach me at <input class="blank" type="email" name="email" placeholder="you@email.com" autocomplete="email" required aria-label="Your email" />.</p>
+        <input class="trap" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
+        <div class="letter-send" data-ll>
+          <button class="btn btn-red" type="submit">Send it <span aria-hidden="true">→</span></button>
+          <p class="letter-status" data-status aria-live="polite"></p>
+        </div>
+      </form>
+      <aside class="talk-side">
+        <p>Rather write it yourself?</p>
+        <p class="talk-mail">shainydev@gmail.com</p>
+        <p><a class="link" href="mailto:shainydev@gmail.com">Open in your email app</a> · <a class="link" href="https://www.linkedin.com/in/shainy-naar-79618b358/">LinkedIn ↗</a></p>
+        <p class="talk-promise">I reply within 48 hours with a clear plan and a fixed price.</p>
+      </aside>
     </section>
 
     <footer class="foot">
@@ -196,6 +242,54 @@ const steps = [
       document.querySelector('[data-mode-toggle]')!.addEventListener('click', () => {
         root.dataset.mode = root.dataset.mode === 'dark' ? 'light' : 'dark';
         sync();
+      });
+
+      // Contact letter: blanks grow with what's typed, chips toggle, and it posts to /api/contact.
+      // If mail isn't set up on the server yet, it falls back to opening the visitor's email app.
+      const letter = document.querySelector<HTMLFormElement>('[data-letter]')!;
+      const status = letter.querySelector<HTMLElement>('[data-status]')!;
+      const started = Date.now();
+      const fit = (el: HTMLInputElement) => (el.size = Math.max(4, (el.value || el.placeholder).length + 1));
+      letter.querySelectorAll<HTMLInputElement>('.blank').forEach((el) => { fit(el); el.addEventListener('input', () => fit(el)); });
+      letter.querySelectorAll<HTMLButtonElement>('[data-chip]').forEach((b) =>
+        b.addEventListener('click', () => b.setAttribute('aria-pressed', String(b.getAttribute('aria-pressed') !== 'true'))),
+      );
+      letter.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const f = new FormData(letter);
+        const val = (k: string) => String(f.get(k) ?? '').trim();
+        const missing = ['name', 'message', 'email'].find((k) => !val(k));
+        if (missing) {
+          status.textContent = 'Just fill in the blanks first.';
+          letter.querySelector<HTMLInputElement>(`[name="${missing}"]`)!.focus();
+          return;
+        }
+        const help = [...letter.querySelectorAll('[data-chip][aria-pressed="true"]')].map((b) => b.textContent);
+        const lines: string[] = [];
+        if (val('company')) lines.push(`Business: ${val('company')}`);
+        if (help.length) lines.push(`Help with: ${help.join(', ')}`);
+        if (lines.length) lines.push('');
+        lines.push(val('message'));
+        const message = lines.join('\n');
+        status.textContent = 'Sending…';
+        let code = 'failed';
+        try {
+          const res = await fetch('/api/contact', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: val('name'), email: val('email'), message, website: val('website'), started }),
+          });
+          code = (await res.json()).code ?? 'failed';
+        } catch {}
+        if (code === 'ok') {
+          letter.classList.add('sent');
+          status.textContent = `Sent. Talk soon, ${val('name')}!`;
+          gsap.fromTo('[data-stamp]', { scale: 2.4, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 0.5, ease: 'back.out(2.5)' });
+        } else if (code === 'bad-email') {
+          status.textContent = 'That email address looks off. Could you check it?';
+        } else {
+          status.textContent = 'Opening your email app with your letter…';
+          location.href = `mailto:shainydev@gmail.com?subject=${encodeURIComponent('Project enquiry from ' + val('name'))}&body=${encodeURIComponent(message + '\n\n' + val('name') + ' · ' + val('email'))}`;
+        }
       });
 
       if (!reduce) {
@@ -239,8 +333,6 @@ const steps = [
         );
         // Process: the steps fill in one after another with the scroll.
         gsap.from('[data-step]', { y: 40, autoAlpha: 0, stagger: 0.15, ease: 'power2.out', scrollTrigger: { trigger: '.steps', start: 'top 80%', end: 'bottom 70%', scrub: 0.6 } });
-        // Closing: the big star turns with the scroll.
-        gsap.fromTo('.talk-star', { rotation: -40, scale: 0.7 }, { rotation: 30, scale: 1, ease: 'none', scrollTrigger: { trigger: '.talk', start: 'top bottom', end: 'bottom bottom', scrub: true } });
         // Work: the posters slide sideways while the section holds (desktop; phones get a vertical stack).
         const barH = () => document.querySelector<HTMLElement>('.bar')!.offsetHeight;
         const setBar = () => document.documentElement.style.setProperty('--bar', barH() + 'px');
@@ -259,8 +351,23 @@ const steps = [
           });
         });
 
-        // The closing row of marks pops in one by one.
-        gsap.from('.talk-mark', { scale: 0, duration: 0.6, stagger: 0.07, ease: 'back.out(2)', scrollTrigger: { trigger: '.talk', start: 'top 70%', toggleActions: 'play none none reverse' } });
+        // Chores: each one is struck through in turn and its hours are added to the counter.
+        const chores = gsap.utils.toArray<HTMLElement>('[data-chore]');
+        const hoursEl = document.querySelector<HTMLElement>('[data-hours]')!;
+        const hours = { n: 0 };
+        hoursEl.textContent = '0';
+        const ct = gsap.timeline({ scrollTrigger: { trigger: '.chore-list', start: 'top 70%', end: 'bottom 55%', scrub: 0.6 } });
+        let total = 0;
+        chores.forEach((c, i) => {
+          total += Number(c.dataset.hours);
+          ct.to(c, { '--strike': 1, duration: 1, ease: 'power2.inOut' }, i)
+            .to(c.querySelector('.chore-text'), { color: 'var(--mute)', duration: 0.6 }, i + 0.4)
+            .fromTo(c.querySelector('.chore-tag'), { scale: 0.4, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 0.5, ease: 'back.out(2)' }, i + 0.5)
+            .to(hours, { n: total, duration: 0.8, ease: 'none', onUpdate: () => (hoursEl.textContent = String(Math.round(hours.n))) }, i + 0.3);
+        });
+        // Contact: the letter's lines arrive one after another; the stamp lands last.
+        gsap.from('[data-ll]', { y: 26, autoAlpha: 0, duration: 0.7, stagger: 0.08, ease: 'power3.out', scrollTrigger: { trigger: '[data-letter]', start: 'top 75%', toggleActions: 'play none none reverse' } });
+        gsap.from('[data-stamp]', { scale: 2.2, autoAlpha: 0, duration: 0.6, ease: 'back.out(2.2)', scrollTrigger: { trigger: '[data-letter]', start: 'top 55%', toggleActions: 'play none none reverse' } });
       }
     </script>
 
@@ -316,7 +423,7 @@ const steps = [
       .in { display: inline-block; }
       .hero-h em { color: var(--red); }
       .inl { display: inline-block; width: 0.55em; height: auto; vertical-align: 0.06em; }
-      .hero-foot { position: relative; z-index: 2; display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: end; gap: 1.5rem 3rem; padding-top: 1.4rem; border-top: 1.5px solid var(--line); }
+      .hero-foot { position: relative; z-index: 2; display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 1.5rem 3rem; padding-top: 1.4rem; border-top: 1.5px solid var(--line); }
       .hero-note { margin: 0; max-width: 34rem; font-size: clamp(1.05rem, 1.4vw, 1.3rem); line-height: 1.45; }
       .hero-note em { color: var(--mute); }
       .btn { display: inline-flex; gap: 0.6rem; align-items: center; padding: 0.95rem 1.8rem; border-radius: 999px; background: var(--ink); color: var(--paper); font-weight: 600; white-space: nowrap; transition: transform 0.25s; }
@@ -399,17 +506,57 @@ const steps = [
       .step:last-child { border-right: 0; }
       .step-n { display: inline-flex; align-items: center; gap: 0.55rem; font: 500 0.95rem var(--font-hanken); color: var(--red); }
       .step-mark { width: 1.4rem; height: auto; }
-      .talk-marks { position: relative; display: flex; flex-wrap: wrap; gap: 0.9rem; margin: 0 0 2.4rem; }
-      .talk-mark { width: clamp(2.2rem, 4vw, 3.4rem); height: auto; }
       .step h3 { margin: 0; font: 600 clamp(1.8rem, 2.6vw, 2.6rem)/1 var(--font-clash); letter-spacing: -0.035em; }
       .step p { margin: 0; color: var(--mute); line-height: 1.45; }
 
-      .talk { position: relative; padding: 18svh 4vw; overflow: clip; border-bottom: 1.5px solid var(--line); }
-      .talk-star { position: absolute; right: 5vw; top: 50%; width: min(36vw, 30rem); height: auto; translate: 0 -50%; mix-blend-mode: var(--blend); }
-      .talk-h { position: relative; margin: 0; max-width: 12ch; font: 600 clamp(3rem, 8vw, 8rem)/0.92 var(--font-clash); letter-spacing: -0.05em; }
+      /* ---------- Chores ---------- */
+      .chores { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr); gap: 3rem 6vw; padding: 14svh 4vw; border-bottom: 1.5px solid var(--line); }
+      .chores-side { align-self: start; position: sticky; top: calc(var(--bar, 68px) + 8svh); display: grid; gap: 1.4rem; }
+      .chores-side h2 { margin: 0; font: 600 clamp(2.4rem, 5vw, 4.8rem)/0.98 var(--font-clash); letter-spacing: -0.045em; }
+      .chores-side em { color: var(--red); }
+      .chores-count { margin: 1rem 0 0; display: flex; align-items: center; gap: 1rem; }
+      .chores-n { font: 600 clamp(5rem, 11vw, 10rem)/0.85 var(--font-clash); letter-spacing: -0.06em; color: var(--red); font-variant-numeric: tabular-nums; }
+      .chores-unit { font-weight: 600; font-size: 1.1rem; line-height: 1.25; }
+      .chores-note { margin: 0; max-width: 30ch; font-size: 0.9rem; line-height: 1.45; color: var(--mute); }
+      .chore-list { list-style: none; margin: 0; padding: 0; border-top: 1.5px solid var(--line); }
+      .chore { --strike: 0; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 1rem 2rem; padding: 2rem 0; border-bottom: 1px solid color-mix(in srgb, var(--line) 25%, transparent); }
+      .chore-task { font: 600 clamp(1.4rem, 2.4vw, 2.3rem)/1.15 var(--font-clash); letter-spacing: -0.03em; }
+      .chore-text { position: relative; }
+      /* The red line drawn through each chore; one line per row of text. */
+      .chore-text { background: linear-gradient(var(--red), var(--red)) no-repeat 0 54% / calc(var(--strike) * 100%) 0.12em; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+      .chore-meta { display: grid; justify-items: end; gap: 0.35rem; }
+      .chore-tag { padding: 0.3rem 0.8rem; border-radius: 999px; background: var(--red); color: #fff; font-size: 0.85rem; font-weight: 600; }
+      .chore-time { font-size: 0.85rem; color: var(--mute); white-space: nowrap; }
+
+      /* ---------- Contact: the letter ---------- */
+      .talk { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: 4rem 6vw; padding: 16svh 4vw 14svh; border-bottom: 1.5px solid var(--line); }
+      .talk-top { grid-column: 1 / -1; display: grid; gap: 1.2rem; }
+      .talk-h { margin: 0; max-width: 14ch; font: 600 clamp(3rem, 7.4vw, 7.4rem)/0.92 var(--font-clash); letter-spacing: -0.05em; }
       .talk-h em { color: var(--red); }
-      .talk-sub { position: relative; margin: 2rem 0 0; max-width: 32rem; font-size: clamp(1.1rem, 1.5vw, 1.35rem); line-height: 1.45; color: var(--mute); }
-      .talk-row { position: relative; display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 2rem; margin-top: 2.4rem; }
+      .letter { position: relative; display: grid; gap: 1.1rem; padding-right: 7rem; font: 500 clamp(1.4rem, 2.5vw, 2.4rem)/1.35 var(--font-clash); letter-spacing: -0.025em; }
+      .ll { margin: 0; }
+      .blank { min-width: 0; max-width: 100%; padding: 0 0.15em; border: 0; border-bottom: 2px solid var(--red); background: none; color: var(--red); font: italic 400 1.08em/1.1 var(--font-instrument); letter-spacing: 0; border-radius: 0; }
+      .blank::placeholder { color: color-mix(in srgb, var(--red) 45%, transparent); }
+      .blank:focus { outline: none; background: color-mix(in srgb, var(--red) 8%, transparent); }
+      .chips { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+      .chip { padding: 0.5rem 1.1rem; border: 1.5px solid var(--line); border-radius: 999px; background: none; color: var(--ink); font: 600 clamp(0.95rem, 1.2vw, 1.1rem) var(--font-hanken); cursor: pointer; transition: background-color 0.25s, color 0.25s, border-color 0.25s, transform 0.25s; }
+      .chip:hover { transform: translateY(-2px); }
+      .chip[aria-pressed='true'] { background: var(--red); border-color: var(--red); color: #fff; }
+      .chip[aria-pressed='true']::before { content: '✓ '; }
+      .letter-send { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.6rem; margin-top: 1rem; }
+      .letter-send .btn { border: 0; font: 600 1rem var(--font-hanken); cursor: pointer; }
+      .letter-status { margin: 0; font: 500 1rem var(--font-hanken); color: var(--mute); letter-spacing: 0; }
+      .letter.sent .ll, .letter.sent .chips { opacity: 0.45; pointer-events: none; }
+      .trap { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+      /* A postage stamp in the corner of the letter; the dotted paper-coloured border reads as perforation. */
+      .stamp { position: absolute; right: 0; top: -0.4rem; width: 5.8rem; aspect-ratio: 4 / 5; display: grid; place-items: center; align-content: center; gap: 0.4rem; padding: 0.5rem; background: var(--red); color: #fff; border: 0.4rem dotted var(--paper); outline: 1.5px solid var(--red); outline-offset: -0.55rem; }
+      .stamp-star { width: 62%; height: auto; }
+      .stamp-star .sh { fill: #fff; }
+      .stamp span { font: 600 0.62rem var(--font-hanken); letter-spacing: 0.08em; text-transform: uppercase; }
+      .talk-side { align-self: end; display: grid; gap: 0.8rem; padding-left: 2rem; border-left: 1.5px solid var(--line); }
+      .talk-side p { margin: 0; line-height: 1.45; }
+      .talk-mail { font: 600 clamp(1.2rem, 1.8vw, 1.6rem) var(--font-clash); letter-spacing: -0.02em; user-select: all; }
+      .talk-promise { color: var(--mute); }
       .link { font-weight: 600; text-decoration: underline; text-decoration-color: var(--red); text-underline-offset: 0.3em; }
       .foot { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 1.6rem 4vw; font-size: 0.9rem; color: var(--mute); }
 
@@ -438,11 +585,18 @@ const steps = [
         .po-jarvis .m-term { font-size: 0.72rem; }
         .steps { grid-template-columns: minmax(0, 1fr); }
         .step, .step + .step { padding: 1.4rem 0; border-right: 0; border-bottom: 1px solid color-mix(in srgb, var(--line) 25%, transparent); }
-        .talk-star { position: relative; display: block; right: auto; top: auto; translate: none; width: 46vw; margin: 0 0 2rem auto; }
+        .chores, .talk { grid-template-columns: minmax(0, 1fr); }
+        .chores-side { position: static; }
+        .chore { grid-template-columns: minmax(0, 1fr); gap: 0.8rem; padding: 1.4rem 0; }
+        .chore-meta { grid-auto-flow: column; justify-content: start; align-items: center; gap: 0.8rem; }
+        .letter { padding-right: 0; padding-top: 6.4rem; }
+        .stamp { top: 0; right: auto; left: 0; width: 4.8rem; }
+        .talk-side { padding: 1.6rem 0 0; border-left: 0; border-top: 1.5px solid var(--line); }
         .foot { flex-direction: column; align-items: flex-start; }
       }
       @media (prefers-reduced-motion: reduce) {
         .scroll-cue span, .caret { animation: none; }
+        .chore { --strike: 1; }
         /* Without the scroll-driven slide, the posters scroll sideways by hand. */
         .posters { overflow-x: auto; }
       }
