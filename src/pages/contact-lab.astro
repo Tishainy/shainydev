@@ -1,0 +1,267 @@
+---
+// Contact section, three directions to compare (A Big address, B Red finale, C Postcard).
+// Hidden (noindex), not linked. /contact-lab/#dark opens in dark.
+import '../styles/global.css';
+import { Font } from 'astro:assets';
+import { star } from '../data/work';
+
+const glyphs: Record<string, string> = {
+  ring: '<path fill-rule="evenodd" d="M50 4a46 46 0 1 0 0 92a46 46 0 1 0 0-92Zm0 22a24 24 0 1 1 0 48a24 24 0 1 1 0-48Z"/>',
+  diamond: '<path d="M50 2 98 50 50 98 2 50Z"/>',
+  half: '<path d="M4 58a46 46 0 0 1 92 0Z"/><rect x="4" y="68" width="92" height="20"/>',
+};
+const glyph = (name: string, cls: string) => `<svg class="glyph ${cls}" viewBox="0 0 100 100" aria-hidden="true">${glyphs[name]}</svg>`;
+const promises = [
+  { g: 'ring', t: 'Reply within 48 hours' },
+  { g: 'diamond', t: 'Clear plan and price upfront' },
+  { g: 'half', t: 'Plain language, always' },
+];
+const mail = 'shainydev@gmail.com';
+const linkedin = 'https://www.linkedin.com/in/shainy-naar-79618b358/';
+---
+
+<html lang="en" data-mode="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Contact lab — ShainyDev</title>
+    <Font cssVariable="--font-clash" preload />
+    <Font cssVariable="--font-hanken" preload />
+    <Font cssVariable="--font-instrument" preload />
+    <script is:inline>
+      if (location.hash === '#dark') document.documentElement.dataset.mode = 'dark';
+    </script>
+  </head>
+  <body>
+    <header class="bar">
+      <a class="brand" href="#a"><Fragment set:html={star('brand-star')} /><span>Contact lab</span></a>
+      <nav class="nav"><a href="#a">A · Big address</a><a href="#b">B · Red finale</a><a href="#c">C · Postcard</a></nav>
+      <button class="mode" type="button" data-mode-toggle aria-label="Switch light or dark"><span class="mode-dot"></span><span data-mode-label>Dark</span></button>
+    </header>
+
+    <!-- ===================== A · BIG ADDRESS ===================== -->
+    <section class="opt ca" id="a">
+      <p class="opt-tag"><b>A</b> Big address · the email is the centrepiece</p>
+      <div class="ca-top">
+        <p class="sec-no">Contact</p>
+        <h2 class="ca-h">Got something in mind? <em>Say hi.</em></h2>
+      </div>
+      <a class="ca-mail" href={`mailto:${mail}`} data-ca-mail aria-label={`Email ${mail}`}>
+        {[...'shainydev'].map((c) => <span class="ch">{c}</span>)}<span class="ch at">@</span>{[...'gmail.com'].map((c) => <span class="ch">{c}</span>)}
+      </a>
+      <div class="ca-foot">
+        <ul class="ca-promises">
+          {promises.map((p) => <li><Fragment set:html={glyph(p.g, 'pm')} />{p.t}</li>)}
+        </ul>
+        <div class="ca-actions">
+          <button class="pill-btn" type="button" data-copy={mail}><span data-copy-label>Copy address</span></button>
+          <a class="pill-btn" href={linkedin}>LinkedIn ↗</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== B · RED FINALE ===================== -->
+    <section class="opt cb" id="b">
+      <p class="opt-tag"><b>B</b> Red finale · the page ends on a red section</p>
+      <div class="cb-grid">
+        <h2 class="cb-h" data-cb-h><span>Got a project?</span><span>Let's <em>talk</em>.</span></h2>
+        <ul class="cb-rows">
+          <li class="cb-row" data-cb-row>
+            <a href={`mailto:${mail}`}><span class="cb-k">Email</span><span class="cb-v">{mail}</span><span class="cb-arrow" aria-hidden="true">→</span></a>
+            <button class="cb-copy" type="button" data-copy={mail}><span data-copy-label>Copy</span></button>
+          </li>
+          <li class="cb-row" data-cb-row>
+            <a href={linkedin}><span class="cb-k">LinkedIn</span><span class="cb-v">Shainy Naar</span><span class="cb-arrow" aria-hidden="true">↗</span></a>
+          </li>
+          <li class="cb-row cb-static" data-cb-row>
+            <span class="cb-k">Reply</span><span class="cb-v">Within 48 hours, with a clear plan and price</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ===================== C · POSTCARD ===================== -->
+    <section class="opt cc" id="c">
+      <p class="opt-tag"><b>C</b> Postcard · a card that lands as you scroll</p>
+      <div class="cc-top">
+        <p class="sec-no">Contact</p>
+        <h2 class="cc-h">Let's make something that <em>shines</em>.</h2>
+      </div>
+      <article class="card" data-card>
+        <div class="card-msg">
+          <p>Tell me what slows your business down, the task you keep repeating or the website you'd rather not send people to.</p>
+          <p>I'll come back within 48 hours with a clear plan and price.</p>
+          <p class="card-sign">Shainy</p>
+        </div>
+        <div class="card-addr">
+          <div class="stamp" data-stamp aria-hidden="true"><Fragment set:html={star('stamp-star')} /><span>48h reply</span></div>
+          <svg class="postmark" data-postmark viewBox="0 0 200 120" aria-hidden="true">
+            <defs><path id="pm-arc" d="M60 60 m-38 0 a38 38 0 1 1 76 0 a38 38 0 1 1 -76 0" /></defs>
+            <circle cx="60" cy="60" r="48" /><circle cx="60" cy="60" r="30" />
+            <text><textPath href="#pm-arc" startOffset="0">SHAINYDEV · DELIVERED · </textPath></text>
+            <path class="wave" d="M118 40c10-8 20 8 30 0s20 8 30 0M118 60c10-8 20 8 30 0s20 8 30 0M118 80c10-8 20 8 30 0s20 8 30 0" />
+          </svg>
+          <p class="addr-to">To</p>
+          <a class="addr-line addr-mail" href={`mailto:${mail}`}>{mail}</a>
+          <a class="addr-line" href={linkedin}>LinkedIn · Shainy Naar ↗</a>
+          <div class="addr-line addr-actions">
+            <a class="btn-red" href={`mailto:${mail}?subject=Project%20enquiry`}>Email me →</a>
+            <button class="pill-btn" type="button" data-copy={mail}><span data-copy-label>Copy address</span></button>
+          </div>
+        </div>
+      </article>
+    </section>
+    <div class="end">End of the three options. Tell me A, B or C, or which parts to mix.</div>
+
+    <script>
+      import gsap from 'gsap';
+      import { ScrollTrigger } from 'gsap/ScrollTrigger';
+      import Lenis from 'lenis';
+      gsap.registerPlugin(ScrollTrigger);
+      const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      const root = document.documentElement;
+      const label = document.querySelector<HTMLElement>('[data-mode-label]')!;
+      const sync = () => (label.textContent = root.dataset.mode === 'dark' ? 'Light' : 'Dark');
+      sync();
+      document.querySelector('[data-mode-toggle]')!.addEventListener('click', () => {
+        root.dataset.mode = root.dataset.mode === 'dark' ? 'light' : 'dark';
+        sync();
+      });
+
+      // Copy buttons (fall back to "select it yourself" when the clipboard is refused).
+      document.querySelectorAll<HTMLButtonElement>('[data-copy]').forEach((b) => {
+        const l = b.querySelector<HTMLElement>('[data-copy-label]')!;
+        const idle = l.textContent;
+        b.addEventListener('click', async () => {
+          try { await navigator.clipboard.writeText(b.dataset.copy!); l.textContent = 'Copied ✓'; }
+          catch { l.textContent = b.dataset.copy!; }
+          setTimeout(() => (l.textContent = idle), 2200);
+        });
+      });
+
+      if (!reduce) {
+        const lenis = new Lenis();
+        lenis.on('scroll', ScrollTrigger.update);
+        gsap.ticker.add((t) => lenis.raf(t * 1000));
+        gsap.ticker.lagSmoothing(0);
+
+        // A: the address types itself in, letter by letter, as the section arrives.
+        gsap.from('[data-ca-mail] .ch', { yPercent: 100, autoAlpha: 0, duration: 0.7, stagger: 0.035, ease: 'power3.out', scrollTrigger: { trigger: '[data-ca-mail]', start: 'top 85%', toggleActions: 'play none none reverse' } });
+        gsap.from('.ca-promises li, .ca-actions > *', { y: 20, autoAlpha: 0, duration: 0.6, stagger: 0.07, ease: 'power2.out', scrollTrigger: { trigger: '.ca-foot', start: 'top 90%', toggleActions: 'play none none reverse' } });
+
+        // B: the headline lines rise, then the rows draw their rules in.
+        gsap.from('[data-cb-h] span', { yPercent: 60, autoAlpha: 0, duration: 0.9, stagger: 0.12, ease: 'power3.out', scrollTrigger: { trigger: '.cb-grid', start: 'top 75%', toggleActions: 'play none none reverse' } });
+        gsap.from('[data-cb-row]', { '--rule': 0, x: 30, autoAlpha: 0, duration: 0.8, stagger: 0.1, ease: 'power3.out', scrollTrigger: { trigger: '.cb-rows', start: 'top 80%', toggleActions: 'play none none reverse' } });
+
+        // C: the card slides up, the stamp thunks on, the postmark lands over it.
+        gsap.timeline({ scrollTrigger: { trigger: '[data-card]', start: 'top 80%', toggleActions: 'play none none reverse' } })
+          .from('[data-card]', { y: 80, autoAlpha: 0, duration: 0.9, ease: 'power3.out' })
+          .from('[data-stamp]', { scale: 2.2, autoAlpha: 0, duration: 0.5, ease: 'back.out(2.2)' }, 0.55)
+          .from('[data-postmark]', { scale: 1.5, autoAlpha: 0, duration: 0.4, ease: 'power4.in' }, 0.85);
+      }
+    </script>
+
+    <style is:global>
+      :root { --paper: #f1ede4; --ink: #121110; --red: #e3342a; --mute: #6a655d; --line: #121110; --card: #f8f5ee; }
+      :root[data-mode='dark'] { --paper: #121110; --ink: #f1ede4; --red: #ff4536; --mute: #a39d92; --line: rgb(241 237 228 / 0.85); --card: #1c1b19; }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; }
+      body { background: var(--paper); color: var(--ink); font-family: var(--font-hanken); transition: background-color 0.5s, color 0.5s; }
+      a { color: inherit; text-decoration: none; }
+      em { font-family: var(--font-instrument); font-style: italic; font-weight: 400; letter-spacing: -0.01em; }
+      .sh, .glyph { fill: var(--red); }
+      svg { overflow: visible; }
+      button { font: inherit; }
+
+      .bar { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: 2rem; padding: 1rem 4vw; background: var(--paper); border-bottom: 1.5px solid var(--line); }
+      .brand { display: inline-flex; align-items: center; gap: 0.5rem; font: 600 1.1rem var(--font-clash); letter-spacing: -0.02em; }
+      .brand-star { width: 1.5rem; height: auto; }
+      .nav { margin-left: auto; display: flex; gap: 1.6rem; font-weight: 500; }
+      .mode { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.9rem; border: 1.5px solid var(--line); border-radius: 999px; background: none; color: var(--ink); font: 600 0.9rem var(--font-hanken); cursor: pointer; }
+      .mode-dot { width: 0.6rem; height: 0.6rem; border-radius: 50%; background: var(--ink); }
+
+      .opt { padding: 10svh 4vw 14svh; border-bottom: 1.5px solid var(--line); }
+      .opt-tag { margin: 0 0 6svh; display: flex; align-items: center; gap: 0.8rem; font-size: 0.95rem; color: var(--mute); }
+      .opt-tag b { display: grid; place-items: center; width: 2.2rem; height: 2.2rem; border-radius: 50%; background: var(--red); color: #fff; font: 600 1rem var(--font-clash); }
+      .sec-no { margin: 0; font-size: 0.95rem; color: var(--mute); }
+      .pill-btn { display: inline-flex; align-items: center; padding: 0.85rem 1.4rem; border: 1.5px solid var(--line); border-radius: 999px; background: none; color: var(--ink); font-weight: 600; cursor: pointer; transition: background-color 0.25s, color 0.25s; }
+      .pill-btn:hover { background: var(--ink); color: var(--paper); }
+      .btn-red { display: inline-flex; align-items: center; padding: 0.9rem 1.5rem; border-radius: 999px; background: var(--red); color: #fff; font-weight: 600; }
+
+      /* ---------- A · Big address ---------- */
+      .ca-top { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2.2fr); gap: 1rem 4vw; align-items: end; }
+      .ca-h { margin: 0; font: 600 clamp(2rem, 3.6vw, 3.4rem)/1 var(--font-clash); letter-spacing: -0.04em; }
+      .ca-h em { color: var(--red); }
+      .ca-mail { display: block; margin: 7svh 0 6svh; padding-bottom: 0.08em; overflow: hidden; white-space: nowrap; font: 600 clamp(2rem, 8.6vw, 12rem)/1.05 var(--font-clash); letter-spacing: -0.055em; border-bottom: 1.5px solid var(--line); }
+      .ch { display: inline-block; transition: color 0.3s; }
+      .ca-mail:hover .ch { color: var(--red); }
+      .ca-mail .at { color: var(--red); font: italic 400 1.02em/1 var(--font-instrument); letter-spacing: 0; padding: 0 0.04em; }
+      .ca-foot { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1.6rem 3rem; }
+      .ca-promises { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.8rem 2.6rem; font-weight: 600; font-size: 1.05rem; }
+      .ca-promises li { display: inline-flex; align-items: center; gap: 0.6rem; }
+      .pm { width: 1.2rem; height: auto; }
+      .ca-actions { display: flex; flex-wrap: wrap; gap: 0.8rem; }
+
+      /* ---------- B · Red finale ---------- */
+      .cb { background: var(--red); color: #fff; border-bottom: 0; }
+      .cb .opt-tag { color: rgb(255 255 255 / 0.8); }
+      .cb .opt-tag b { background: #fff; color: var(--red); }
+      .cb-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 3rem 6vw; align-items: end; min-height: 40svh; }
+      .cb-h { margin: 0; display: grid; font: 600 clamp(3rem, 7.2vw, 7.6rem)/0.92 var(--font-clash); letter-spacing: -0.05em; }
+      .cb-h span { display: block; }
+      .cb-rows { list-style: none; margin: 0; padding: 0; border-bottom: 1.5px solid #fff; }
+      @property --rule { syntax: '<number>'; inherits: false; initial-value: 1; }
+      .cb-row { --rule: 1; position: relative; display: flex; align-items: center; gap: 1rem; transition: background-color 0.3s, color 0.3s; }
+      .cb-row::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 1.5px; background: #fff; transform: scaleX(var(--rule)); transform-origin: left; }
+      .cb-row > a, .cb-static { flex: 1; display: grid; grid-template-columns: 7rem minmax(0, 1fr) auto; align-items: center; gap: 1rem; padding: 1.5rem 0.4rem; }
+      .cb-k { font-size: 0.95rem; opacity: 0.8; }
+      .cb-v { font: 600 clamp(1.2rem, 2vw, 1.9rem)/1.15 var(--font-clash); letter-spacing: -0.03em; overflow-wrap: anywhere; }
+      .cb-static .cb-v { font: 500 1.05rem/1.4 var(--font-hanken); letter-spacing: 0; }
+      .cb-arrow { font-size: 1.6rem; transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1); }
+      .cb-row:not(.cb-static):hover { background: #fff; color: var(--red); }
+      .cb-row:not(.cb-static):hover .cb-arrow { transform: translateX(0.4rem); }
+      .cb-copy { margin-right: 0.4rem; padding: 0.5rem 0.9rem; border: 1.5px solid currentColor; border-radius: 999px; background: none; color: inherit; font-weight: 600; font-size: 0.85rem; cursor: pointer; }
+
+      /* ---------- C · Postcard ---------- */
+      .cc-top { display: grid; gap: 1.2rem; margin-bottom: 7svh; }
+      .cc-h { margin: 0; max-width: 16ch; font: 600 clamp(2.6rem, 6vw, 6rem)/0.95 var(--font-clash); letter-spacing: -0.05em; }
+      .cc-h em { color: var(--red); }
+      .card { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); border: 1.5px solid var(--line); border-radius: 0.6rem; background: var(--card); box-shadow: 0.7rem 0.7rem 0 var(--ink); min-height: min(60svh, 34rem); }
+      .card-msg { display: grid; align-content: center; gap: 1.2rem; padding: 3rem 4vw 3rem 3rem; border-right: 1.5px solid var(--line); font: 500 clamp(1.2rem, 1.9vw, 1.8rem)/1.35 var(--font-clash); letter-spacing: -0.025em; }
+      .card-msg p { margin: 0; }
+      .card-sign { margin-top: 0.4rem !important; font: italic 400 clamp(2rem, 3vw, 2.8rem)/1 var(--font-instrument); letter-spacing: 0; }
+      .card-addr { position: relative; display: grid; align-content: end; padding: 3rem; }
+      .stamp { position: absolute; right: 2.4rem; top: 2.4rem; width: 5.8rem; aspect-ratio: 4 / 5; display: grid; place-items: center; align-content: center; gap: 0.4rem; padding: 0.5rem; background: var(--red); color: #fff; border: 0.4rem dotted var(--card); outline: 1.5px solid var(--red); outline-offset: -0.55rem; }
+      .stamp-star { width: 62%; height: auto; } .stamp-star .sh { fill: #fff; }
+      .stamp span { font: 600 0.62rem var(--font-hanken); letter-spacing: 0.08em; text-transform: uppercase; }
+      .postmark { position: absolute; right: 5.6rem; top: 4.6rem; width: 11rem; height: auto; fill: none; stroke: var(--ink); stroke-width: 1.6; opacity: 0.55; }
+      .postmark text { fill: var(--ink); stroke: none; font: 600 9.4px var(--font-hanken); letter-spacing: 1.6px; }
+      .addr-to { margin: 0 0 0.4rem; font-size: 0.9rem; color: var(--mute); }
+      .addr-line { display: flex; flex-wrap: wrap; align-items: center; gap: 0.8rem; min-height: 3.6rem; padding: 0.6rem 0; border-bottom: 1.5px solid var(--line); font-weight: 600; font-size: 1.05rem; }
+      .addr-mail { font: 600 clamp(1.3rem, 2.2vw, 2rem)/1.1 var(--font-clash); letter-spacing: -0.03em; }
+      .addr-mail:hover { color: var(--red); }
+      .addr-actions { border-bottom: 0; padding-top: 1.4rem; }
+
+      .end { padding: 10svh 4vw; text-align: center; color: var(--mute); }
+
+      @media (max-width: 767px) {
+        .nav { gap: 0.9rem; font-size: 0.85rem; }
+        .bar { gap: 1rem; flex-wrap: wrap; }
+        .brand span { display: none; }
+        .ca-top, .cb-grid, .card { grid-template-columns: minmax(0, 1fr); }
+        .ca-mail { font-size: 8.7vw; letter-spacing: -0.05em; }
+        .cb-grid { min-height: 0; }
+        .cb-row > a, .cb-static { grid-template-columns: minmax(0, 1fr) auto; gap: 0.3rem 1rem; padding: 1.2rem 0.2rem; }
+        .cb-k { grid-column: 1 / -1; }
+        .card-msg { padding: 2rem 1.6rem; border-right: 0; border-bottom: 1.5px solid var(--line); }
+        .card-addr { padding: 9.5rem 1.6rem 1.6rem; }
+        .stamp { right: 1.4rem; top: 1.4rem; width: 4.8rem; }
+        .postmark { right: 4.6rem; top: 2.6rem; width: 9rem; }
+        .card { box-shadow: 0.4rem 0.4rem 0 var(--ink); }
+      }
+      @media (prefers-reduced-motion: reduce) { .ch, .cb-arrow, .pill-btn { transition: none; } }
+    </style>
+  </body>
+</html>
