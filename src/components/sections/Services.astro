@@ -17,7 +17,7 @@ const { build, automate, ai } = site.interludes;
       {items.map((item, index) => (
         <article class="svc-frame" data-svc-frame={index}>
           <p class="svc-word" aria-hidden="true" data-svc-word>
-            {item.name}<span class="svc-word-orb glass-orb"></span>
+            {item.name}<span class="svc-word-fill" data-svc-fill>{item.name}</span><span class="svc-word-orb glass-orb" data-svc-orb></span>
           </p>
 
           <!-- Layout-neutral everywhere except the phone index, where it opens as you reach it. -->
@@ -134,7 +134,8 @@ const { build, automate, ai } = site.interludes;
   .svc-body {
     display: contents;
   }
-  .svc-word-orb {
+  .svc-word-orb,
+  .svc-word-fill {
     display: none;
   }
   .svc-heading {
@@ -567,12 +568,22 @@ const { build, automate, ai } = site.interludes;
     display: flex;
   }
 
-  /* ---------- Phones: an index. The three words as a list; each opens as you scroll to it
-     (the script animates its body open), and the one you're on glows with the orb as its full stop.
-     Opened services stay open, so nothing above you ever changes height. ---------- */
+  /* ---------- Phones: the index plays like a film. The section holds in place while you scroll:
+     Build opens, then closes as Automate opens, then AI; scrolling back up plays it in reverse.
+     Everything is driven by one scroll timeline (services.ts), so nothing flickers. ---------- */
   @media (max-width: 767px) {
+    .svc:global(.is-index) {
+      height: 100svh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .svc:global(.is-index) .svc-heading {
+      padding: 5rem 6vw 0.6rem;
+      font-size: 1.5rem;
+    }
     .svc:global(.is-index) .svc-strip {
-      padding: 0 5vw 3rem;
+      padding: 0 6vw;
     }
     .svc:global(.is-index) .svc-frame {
       display: block;
@@ -583,19 +594,27 @@ const { build, automate, ai } = site.interludes;
       border-bottom: 1px solid var(--color-line);
     }
     .svc:global(.is-index) .svc-word {
+      position: relative;
       display: flex;
       align-items: baseline;
-      padding: 0.7rem 0;
-      font-size: 3.6rem;
+      justify-self: stretch;
+      padding: 0.5rem 0;
+      font-size: 3.2rem;
       background: none;
-      color: color-mix(in srgb, var(--color-fg) 30%, transparent);
-      transition: color 0.4s;
+      color: color-mix(in srgb, var(--color-fg) 28%, transparent);
     }
-    .svc:global(.is-index) .svc-frame:global(.is-active) .svc-word {
+    /* The light sits exactly over the grey word; the timeline fades it in and out. */
+    .svc:global(.is-index) .svc-word-fill {
+      display: block;
+      position: absolute;
+      left: 0;
+      top: 0.5rem;
+      padding-right: 0.06em;
       background: var(--light-fill);
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
+      opacity: 0;
     }
     .svc:global(.is-index) .svc-word-orb {
       display: inline-block;
@@ -603,31 +622,39 @@ const { build, automate, ai } = site.interludes;
       height: 0.16em;
       margin-left: 0.05em;
       transform: scale(0);
-      transition: transform 0.45s cubic-bezier(0.3, 1.6, 0.5, 1);
-    }
-    .svc:global(.is-index) .svc-frame:global(.is-active) .svc-word-orb {
-      transform: scale(1);
     }
     .svc:global(.is-index) .svc-body {
       display: grid;
-      gap: 0.9rem;
+      gap: 0.8rem;
       height: 0;
       overflow: hidden;
     }
     .svc:global(.is-index) .svc-body > :last-child {
-      margin-bottom: 1.8rem;
+      margin-bottom: 1.2rem;
     }
     .svc:global(.is-index) .svc-sum {
-      font-size: 1.8rem;
+      font-size: 1.6rem;
     }
-    .svc:global(.is-index) .svc-desc {
-      font-size: 1rem;
-      line-height: 1.5;
+    .svc:global(.is-index) .svc-sum-line {
+      display: inline;
     }
-    /* Kept lean on phones: no "what's included" list, no caption under the demo. */
+    .svc:global(.is-index) .svc-sum-indent {
+      padding-left: 0.25em;
+    }
+    /* Kept lean on phones: one line of subtitle and the demo. */
+    .svc:global(.is-index) .svc-desc,
     .svc:global(.is-index) .svc-inc,
     .svc:global(.is-index) .svc-demo-caption {
       display: none;
+    }
+    .svc:global(.is-index) .svc-demo {
+      min-height: 0;
+    }
+    .svc:global(.is-index) .mock-img {
+      min-height: 3.2rem;
+    }
+    .svc:global(.is-index) .mock-row > span {
+      height: 2.2rem;
     }
     .svc:global(.is-index) .chat-typing {
       display: flex;

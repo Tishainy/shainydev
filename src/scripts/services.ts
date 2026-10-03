@@ -76,45 +76,62 @@ export function initServices() {
     };
   });
 
-  // Phones: an index. Each service opens by itself as you scroll to it (no tapping) and plays its
-  // demo; the one you're on glows. Opened services stay open, so the page never jumps under a thumb.
+  // Phones: the index plays like a film. The section holds in place while one scroll timeline opens
+  // each service (its word lights up, the orb pops on, its subtitle and demo slide open and the demo
+  // plays), then closes it as the next opens. Scrolling back up plays it all in reverse.
   mm.add('(max-width: 767px) and (prefers-reduced-motion: no-preference)', () => {
     section.classList.add('is-index');
     const frames = gsap.utils.toArray<HTMLElement>('[data-svc-frame]', section);
-    const setActive = (i: number) => frames.forEach((f, k) => f.classList.toggle('is-active', k === i));
+    const parts = frames.map((frame) => ({
+      fill: frame.querySelector<HTMLElement>('[data-svc-fill]')!,
+      orb: frame.querySelector<HTMLElement>('[data-svc-orb]')!,
+      body: frame.querySelector<HTMLElement>('[data-svc-body]')!,
+      demo: demoFor(frame),
+    }));
 
-    frames.forEach((frame, i) => {
-      const body = frame.querySelector<HTMLElement>('[data-svc-body]')!;
-      const demo = demoFor(frame).pause().duration(2.4);
+    const tl = gsap.timeline({
+      defaults: { ease: 'power2.inOut' },
+      scrollTrigger: {
+        trigger: section,
+        start: 'top top',
+        end: () => `+=${frames.length * 130}%`,
+        scrub: 0.8,
+        pin: true,
+        anticipatePin: 1,
+        invalidateOnRefresh: true,
+        snap: { snapTo: 'labelsDirectional', duration: { min: 0.25, max: 0.7 }, delay: 0.1, ease: 'power1.inOut' },
+      },
+    });
 
-      ScrollTrigger.create({
-        trigger: frame,
-        start: 'top 62%',
-        once: true,
-        onEnter: () => {
-          setActive(i);
-          gsap.fromTo(body, { height: 0 }, {
-            height: 'auto',
-            duration: 0.8,
-            ease: 'power3.out',
-            onComplete: () => ScrollTrigger.refresh(),
-          });
-          gsap.from(body.children, { y: 18, autoAlpha: 0, duration: 0.6, stagger: 0.08, delay: 0.15, ease: 'power2.out' });
-          gsap.delayedCall(0.5, () => demo.play(0));
-        },
-      });
-      // The glow follows whichever service is in the middle of the screen, also when scrolling back up.
-      ScrollTrigger.create({
-        trigger: frame,
-        start: 'top 62%',
-        end: 'bottom 62%',
-        onToggle: (self) => self.isActive && setActive(i),
-      });
+    const open = (i: number, at: number) => {
+      const p = parts[i];
+      tl.to(p.fill, { opacity: 1, duration: 0.4 }, at)
+        .to(p.orb, { scale: 1, duration: 0.35, ease: 'back.out(2)' }, at + 0.15)
+        .fromTo(p.body, { height: 0 }, { height: 'auto', duration: 0.6 }, at)
+        .fromTo(p.body.children, { y: 16, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.4, stagger: 0.08 }, at + 0.2)
+        .add(p.demo.duration(1), at + 0.55);
+    };
+    const close = (i: number, at: number) => {
+      const p = parts[i];
+      tl.to(p.body.children, { autoAlpha: 0, duration: 0.25 }, at)
+        .to(p.body, { height: 0, duration: 0.5 }, at)
+        .to(p.orb, { scale: 0, duration: 0.25 }, at)
+        .to(p.fill, { opacity: 0, duration: 0.35 }, at);
+    };
+
+    tl.addLabel('start', 0);
+    frames.forEach((_, i) => {
+      const at = i === 0 ? 0.1 : tl.duration();
+      if (i > 0) close(i - 1, at);
+      open(i, i > 0 ? at + 0.2 : at);
+      tl.addLabel(`s${i}`, tl.duration());
+      // A short hold on each finished service before the next takes over.
+      tl.to({}, { duration: 0.35 });
     });
 
     return () => {
       section.classList.remove('is-index');
-      frames.forEach((f) => f.classList.remove('is-active'));
+      parts.forEach((p) => gsap.set([p.fill, p.orb, p.body, ...p.body.children], { clearProps: 'all' }));
     };
   });
 }

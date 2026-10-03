@@ -185,7 +185,9 @@ const { intro } = site.about;
   }
 
   @media (max-width: 767px) {
-    .hero-headline { top: 13%; font-size: 11.5vw; }
+    .hero-headline { top: 19%; font-size: 11.5vw; }
+    /* The button sits under the headline on phones. */
+    .hero-l4 .hero-l-inner { flex-direction: column; align-items: flex-start; }
     .hero-giant { display: none; }
     .hero-m {
       display: block;
@@ -198,11 +200,11 @@ const { intro } = site.about;
     .hero-m-orb {
       position: absolute;
       left: 50%;
-      bottom: 19svh;
-      width: min(44vw, 13rem);
-      height: min(44vw, 13rem);
-      margin-left: max(-22vw, -6.5rem);
-      font-size: min(275vw, 81rem);
+      bottom: 18svh;
+      width: min(36vw, 11rem);
+      height: min(36vw, 11rem);
+      margin-left: max(-18vw, -5.5rem);
+      font-size: min(225vw, 69rem);
     }
     .hero-m-hi {
       position: absolute;
@@ -218,7 +220,6 @@ const { intro } = site.about;
     }
     .hero-l2 { padding-left: 22%; }
     .hero-l4 { padding-left: 12%; }
-    .hero-l4 .hero-l-inner { flex-wrap: wrap; row-gap: 1rem; }
-    .hero-pill { margin-left: 0.8em; font-size: 1rem; padding: 0.75rem 1.4rem; }
+    .hero-pill { margin: 1.6rem 0 0 -0.1em; font-size: 1rem; padding: 0.8rem 1.5rem; }
   }
 </style>

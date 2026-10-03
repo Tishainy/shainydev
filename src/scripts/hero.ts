@@ -33,7 +33,7 @@ export function initHero() {
   const phone = matchMedia('(max-width: 767px)').matches;
   startWaveLines(hero, base, glow, {
     canDraw: () => window.scrollY < hero.offsetHeight * 0.1,
-    ...(phone ? { spacing: 24, amplitude: 0.42, frequency: 3.2, halo: 20 } : {}),
+    ...(phone ? { spacing: 24, amplitude: 0.42, frequency: 3.2, halo: 30, softness: 28 } : {}),
   });
   startHeaderState(hero);
   placeOrb(giant);

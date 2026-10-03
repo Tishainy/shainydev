@@ -51,9 +51,9 @@ function startReveals() {
       const targets = gsap.utils.toArray<HTMLElement>('[data-reveal]');
       gsap.set(targets, { autoAlpha: 0, y: reduce ? 0 : 32 });
 
+      // Like a film: things rise in as you scroll down and sink away again as you scroll back up.
       ScrollTrigger.batch(targets, {
-        start: 'top 85%',
-        once: true,
+        start: 'top 88%',
         onEnter: (batch) =>
           gsap.to(batch, {
             autoAlpha: 1,
@@ -61,6 +61,15 @@ function startReveals() {
             duration: reduce ? 0.4 : 0.8,
             ease: 'power3.out',
             stagger: reduce ? 0 : 0.08,
+            overwrite: true,
+          }),
+        onLeaveBack: (batch) =>
+          gsap.to(batch, {
+            autoAlpha: 0,
+            y: reduce ? 0 : 32,
+            duration: 0.4,
+            ease: 'power2.in',
+            stagger: 0.04,
             overwrite: true,
           }),
       });

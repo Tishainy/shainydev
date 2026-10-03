@@ -11,6 +11,8 @@ interface Options {
   frequency?: number;
   /** How far the lines' fade reaches out from each letter, in px (default 34). */
   halo?: number;
+  /** How soft the edge of that fade is, in px (default 18). */
+  softness?: number;
   /** Elements whose transforms are switched off while measuring, so letters are traced at rest. */
   atRest?: () => HTMLElement[];
   /** Return false to skip a redraw (e.g. when the letters have been animated away). */
@@ -35,7 +37,7 @@ export function startWaveLines(container: HTMLElement, base: HTMLCanvasElement, 
     mask.width = w * dpr;
     mask.height = h * dpr;
     mctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    mctx.filter = 'blur(18px)';
+    mctx.filter = `blur(${options.softness ?? 18}px)`;
     mctx.fillStyle = '#000';
     mctx.strokeStyle = '#000';
     mctx.lineJoin = 'round';
