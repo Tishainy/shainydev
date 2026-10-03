@@ -82,8 +82,19 @@ export function initServices() {
     section.classList.add('is-cards');
     const frames = gsap.utils.toArray<HTMLElement>('[data-svc-frame]', section);
 
+    // ScrollTrigger measures a stuck (sticky) card where it currently is, not where it sits in the
+    // page, which made the timing run backwards. So each card gets a zero-height marker just before
+    // it: never sticky, it always reports the card's true position.
+    const markers = frames.map((frame) => {
+      const marker = document.createElement('div');
+      marker.setAttribute('aria-hidden', 'true');
+      frame.before(marker);
+      return marker;
+    });
+
     frames.forEach((frame, i) => {
-      const next = frames[i + 1];
+      // As the next card slides up over this one, this one shrinks back a little and dims slightly.
+      const next = markers[i + 1];
       if (next) {
         gsap.to(frame, {
           scale: 0.94,
@@ -95,14 +106,17 @@ export function initServices() {
 
       const demo = demoFor(frame).pause().duration(2.6);
       ScrollTrigger.create({
-        trigger: frame,
+        trigger: markers[i],
         start: 'top 35%',
         onEnter: () => demo.play(0),
         onLeaveBack: () => demo.pause(0),
       });
     });
 
-    return () => section.classList.remove('is-cards');
+    return () => {
+      markers.forEach((marker) => marker.remove());
+      section.classList.remove('is-cards');
+    };
   });
 }
 
