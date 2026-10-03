@@ -1,0 +1,22 @@
+---
+import { services } from '../../data/site';
+import { glyph } from '../../lib/marks';
+---
+
+<section class="svc" id="services">
+  <header class="sec-head" data-up>
+    <p class="sec-no">{services.label}</p>
+    <h2 set:html={services.html} />
+  </header>
+  <div class="svc-grid">
+    {services.items.map((s) => (
+      <article class="svc-col" data-col>
+        <span class="rule" data-rule></span>
+        <Fragment set:html={glyph(s.glyph, 'svc-mark')} />
+        <h3>{s.name}</h3>
+        <p class="svc-line">{s.line}</p>
+        <ul>{s.list.map((x) => <li>{x}</li>)}</ul>
+      </article>
+    ))}
+  </div>
+</section>

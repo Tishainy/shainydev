@@ -1,0 +1,34 @@
+---
+import { work } from '../../data/site';
+import { projects, media } from '../../data/work';
+import { star } from '../../lib/marks';
+---
+
+<!-- Posters slide sideways while the section holds (desktop); phones get a vertical stack. -->
+<section class="work" id="work">
+  <div class="posters" data-posters>
+    <div class="poster-track" data-track>
+      <article class="poster po-intro">
+        <p class="sec-no">{work.label}</p>
+        <h2 set:html={work.html} />
+        <p class="po-hint">{work.hint} <span aria-hidden="true">→</span></p>
+      </article>
+      {projects.map((p, i) => (
+        <article class={`poster po-${p.id}`}>
+          <div class="po-media"><Fragment set:html={media(p.id)} /></div>
+          <div class="po-text">
+            <p class="po-kind">0{i + 1} · {p.kind} · {p.who}</p>
+            <h3>{p.name}</h3>
+            <p class="po-line">{p.line}</p>
+          </div>
+        </article>
+      ))}
+      <article class="poster po-next">
+        <Fragment set:html={star('po-star')} />
+        <h3>{work.next}</h3>
+        <a class="po-btn" href="#contact">{work.nextCta}</a>
+      </article>
+    </div>
+    <p class="po-count" aria-hidden="true"><span data-count>01</span> / 0{projects.length}</p>
+  </div>
+</section>

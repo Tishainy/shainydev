@@ -1,13 +1,5 @@
 // Work projects and their visuals, shared by the paper lab and work lab pages (kept out of .astro frontmatter on purpose).
-const shards = [
-  'M241.495 0L313.808 125.25H169.182L241.495 0Z',
-  'M25.887 148.966L168.723 126.283L116.949 261.325L25.887 148.966Z',
-  'M455.819 148.966L312.983 126.283L364.757 261.325L455.819 148.966Z',
-  'M100.669 412.326L118.069 262.146L238.748 350.753L100.669 412.326Z',
-  'M380.321 412.326L362.922 262.146L242.243 350.753L380.321 412.326Z',
-];
-export const star = (cls: string) =>
-  `<svg class="${cls}" viewBox="0 0 482 457" aria-hidden="true">${shards.map((d, i) => `<path class="sh sh${i}" d="${d}"/>`).join('')}</svg>`;
+export { star } from '../lib/marks';
 
 export const projects = [
   { id: 'luna', name: 'Luna & Sage', kind: 'Skincare webshop', who: 'Design', status: '2026', line: 'A gentle, earthy webshop for a natural skincare brand. Designed phone-first, with soft product photography up front.', did: ['Design', 'Mobile first', 'Webshop'] },

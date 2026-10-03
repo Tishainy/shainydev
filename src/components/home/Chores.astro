@@ -1,0 +1,22 @@
+---
+import { chores } from '../../data/site';
+const total = chores.items.reduce((n, c) => n + c.hours, 0);
+---
+
+<!-- Each chore is struck through as you scroll and its hours add up in the counter. -->
+<section class="chores" data-chores>
+  <div class="chores-side">
+    <p class="sec-no">{chores.label}</p>
+    <h2 set:html={chores.html} />
+    <p class="chores-count"><span class="chores-n" data-hours>{total}</span><span class="chores-unit">{chores.unit[0]}<br />{chores.unit[1]}</span></p>
+    <p class="chores-note">{chores.note}</p>
+  </div>
+  <ol class="chore-list">
+    {chores.items.map((c) => (
+      <li class="chore" data-chore data-hours={c.hours}>
+        <span class="chore-task"><span class="chore-text">{c.task}</span></span>
+        <span class="chore-meta"><span class="chore-tag">{c.tag}</span><span class="chore-time">~{c.hours} h / week</span></span>
+      </li>
+    ))}
+  </ol>
+</section>

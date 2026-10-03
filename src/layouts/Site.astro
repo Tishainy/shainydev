@@ -1,0 +1,58 @@
+---
+import '../styles/site.css';
+import { Font } from 'astro:assets';
+import { site } from '../data/site';
+import { star } from '../lib/marks';
+
+const canonical = new URL(Astro.url.pathname, Astro.site);
+---
+
+<html lang="en" data-mode="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{site.meta.title}</title>
+    <meta name="description" content={site.meta.description} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={site.meta.title} />
+    <meta property="og:description" content={site.meta.description} />
+    <meta property="og:url" content={canonical} />
+    <meta name="theme-color" content="#f1ede4" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1f1d1b" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <Font cssVariable="--font-clash" preload />
+    <Font cssVariable="--font-hanken" preload />
+    <Font cssVariable="--font-instrument" preload />
+    <!-- Light or dark before first paint: the visitor's saved choice, otherwise their system setting. -->
+    <script is:inline>
+      try {
+        const saved = localStorage.getItem('mode');
+        const dark = saved ? saved === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.dataset.mode = dark ? 'dark' : 'light';
+      } catch {}
+    </script>
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="bar">
+      <a class="brand" href="#main" aria-label={`${site.brand}, back to top`}><Fragment set:html={star('brand-star')} /><span>{site.brand}</span></a>
+      <nav class="nav" aria-label="Sections">
+        {site.nav.map((item) => <a href={item.href}>{item.label}</a>)}
+      </nav>
+      <button class="mode" type="button" data-mode-toggle aria-label="Switch between light and dark">
+        <span class="mode-dot"></span><span data-mode-label>Dark</span>
+      </button>
+    </header>
+    <main id="main">
+      <slot />
+    </main>
+    <footer class="foot">
+      <span class="brand"><Fragment set:html={star('brand-star')} /><span>{site.brand}</span></span>
+      <span>{site.footer} · © {new Date().getFullYear()}</span>
+    </footer>
+    <script>
+      import '../scripts/site';
+    </script>
+  </body>
+</html>

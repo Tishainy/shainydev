@@ -1,0 +1,13 @@
+---
+import { band } from '../../data/site';
+import { star, glyph } from '../../lib/marks';
+// Every other word gets the star; the rest alternate sparkle and flower. Two copies make the loop seamless.
+const mark = (i: number) => (i % 2 === 0 ? star('band-star spin') : glyph(i % 4 === 1 ? 'sparkle' : 'flower', 'band-glyph spin'));
+---
+
+<!-- Decorative ticker; the same services are listed properly in the next section. -->
+<div class="band" aria-hidden="true">
+  <div class="band-track" data-band>
+    {[0, 1].map(() => band.map((w, i) => <span class="band-item">{w}<Fragment set:html={mark(i)} /></span>))}
+  </div>
+</div>

@@ -1,0 +1,20 @@
+---
+import { process } from '../../data/site';
+import { glyph } from '../../lib/marks';
+---
+
+<section class="how" id="process">
+  <header class="sec-head" data-up>
+    <p class="sec-no">{process.label}</p>
+    <h2 set:html={process.html} />
+  </header>
+  <ol class="steps">
+    {process.steps.map((s, i) => (
+      <li class="step" data-step>
+        <span class="step-n"><Fragment set:html={glyph(s.glyph, 'step-mark')} />0{i + 1}</span>
+        <h3>{s.name}</h3>
+        <p>{s.line}</p>
+      </li>
+    ))}
+  </ol>
+</section>

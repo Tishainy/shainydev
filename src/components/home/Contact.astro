@@ -1,0 +1,25 @@
+---
+import { site, contact } from '../../data/site';
+import { glyph } from '../../lib/marks';
+const [user, domain] = site.links.email.split('@');
+---
+
+<!-- The email address is the centrepiece; each letter is its own span so it can type itself in. -->
+<section class="talk" id="contact">
+  <div class="talk-top">
+    <p class="sec-no">{contact.label}</p>
+    <h2 class="talk-h" set:html={contact.html} />
+  </div>
+  <a class="talk-mail" href={`mailto:${site.links.email}`} data-talk-mail aria-label={`Email ${site.links.email}`}>
+    {[...user].map((c) => <span class="ch" aria-hidden="true">{c}</span>)}<span class="ch at" aria-hidden="true">@</span>{[...domain].map((c) => <span class="ch" aria-hidden="true">{c}</span>)}
+  </a>
+  <div class="talk-foot">
+    <ul class="talk-promises">
+      {contact.promises.map((p) => <li><Fragment set:html={glyph(p.glyph, 'pm')} />{p.text}</li>)}
+    </ul>
+    <div class="talk-actions">
+      <button class="pill-btn" type="button" data-copy={site.links.email} data-copied={contact.copied}><span data-copy-label>{contact.copy}</span></button>
+      <a class="pill-btn" href={site.links.linkedin} rel="me">LinkedIn ↗</a>
+    </div>
+  </div>
+</section>
