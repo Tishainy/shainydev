@@ -1,0 +1,351 @@
+---
+// Rework sketches for Services and Work (laptop + phone). Hidden (noindex), not linked.
+// Open one alone with /rework-lab/#rows, #sentence or #work.
+import Layout from '../layouts/Layout.astro';
+import { site } from '../data/content';
+
+const services = site.services.items;
+const { build, automate, ai } = site.interludes;
+const jarvis = site.work.projects[0];
+const travel = site.work.projects[1];
+
+// Lines replayed in the terminal tile, modelled on Jarvis's own console output.
+const terminal = [
+  { t: '[voice] wake word "hey jarvis" detected', c: 'acc' },
+  { t: "[stt] 'remind me to call the client at three'", c: '' },
+  { t: '[orchestrator] reminder scheduled for 3:00 PM', c: '' },
+  { t: '→ Sent to TTS: Alarm scheduled for 3:00 PM.', c: 'ok' },
+  { t: '[presence] person left the room', c: 'dim' },
+  { t: '[presence] person entered: desk zone', c: '' },
+  { t: '[orchestrator] holding reminder until present', c: 'dim' },
+  { t: 'Jarvis: Reminder: call the client.', c: 'ok' },
+];
+const models = ['Qwen 2.5 · 3B', 'Vosk speech', 'Piper voice', 'Moondream vision'];
+---
+
+<Layout>
+  <!-- ===================== SERVICES · OPTION 1: ROWS ===================== -->
+  <section class="lab" id="rows">
+    <p class="lab-tag">Services · Option 1 · Rows</p>
+    <h2 class="rows-kicker" data-reveal>What I can do for you</h2>
+    <ol class="rows">
+      {services.map((item) => (
+        <li class="row" data-reveal>
+          <p class="row-name">{item.name}</p>
+          <p class="row-sum">{item.summary}</p>
+          <div class="row-demo" data-mini={item.interlude}>
+            {item.interlude === 'build' && (
+              <div class="mini-site">
+                <span class="ms-bar"></span><span class="ms-h"></span><span class="ms-btn"></span><span class="ms-img"></span>
+              </div>
+            )}
+            {item.interlude === 'automate' && (
+              <div class="mini-flow">
+                {automate.steps.map((s) => <span class="mf-step">{s}</span>)}
+                <span class="mf-dot glass-orb"></span>
+              </div>
+            )}
+            {item.interlude === 'ai' && (
+              <div class="mini-chat">
+                <span class="mc-q">{ai.question}</span>
+                <span class="mc-a">{ai.answer}</span>
+              </div>
+            )}
+          </div>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <!-- ===================== SERVICES · OPTION 2: ONE SENTENCE ===================== -->
+  <section class="lab sent" id="sentence" data-sentence>
+    <p class="lab-tag">Services · Option 2 · One sentence</p>
+    <div class="sent-stage">
+      <p class="sent-kicker">What I can do for you</p>
+      <p class="sent-text">
+        I <span class="ph" data-ph="0">build websites&nbsp;&amp;&nbsp;apps</span>, <span class="ph" data-ph="1">automate your workflows&nbsp;&amp;&nbsp;email</span>, and add <span class="ph" data-ph="2">AI that actually helps</span>.
+      </p>
+      <div class="sent-demos">
+        <figure class="sd" data-sd="0">
+          <div class="m"><div class="m-nav"><span class="m-logo">{build.demoBusiness}</span><span>Services · Book</span></div>
+            <p class="m-h">{build.demoHeadline}</p><span class="m-btn">{build.demoButton}</span><div class="m-img"></div></div>
+          <figcaption>{build.caption}</figcaption>
+        </figure>
+        <figure class="sd" data-sd="1">
+          <div class="flow">{automate.steps.map((s) => <><span class="flow-dot"></span><span>{s}</span></>)}</div>
+          <figcaption>{automate.caption}</figcaption>
+        </figure>
+        <figure class="sd" data-sd="2">
+          <div class="chat"><p class="bub them">{ai.question}</p><p class="bub bot">{ai.answer}</p></div>
+          <figcaption>{ai.caption}</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== WORK: BENTO ===================== -->
+  <section class="lab work" id="work">
+    <p class="lab-tag">Work · Bento</p>
+    <h2 class="work-h" data-reveal>Work</h2>
+
+    <article class="proj">
+      <header class="proj-head" data-reveal>
+        <div>
+          <span class="pill">AI assistant · Personal project</span>
+          <h3 class="proj-title">{jarvis.name}</h3>
+        </div>
+        <p class="proj-meta">Runs fully offline<br />on my own server</p>
+      </header>
+
+      <div class="bento">
+        <!-- Big tile: the orb and the conversation -->
+        <div class="tile t-hero" data-reveal>
+          <span class="th-orb glass-orb"></span>
+          <div class="th-chat">
+            {jarvis.demo.map((line) => (
+              <p class:list={['th-line', line.who === 'Jarvis' ? 'is-j' : 'is-y']}><b>{line.who}</b>{line.text}</p>
+            ))}
+          </div>
+        </div>
+        <!-- Tall tile: the terminal -->
+        <div class="tile t-term" data-reveal>
+          <p class="tt-bar"><span></span><span></span><span></span><em>jarvis.py</em></p>
+          <div class="tt-log" data-term>
+            {terminal.map((l) => <p class:list={['tt-l', l.c]}>{l.t}</p>)}
+          </div>
+        </div>
+        <!-- Small tiles -->
+        <div class="tile t-wave" data-reveal>
+          <div class="tw-bars">{Array.from({ length: 28 }).map((_, i) => <span style={`--i:${i}`}></span>)}</div>
+          <p class="t-cap"><b>"Hey Jarvis"</b>Wake word, heard offline</p>
+        </div>
+        <div class="tile t-room" data-reveal>
+          <div class="tr-room">
+            <span class="tr-zone z1">desk</span><span class="tr-zone z2">couch</span><span class="tr-zone z3">door</span>
+            <span class="tr-dot"></span>
+          </div>
+          <p class="t-cap"><b>Presence</b>Knows which part of the room you're in</p>
+        </div>
+        <div class="tile t-stack" data-reveal>
+          <ul class="ts-list">{models.map((m) => <li>{m}</li>)}</ul>
+          <p class="t-cap"><b>Local AI</b>Nothing leaves the house</p>
+        </div>
+      </div>
+    </article>
+
+    <article class="proj">
+      <header class="proj-head" data-reveal>
+        <div>
+          <span class="pill">Website · Client work</span>
+          <h3 class="proj-title">{travel.name}</h3>
+        </div>
+        <p class="proj-meta proj-soon">Launching soon</p>
+      </header>
+      <div class="bento bento-soon">
+        <div class="tile t-browser" data-reveal>
+          <p class="tb-bar"><span></span><span></span><span></span><em>travel-agency.com</em></p>
+          <div class="tb-page"><span class="sk w60"></span><span class="sk w40"></span><span class="sk img"></span><span class="sk row"></span></div>
+        </div>
+        <div class="tile t-phone" data-reveal>
+          <div class="tp-frame"><span class="sk w60"></span><span class="sk img"></span><span class="sk w40"></span><span class="sk w60"></span></div>
+        </div>
+      </div>
+    </article>
+  </section>
+</Layout>
+
+<script is:inline>
+  const only = location.hash.slice(1);
+  if (['rows', 'sentence', 'work'].includes(only)) document.querySelectorAll('.lab').forEach((el) => { if (el.id !== only) el.hidden = true; });
+</script>
+
+<script>
+  import gsap from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  gsap.registerPlugin(ScrollTrigger);
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Option 2: a pinned sentence; each phrase lights up in turn and swaps its demo in.
+  const sent = document.querySelector<HTMLElement>('[data-sentence]');
+  if (sent && !sent.hidden && !reduce) {
+    const phrases = gsap.utils.toArray<HTMLElement>('[data-ph]', sent);
+    const demos = gsap.utils.toArray<HTMLElement>('[data-sd]', sent);
+    gsap.set(demos, { autoAlpha: 0, y: 30 });
+    const tl = gsap.timeline({
+      scrollTrigger: { trigger: sent, start: 'top top', end: '+=260%', scrub: 0.8, pin: true, snap: { snapTo: 'labelsDirectional', duration: 0.5 } },
+    });
+    phrases.forEach((ph, i) => {
+      if (i > 0) tl.to(phrases[i - 1], { '--lit': 0, duration: 0.4 }).to(demos[i - 1], { autoAlpha: 0, y: -30, duration: 0.4 }, '<');
+      tl.to(ph, { '--lit': 1, duration: 0.5 }, i > 0 ? '<' : 0).to(demos[i], { autoAlpha: 1, y: 0, duration: 0.5 }, '<0.1');
+      tl.addLabel(`p${i}`).to({}, { duration: 0.5 });
+    });
+  }
+
+  // Work: the terminal replays its lines while on screen.
+  const term = document.querySelector<HTMLElement>('[data-term]');
+  if (term && !reduce) {
+    const lines = gsap.utils.toArray<HTMLElement>('.tt-l', term);
+    const loop = gsap.timeline({ repeat: -1, repeatDelay: 1.5, paused: true });
+    loop.set(lines, { autoAlpha: 0 });
+    lines.forEach((l, i) => loop.to(l, { autoAlpha: 1, duration: 0.05 }, 0.4 + i * 0.7));
+    loop.to(lines, { autoAlpha: 0, duration: 0.4 }, '+=2.5');
+    ScrollTrigger.create({ trigger: term, start: 'top bottom', end: 'bottom top', onToggle: (s) => (s.isActive ? loop.play() : loop.pause()) });
+  }
+</script>
+
+<style is:global>
+  .lab { position: relative; max-width: 90rem; margin: 0 auto; padding: 14svh 6vw; border-top: 1px dashed var(--color-line); }
+  .lab-tag { position: absolute; right: 1rem; top: 1rem; margin: 0; font-size: 0.75rem; padding: 0.3rem 0.6rem; border-radius: 0.4rem; background: rgb(127 127 127 / 0.15); }
+  .lit-text { background: var(--light-fill); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+  /* ---------- Option 1: rows ---------- */
+  .rows-kicker { margin: 0 0 3rem; font-family: var(--font-serif); font-style: italic; font-weight: 400; font-size: clamp(1.6rem, 2.4vw, 2.3rem); color: var(--color-muted); }
+  .rows { list-style: none; margin: 0; padding: 0; }
+  .row {
+    display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr) minmax(0, 0.9fr); align-items: center; gap: 2rem 3vw;
+    padding: 2.4rem 0; border-top: 1px solid var(--color-line);
+  }
+  .row:last-child { border-bottom: 1px solid var(--color-line); }
+  .row-name {
+    margin: 0; font-family: var(--font-display); font-weight: 600; letter-spacing: -0.05em; line-height: 0.9; font-size: clamp(3rem, 5.6vw, 5.4rem);
+    background: var(--light-fill); -webkit-background-clip: text; background-clip: text; color: transparent; justify-self: start; padding-right: 0.06em;
+  }
+  .row-sum { margin: 0; font-family: var(--font-serif); font-style: italic; font-size: clamp(1.5rem, 2.4vw, 2.3rem); line-height: 1.05; }
+  .row-demo { height: 9rem; border: 1px solid var(--color-line); border-radius: 1rem; overflow: hidden; position: relative; background: color-mix(in srgb, var(--color-fg) 3%, transparent); }
+  /* mini site: wireframe that styles itself on a loop */
+  .mini-site { position: absolute; inset: 0.9rem; display: grid; grid-template-rows: auto auto auto 1fr; gap: 0.5rem; }
+  .mini-site span { border-radius: 0.3rem; background: color-mix(in srgb, var(--color-fg) 12%, transparent); animation: mini-style 5s ease-in-out infinite; }
+  .ms-bar { height: 0.5rem; width: 40%; }
+  .ms-h { height: 0.9rem; width: 75%; animation-delay: 0.3s !important; }
+  .ms-btn { height: 0.8rem; width: 30%; border-radius: 999px !important; animation-name: mini-btn !important; }
+  .ms-img { animation-name: mini-img !important; animation-delay: 0.6s !important; }
+  @keyframes mini-style { 0%, 20% { background: color-mix(in srgb, var(--color-fg) 12%, transparent); } 45%, 85% { background: var(--color-fg); } 100% { background: color-mix(in srgb, var(--color-fg) 12%, transparent); } }
+  @keyframes mini-btn { 0%, 25% { background: color-mix(in srgb, var(--color-fg) 12%, transparent); } 50%, 85% { background: var(--color-accent); } 100% { background: color-mix(in srgb, var(--color-fg) 12%, transparent); } }
+  @keyframes mini-img { 0%, 30% { background: color-mix(in srgb, var(--color-fg) 12%, transparent); } 55%, 85% { background: #3a5cff; } 100% { background: color-mix(in srgb, var(--color-fg) 12%, transparent); } }
+  /* mini flow: a dot travelling along the steps */
+  .mini-flow { position: absolute; inset: 0.9rem 1rem; display: grid; align-content: space-between; padding-left: 1.4rem; border-left: 2px solid color-mix(in srgb, var(--color-accent) 50%, transparent); font-size: 0.8rem; font-family: var(--font-display); font-weight: 500; }
+  .mf-dot { position: absolute; left: -0.55rem; top: 0; width: 0.9rem; height: 0.9rem; font-size: 5.6rem; animation: mini-travel 4s ease-in-out infinite; }
+  @keyframes mini-travel { 0% { top: 0; } 85%, 100% { top: calc(100% - 0.9rem); } }
+  /* mini chat */
+  .mini-chat { position: absolute; inset: 0.9rem; display: grid; gap: 0.5rem; align-content: start; font-size: 0.78rem; line-height: 1.3; }
+  .mini-chat span { padding: 0.4rem 0.7rem; border-radius: 0.8rem; max-width: 88%; opacity: 0; animation: mini-pop 6s ease infinite; }
+  .mc-q { justify-self: end; background: var(--color-accent); color: var(--color-on-accent); }
+  .mc-a { justify-self: start; background: color-mix(in srgb, var(--color-fg) 10%, transparent); animation-delay: 1.4s !important; }
+  @keyframes mini-pop { 0% { opacity: 0; transform: translateY(6px); } 10%, 80% { opacity: 1; transform: none; } 95%, 100% { opacity: 0; } }
+
+  @media (max-width: 767px) {
+    .lab { padding: 10svh 5vw; }
+    .row { grid-template-columns: minmax(0, 1fr); gap: 0.8rem; padding: 1.8rem 0; }
+    .row-name { font-size: 3.4rem; }
+    .row-demo { height: 8rem; }
+  }
+
+  /* ---------- Option 2: one sentence ---------- */
+  .sent { height: 100svh; padding-top: 0; padding-bottom: 0; }
+  .sent-stage { height: 100%; display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr); align-content: center; align-items: center; gap: 2rem 5vw; }
+  .sent-kicker { grid-column: 1 / -1; margin: 0; font-family: var(--font-serif); font-style: italic; font-size: clamp(1.4rem, 2vw, 1.9rem); color: var(--color-muted); }
+  .sent-text { margin: 0; font-family: var(--font-display); font-weight: 500; letter-spacing: -0.035em; line-height: 1.08; font-size: clamp(2.2rem, 4.6vw, 4.6rem); color: color-mix(in srgb, var(--color-fg) 40%, transparent); }
+  .ph {
+    --lit: 0;
+    position: relative;
+    color: color-mix(in srgb, var(--color-fg) calc(40% + var(--lit) * 60%), transparent);
+    font-family: var(--font-serif); font-style: italic; font-weight: 400; letter-spacing: -0.01em;
+  }
+  .ph::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0.02em; height: 0.06em; background: var(--light-fill); transform-origin: 0 50%; transform: scaleX(var(--lit)); }
+  @property --lit { syntax: '<number>'; inherits: true; initial-value: 0; }
+  .sent-demos { display: grid; }
+  .sd { grid-area: 1 / 1; margin: 0; display: grid; gap: 0.8rem; }
+  .sd figcaption { font-family: var(--font-serif); font-style: italic; color: var(--color-muted); }
+  @media (max-width: 767px) {
+    .sent-stage { grid-template-columns: minmax(0, 1fr); align-content: start; padding-top: 6rem; gap: 1.5rem; }
+    .sent-text { font-size: 2.1rem; }
+  }
+
+  /* shared finished demos */
+  .m { border: 1px solid var(--color-line); border-radius: 0.9rem; padding: 0.9rem; background: color-mix(in srgb, var(--color-fg) 3%, transparent); display: grid; gap: 0.6rem; }
+  .m-nav { display: flex; justify-content: space-between; font-size: 0.75rem; }
+  .m-logo { font-family: var(--font-serif); font-style: italic; font-size: 0.95rem; }
+  .m-h { margin: 0; font-family: var(--font-display); font-weight: 600; letter-spacing: -0.03em; font-size: 1.3rem; }
+  .m-btn { justify-self: start; padding: 0.35rem 0.75rem; border-radius: 999px; background: var(--color-accent); color: var(--color-on-accent); font-size: 0.72rem; font-weight: 600; }
+  .m-img { height: 5rem; border-radius: 0.5rem; background: var(--light-fill); }
+  .flow { display: grid; grid-template-columns: auto 1fr; gap: 0.8rem 0.8rem; align-items: center; font-family: var(--font-display); font-weight: 500; font-size: 1.05rem; }
+  .flow-dot { width: 0.6rem; height: 0.6rem; border-radius: 50%; background: var(--color-accent); }
+  .chat { display: grid; gap: 0.5rem; }
+  .bub { margin: 0; max-width: 85%; padding: 0.6rem 0.85rem; border-radius: 1rem; font-size: 0.95rem; line-height: 1.35; }
+  .them { justify-self: end; background: var(--color-accent); color: var(--color-on-accent); border-bottom-right-radius: 0.3rem; }
+  .bot { justify-self: start; background: color-mix(in srgb, var(--color-fg) 9%, transparent); border-bottom-left-radius: 0.3rem; }
+
+  /* ---------- Work: bento ---------- */
+  .work-h { margin: 0 0 8svh; font-family: var(--font-display); font-weight: 600; letter-spacing: -0.055em; line-height: 0.85; font-size: clamp(3.5rem, 10vw, 9rem); }
+  .proj + .proj { margin-top: 14svh; }
+  .proj-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 1.5rem; margin-bottom: 2rem; }
+  .pill { display: inline-block; padding: 0.4rem 0.9rem; border: 1px solid var(--color-line); border-radius: 999px; font-size: 0.9rem; }
+  .proj-title { margin: 0.8rem 0 0; font-family: var(--font-display); font-weight: 600; letter-spacing: -0.045em; line-height: 0.95; font-size: clamp(2.6rem, 5.5vw, 5.4rem); }
+  .proj-meta { margin: 0; text-align: right; font-family: var(--font-serif); font-style: italic; font-size: clamp(1.1rem, 1.5vw, 1.4rem); color: var(--color-muted); }
+  .proj-soon { color: var(--color-accent); }
+  .bento { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); grid-auto-rows: clamp(9rem, 15vw, 14rem); gap: 1rem; }
+  .tile { position: relative; overflow: hidden; border-radius: 1.2rem; background: color-mix(in srgb, var(--color-fg) 4%, var(--color-bg)); border: 1px solid var(--color-line); }
+  .t-hero { grid-column: span 4; grid-row: span 2; background: radial-gradient(60% 80% at 25% 30%, #2f5bff 0%, transparent 70%), radial-gradient(50% 70% at 85% 80%, #19c2e6 0%, transparent 70%), linear-gradient(135deg, #0b1a6e, #06103f); border: 0; color: #f3f6ff; }
+  .t-term { grid-column: span 2; grid-row: span 2; background: #07090f; color: #c9d4ff; }
+  .t-wave, .t-room, .t-stack { grid-column: span 2; }
+  .th-orb { position: absolute; left: 8%; top: 14%; width: clamp(5rem, 10vw, 9rem); height: clamp(5rem, 10vw, 9rem); font-size: clamp(31rem, 62vw, 56rem); }
+  .th-chat { position: absolute; right: 6%; bottom: 8%; width: min(60%, 26rem); display: grid; gap: 0.6rem; }
+  .th-line { margin: 0; padding: 0.6rem 0.9rem; border-radius: 1rem; font-size: clamp(0.85rem, 1.05vw, 1rem); line-height: 1.35; display: grid; gap: 0.1rem; }
+  .th-line b { font-size: 0.7rem; opacity: 0.7; }
+  .is-y { background: rgb(255 255 255 / 0.12); justify-self: start; }
+  .is-j { background: rgb(255 255 255 / 0.92); color: #0b1230; justify-self: end; font-family: var(--font-serif); font-style: italic; font-size: clamp(1rem, 1.25vw, 1.2rem); }
+  .tt-bar { margin: 0; display: flex; align-items: center; gap: 0.35rem; padding: 0.7rem 0.9rem; border-bottom: 1px solid rgb(255 255 255 / 0.08); font-size: 0.75rem; color: #6b7390; }
+  .tt-bar span { width: 0.55rem; height: 0.55rem; border-radius: 50%; background: #2a3045; }
+  .tt-bar em { margin-left: auto; font-style: normal; }
+  .tt-log { padding: 0.9rem; display: grid; gap: 0.45rem; font-family: ui-monospace, 'Cascadia Code', Consolas, monospace; font-size: clamp(0.62rem, 0.8vw, 0.78rem); line-height: 1.4; }
+  .tt-l { margin: 0; }
+  .tt-l.acc { color: #8ef0ff; }
+  .tt-l.ok { color: #9fe0a8; }
+  .tt-l.dim { color: #5b6383; }
+  .t-cap { position: absolute; left: 1rem; bottom: 0.9rem; margin: 0; display: grid; font-size: 0.85rem; color: var(--color-muted); }
+  .t-cap b { font-family: var(--font-display); font-weight: 600; font-size: 1.05rem; color: var(--color-fg); letter-spacing: -0.01em; }
+  .tw-bars { position: absolute; left: 1rem; right: 1rem; top: 1.2rem; height: 45%; display: flex; align-items: center; gap: 3px; }
+  .tw-bars span { flex: 1; border-radius: 3px; background: linear-gradient(#8ef0ff, #2f5bff); height: 20%; animation: tw 1.4s ease-in-out infinite; animation-delay: calc(var(--i) * -0.09s); }
+  @keyframes tw { 0%, 100% { height: 15%; } 50% { height: 95%; } }
+  .tr-room { position: absolute; left: 1rem; right: 1rem; top: 1rem; height: 50%; border: 1px dashed var(--color-line); border-radius: 0.6rem; }
+  .tr-zone { position: absolute; padding: 0.15rem 0.4rem; border-radius: 0.3rem; font-size: 0.65rem; background: color-mix(in srgb, var(--color-accent) 18%, transparent); color: var(--color-accent); }
+  .z1 { left: 8%; top: 12%; } .z2 { right: 8%; top: 40%; } .z3 { left: 40%; bottom: 8%; }
+  .tr-dot { position: absolute; width: 0.7rem; height: 0.7rem; border-radius: 50%; background: #8ef0ff; box-shadow: 0 0 0.8rem #8ef0ff; animation: walk 7s ease-in-out infinite; }
+  @keyframes walk { 0%, 15% { left: 12%; top: 40%; } 40%, 55% { left: 78%; top: 20%; } 80%, 100% { left: 46%; top: 60%; } }
+  .ts-list { position: absolute; left: 1rem; right: 1rem; top: 1rem; margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .ts-list li { padding: 0.3rem 0.6rem; border-radius: 999px; font-size: 0.75rem; border: 1px solid var(--color-line); }
+  .bento-soon { grid-auto-rows: clamp(10rem, 17vw, 16rem); }
+  .t-browser { grid-column: span 4; grid-row: span 2; }
+  .t-phone { grid-column: span 2; grid-row: span 2; display: grid; place-items: center; }
+  .tb-bar { margin: 0; display: flex; align-items: center; gap: 0.35rem; padding: 0.7rem 0.9rem; border-bottom: 1px solid var(--color-line); font-size: 0.75rem; color: var(--color-muted); }
+  .tb-bar span { width: 0.55rem; height: 0.55rem; border-radius: 50%; background: var(--color-line); }
+  .tb-bar em { margin-left: 1rem; font-style: normal; }
+  .tb-page { padding: 1.4rem; display: grid; gap: 0.8rem; }
+  .tp-frame { width: 52%; height: 86%; border: 2px solid var(--color-line); border-radius: 1.6rem; padding: 1.2rem 0.8rem; display: grid; gap: 0.6rem; align-content: start; }
+  .sk { display: block; height: 0.9rem; border-radius: 0.3rem; background: linear-gradient(90deg, color-mix(in srgb, var(--color-fg) 8%, transparent), color-mix(in srgb, var(--color-fg) 16%, transparent), color-mix(in srgb, var(--color-fg) 8%, transparent)); background-size: 200% 100%; animation: shimmer 2.2s linear infinite; }
+  .sk.w60 { width: 60%; } .sk.w40 { width: 40%; } .sk.img { height: 6rem; } .sk.row { height: 3rem; }
+  @keyframes shimmer { to { background-position: -200% 0; } }
+
+  @media (max-width: 767px) {
+    .proj-head { flex-direction: column; align-items: flex-start; }
+    .proj-meta { text-align: left; }
+    .bento { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 9.5rem; gap: 0.7rem; }
+    .t-hero { grid-column: span 2; grid-row: span 2; }
+    .th-chat { width: 72%; }
+    .t-term { grid-column: span 2; grid-row: span 2; }
+    .t-wave, .t-room { grid-column: span 1; }
+    .t-stack { grid-column: span 2; }
+    .t-browser { grid-column: span 2; }
+    .t-phone { grid-column: span 2; }
+    .t-cap { font-size: 0.72rem; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .tile *, .row-demo * { animation: none !important; }
+    /* No scroll film: every phrase is lit and the demos are listed under the sentence. */
+    .sent { height: auto; padding-block: 14svh; }
+    .ph { --lit: 1; }
+    .sent-demos { gap: 2rem; }
+    .sd { grid-area: auto; }
+    .mini-chat span { opacity: 1; }
+  }
+</style>
