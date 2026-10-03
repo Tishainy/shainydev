@@ -10,9 +10,9 @@ export const star = (cls: string) =>
   `<svg class="${cls}" viewBox="0 0 482 457" aria-hidden="true">${shards.map((d, i) => `<path class="sh sh${i}" d="${d}"/>`).join('')}</svg>`;
 
 export const projects = [
-  { id: 'elsewhere', name: 'Elsewhere', kind: 'Travel website', who: 'Client', status: 'Launching soon', line: 'A travel agency site for trips planned around one person. Full-screen film, destination pages and quiet scroll motion.', did: ['Design', 'Build', 'Motion'] },
   { id: 'luna', name: 'Luna & Sage', kind: 'Skincare webshop', who: 'Design', status: '2026', line: 'A gentle, earthy webshop for a natural skincare brand. Designed phone-first, with soft product photography up front.', did: ['Design', 'Mobile first', 'Webshop'] },
   { id: 'jarvis', name: 'Jarvis', kind: 'AI voice assistant', who: 'Personal', status: 'Running daily', line: 'A voice assistant that runs fully offline on my own server. It hears its name, sets reminders, and knows where you are in the room.', did: ['Python', 'Speech to text', 'Local AI'] },
+  { id: 'elsewhere', name: 'Elsewhere', kind: 'Travel website', who: 'Client', status: 'Launching soon', line: 'A travel agency site for trips planned around one person. Full-screen film, destination pages and quiet scroll motion.', did: ['Design', 'Build', 'Motion'] },
 ];
 const term = [
   ['acc', '[voice] wake word "hey jarvis" detected'],
