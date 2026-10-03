@@ -137,7 +137,20 @@ const steps = [
             <ul class="case-did"><li>Design</li><li>Build</li><li>Motion</li><li>Destination pages</li></ul>
           </div>
         </article>
-        <article class="case case-flip" data-case="jarvis">
+        <article class="case case-flip" data-case="luna">
+          <div class="case-media">
+            <div class="stage">
+              <img class="phone" src="/images/work/luna-sage-phone.webp" width="409" height="837" alt="Luna &amp; Sage skincare webshop on a phone" />
+            </div>
+          </div>
+          <div class="case-meta" data-up>
+            <p class="case-kind"><span class="pill">Webshop · Design</span></p>
+            <h3>Luna &amp; Sage</h3>
+            <p class="case-line">A gentle, earthy webshop for a natural skincare brand. Designed phone-first, with soft product photography up front.</p>
+            <ul class="case-did"><li>Design</li><li>Mobile first</li><li>Webshop</li></ul>
+          </div>
+        </article>
+        <article class="case" data-case="jarvis">
           <div class="case-media">
             <div class="frame frame-dark">
               <p class="frame-bar"><span></span><span></span><span></span><em>jarvis.py · home server</em></p>
@@ -263,6 +276,9 @@ const steps = [
         // Elsewhere: the screenshot drifts slightly inside its frame as you scroll past.
         gsap.fromTo('.shot', { yPercent: -4, scale: 1.08 }, { yPercent: 4, scale: 1.08, ease: 'none', scrollTrigger: { trigger: '[data-case="elsewhere"]', start: 'top bottom', end: 'bottom top', scrub: true } });
         gsap.from('[data-case="elsewhere"] .frame', { y: 50, autoAlpha: 0, duration: 1, ease: 'power3.out', scrollTrigger: { trigger: '[data-case="elsewhere"]', start: 'top 85%', toggleActions: 'play none none reverse' } });
+        // Luna & Sage: the phone rises a little faster than the page.
+        gsap.fromTo('.phone', { yPercent: 4 }, { yPercent: -4, ease: 'none', scrollTrigger: { trigger: '[data-case="luna"]', start: 'top bottom', end: 'bottom top', scrub: true } });
+        gsap.from('[data-case="luna"] .stage', { y: 50, autoAlpha: 0, duration: 1, ease: 'power3.out', scrollTrigger: { trigger: '[data-case="luna"]', start: 'top 85%', toggleActions: 'play none none reverse' } });
         // Jarvis: the console lines arrive one by one, tied to the scroll.
         gsap.from('[data-case="jarvis"] .frame', { y: 50, autoAlpha: 0, duration: 1, ease: 'power3.out', scrollTrigger: { trigger: '[data-case="jarvis"]', start: 'top 85%', toggleActions: 'play none none reverse' } });
         gsap.fromTo('[data-tl]', { autoAlpha: 0, x: -10 }, { autoAlpha: 1, x: 0, stagger: 0.3, ease: 'none', scrollTrigger: { trigger: '[data-term]', start: 'top 80%', end: 'bottom 45%', scrub: 0.6 } });
@@ -371,6 +387,8 @@ const steps = [
       .frame-dark .frame-bar span { border-color: #3a3f4b; }
       .frame-dark .frame-bar span:first-child { background: var(--red); border-color: var(--red); }
       .frame-view { position: relative; aspect-ratio: 16 / 10; overflow: hidden; }
+      .stage { position: relative; aspect-ratio: 16 / 10; border: 1.5px solid var(--line); border-radius: 1rem; background: var(--ink); box-shadow: 0.6rem 0.6rem 0 var(--red); }
+      .phone { position: absolute; left: 50%; top: 6%; height: 88%; width: auto; translate: -50% 0; display: block; filter: drop-shadow(0 0.6rem 1rem rgb(0 0 0 / 0.3)); }
       .shot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
       .term { padding: 5% 5.5%; display: grid; align-content: start; gap: 0.75em; font: 400 clamp(0.72rem, 1.05vw, 1rem)/1.45 ui-monospace, 'Cascadia Code', Consolas, monospace; color: #d6dae6; }
       .tl { margin: 0; }
@@ -421,7 +439,8 @@ const steps = [
         .case-flip .case-media { order: 0; }
         .cases { gap: 9svh; }
         .frame { box-shadow: 0.35rem 0.35rem 0 var(--ink); }
-        .frame-dark { box-shadow: 0.35rem 0.35rem 0 var(--red); }
+        .frame-dark, .stage { box-shadow: 0.35rem 0.35rem 0 var(--red); }
+        .stage { aspect-ratio: 4 / 3.4; }
         .steps { grid-template-columns: minmax(0, 1fr); }
         .step, .step + .step { padding: 1.4rem 0; border-right: 0; border-bottom: 1px solid color-mix(in srgb, var(--line) 25%, transparent); }
         .talk-star { position: relative; display: block; right: auto; top: auto; translate: none; width: 46vw; margin: 0 0 2rem auto; }
