@@ -21,6 +21,8 @@ export const site = {
     linkedin: 'https://www.linkedin.com/in/shainy-naar-79618b358/',
   },
   footer: 'Designed & built by Shainy',
+  /** The button that leads to the contact form page, used in the menu and the contact section. */
+  formCta: 'Start a project',
 };
 
 export const hero = {
@@ -100,4 +102,29 @@ export const contact: {
   ],
   copy: 'Copy address',
   copied: 'Copied ✓',
+};
+
+// The contact form page (/contact/).
+export const form: {
+  title: string;
+  html: string;
+  lead: string;
+  topicsLabel: string;
+  topics: string[];
+  send: string;
+  sending: string;
+  sentHtml: string;
+  sentLine: string;
+  failed: string;
+} = {
+  title: 'Start a project | ShainyDev',
+  html: 'Tell me about <em>your project.</em>',
+  lead: "A few lines is plenty. I'll reply within 48 hours with a clear next step, and a price once I know what you need.",
+  topicsLabel: 'What can I help with?',
+  topics: ['Website', 'App', 'Automation', 'Email', 'AI assistant', 'Not sure yet'],
+  send: 'Send message',
+  sending: 'Sending…',
+  sentHtml: 'Message <em>sent.</em>',
+  sentLine: "Thank you! I'll reply within 48 hours, usually sooner.",
+  failed: "That didn't send, sorry. Please email me instead at",
 };

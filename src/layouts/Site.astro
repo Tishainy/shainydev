@@ -10,8 +10,13 @@ interface Props {
   intro?: boolean;
   /** A hidden preview page: kept out of search engines. */
   lab?: boolean;
+  /** Page title, when it isn't the homepage's. */
+  title?: string;
 }
-const { intro = false, lab = false } = Astro.props;
+const { intro = false, lab = false, title = site.meta.title } = Astro.props;
+// Section links point at the homepage's sections, from whichever page they're on.
+const home = Astro.url.pathname === '/';
+const nav = site.nav.map((item) => ({ ...item, href: home ? item.href : '/' + item.href }));
 const canonical = new URL(Astro.url.pathname, Astro.site);
 ---
 
@@ -19,12 +24,12 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{site.meta.title}</title>
+    <title>{title}</title>
     {lab && <meta name="robots" content="noindex, nofollow" />}
     <meta name="description" content={site.meta.description} />
     <link rel="canonical" href={canonical} />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content={site.meta.title} />
+    <meta property="og:title" content={title} />
     <meta property="og:description" content={site.meta.description} />
     <meta property="og:url" content={canonical} />
     <meta name="theme-color" content="#f1ede4" media="(prefers-color-scheme: light)" />
@@ -41,30 +46,43 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
         document.documentElement.dataset.mode = dark ? 'dark' : 'light';
       } catch {}
     </script>
-    {intro && (
-      <script is:inline>
-        // The intro plays on the first page view of a visit, unless motion is reduced or the link points at a section.
-        try {
-          if (!location.hash && !sessionStorage.getItem('intro') && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
-            sessionStorage.setItem('intro', '1');
-            document.documentElement.dataset.intro = 'on';
-          }
-        } catch {}
-      </script>
-    )}
+    <!-- The intro plays on the first page view of a visit (on any page), unless motion is reduced or the link points at a section. -->
+    <script is:inline define:vars={{ intro }}>
+      try {
+        if (intro && !location.hash && !sessionStorage.getItem('intro') && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          document.documentElement.dataset.intro = 'on';
+        }
+        sessionStorage.setItem('intro', '1');
+      } catch {}
+    </script>
   </head>
   <body>
     {intro && <Intro />}
     <a class="skip" href="#main">Skip to content</a>
     <header class="bar">
-      <a class="brand" href="#main" aria-label={`${site.brand}, back to top`}><Fragment set:html={star('brand-star')} /><span>{site.brand}</span></a>
+      <a class="brand" href={home ? '#main' : '/'} aria-label={home ? `${site.brand}, back to top` : `${site.brand}, home`}><Fragment set:html={star('brand-star')} /><span>{site.brand}</span></a>
       <nav class="nav" aria-label="Sections">
-        {site.nav.map((item) => <a href={item.href}>{item.label}</a>)}
+        {nav.map((item) => <a href={item.href}>{item.label}</a>)}
       </nav>
       <button class="mode" type="button" data-mode-toggle aria-label="Switch between light and dark">
         <span class="mode-dot"></span><span data-mode-label>Dark</span>
       </button>
+      <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu" data-menu-btn>
+        <span class="menu-ico" aria-hidden="true"><i></i><i></i></span><span data-menu-label>Menu</span>
+      </button>
     </header>
+    <!-- Phones: the sections, plus the form and the email address, in a full-screen menu under the bar. -->
+    <div class="menu" id="menu" data-menu tabindex="-1" hidden>
+      <nav aria-label="Menu">
+        <ol class="menu-list">
+          {nav.map((item, i) => <li><a href={item.href} data-menu-link><span class="menu-n">0{i + 1}</span><span class="menu-t">{item.label}</span></a></li>)}
+        </ol>
+      </nav>
+      <div class="menu-foot">
+        <a class="btn btn-red" href="/contact/" data-menu-link>{site.formCta} <span aria-hidden="true">→</span></a>
+        <a class="menu-mail" href={`mailto:${site.links.email}`}>{site.links.email}</a>
+      </div>
+    </div>
     <main id="main">
       <slot />
     </main>

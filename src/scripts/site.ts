@@ -47,13 +47,52 @@ if (copyBtn) {
   });
 }
 
-if (!reduce) {
-  // Smooth scrolling; in-page links glide to their section and stop just under the bar.
-  const lenis = new Lenis({ anchors: { offset: -barH() } });
+// Smooth scrolling; in-page links glide to their section and stop just under the bar.
+// (The bar's height is already allowed for by scroll-padding-top in the CSS, which Lenis respects.)
+const lenis = reduce ? null : new Lenis({ anchors: true });
+if (lenis) {
   lenis.on('scroll', ScrollTrigger.update);
   gsap.ticker.add((t) => lenis.raf(t * 1000));
   gsap.ticker.lagSmoothing(0);
+}
 
+// ---------- Phone menu: a full-screen list of the sections under the bar ----------
+const menu = document.querySelector<HTMLElement>('[data-menu]')!;
+const menuBtn = document.querySelector<HTMLButtonElement>('[data-menu-btn]')!;
+const menuLabel = menuBtn.querySelector<HTMLElement>('[data-menu-label]')!;
+const behind = document.querySelectorAll<HTMLElement>('main, .foot');
+const setMenu = (open: boolean) => {
+  if (open === (menuBtn.getAttribute('aria-expanded') === 'true')) return;
+  menuBtn.setAttribute('aria-expanded', String(open));
+  menuLabel.textContent = open ? 'Close' : 'Menu';
+  root.classList.toggle('menu-open', open);
+  behind.forEach((el) => (el.inert = open));
+  if (open) {
+    lenis?.stop();
+    menu.hidden = false;
+    if (!reduce) {
+      gsap.fromTo(menu, { clipPath: 'inset(0 0 100% 0)' }, { clipPath: 'inset(0 0 0% 0)', duration: 0.6, ease: 'expo.out' });
+      gsap.fromTo(menu.querySelectorAll('.menu-list li, .menu-foot > *'), { yPercent: 60, autoAlpha: 0 }, { yPercent: 0, autoAlpha: 1, duration: 0.6, stagger: 0.05, ease: 'expo.out', delay: 0.08 });
+    }
+    menu.focus({ preventScroll: true });
+  } else {
+    lenis?.start();
+    menu.hidden = true;
+  }
+};
+menuBtn.addEventListener('click', () => setMenu(menuBtn.getAttribute('aria-expanded') !== 'true'));
+// A link closes the menu first, so the page can scroll to the section underneath.
+menu.querySelectorAll('[data-menu-link]').forEach((a) => a.addEventListener('click', () => setMenu(false)));
+addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && menuBtn.getAttribute('aria-expanded') === 'true') {
+    setMenu(false);
+    menuBtn.focus();
+  }
+});
+matchMedia('(min-width: 768px)').addEventListener('change', (e) => e.matches && setMenu(false));
+
+// Everything below animates the homepage's sections.
+if (lenis && document.querySelector('[data-hero]')) {
   // ---------- Hero: the star assembles shard by shard, then the headline rises line by line ----------
   const dirs = [[0, -1], [-1, -0.35], [1, -0.35], [-0.7, 0.85], [0.7, 0.85]];
   const parts = gsap.utils.toArray<SVGPathElement>('.hero-star .sh');

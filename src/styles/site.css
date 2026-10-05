@@ -15,6 +15,7 @@
   --sage: #b7c5a3;
   --sage-ink: #34402b;
   --night: #0b0c0f;
+  --card: #faf8f2;
 }
 :root[data-mode='dark'] {
   /* A warm charcoal rather than near-black. */
@@ -25,6 +26,7 @@
   --line: rgb(241 237 228 / 0.85);
   --soft: rgb(241 237 228 / 0.06);
   --blend: normal;
+  --card: #282522;
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
@@ -51,6 +53,28 @@ svg { overflow: visible; }
 .nav { margin-left: auto; display: flex; gap: 1.8rem; font-weight: 500; }
 .mode { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.9rem; border: 1.5px solid var(--line); border-radius: 999px; background: none; color: var(--ink); font: 600 0.9rem var(--font-hanken); cursor: pointer; }
 .mode-dot { width: 0.6rem; height: 0.6rem; border-radius: 50%; background: var(--ink); }
+
+/* ---------- Phone menu ---------- */
+.menu-btn { display: none; align-items: center; gap: 0.55rem; padding: 0.5rem 0.95rem; border: 1.5px solid var(--ink); border-radius: 999px; background: var(--ink); color: var(--paper); font: 600 0.9rem var(--font-hanken); cursor: pointer; }
+.menu-ico { position: relative; width: 1rem; height: 0.6rem; }
+.menu-ico i { position: absolute; left: 0; right: 0; height: 1.5px; background: currentColor; transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), top 0.35s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.menu-ico i:first-child { top: 0; }
+.menu-ico i:last-child { top: calc(100% - 1.5px); }
+.menu-btn[aria-expanded='true'] .menu-ico i { top: calc(50% - 0.75px); }
+.menu-btn[aria-expanded='true'] .menu-ico i:first-child { transform: rotate(45deg); }
+.menu-btn[aria-expanded='true'] .menu-ico i:last-child { transform: rotate(-45deg); }
+.menu { position: fixed; inset: var(--bar, 68px) 0 0; z-index: 19; display: flex; flex-direction: column; justify-content: space-between; gap: 2rem; padding: 4vh 4vw calc(2rem + env(safe-area-inset-bottom, 0px)); background: var(--paper); overflow-y: auto; }
+.menu[hidden] { display: none; }
+.menu-list { list-style: none; margin: 0; padding: 0; }
+.menu-list li { border-bottom: 1.5px solid var(--line); }
+.menu-list a { display: flex; align-items: baseline; gap: 1rem; padding: 1.1rem 0 0.9rem; font: 600 clamp(2.6rem, 13vw, 4.4rem)/0.95 var(--font-clash); letter-spacing: -0.05em; }
+.menu-n { min-width: 2ch; font: 500 0.95rem var(--font-hanken); letter-spacing: 0; color: var(--red); }
+.menu-list a:active .menu-t { color: var(--red); }
+.menu-foot { display: grid; justify-items: start; gap: 1.2rem; }
+.menu-mail { font-weight: 600; text-decoration: underline; text-decoration-color: var(--red); text-underline-offset: 0.3em; }
+:root.menu-open { overflow: hidden; }
+/* Focus moves into the menu and the thank-you when they open; they are not controls themselves. */
+.menu:focus, .cf-done:focus { outline: none; }
 
 /* ---------- Hero ---------- */
 .hero { position: relative; min-height: calc(100svh - 4rem); display: flex; flex-direction: column; padding: 0 4vw 2rem; border-bottom: 1.5px solid var(--line); overflow: clip; }
@@ -211,10 +235,67 @@ section.svc, section.how { padding: 14svh 4vw; border-bottom: 1.5px solid var(--
 .ic-marks { position: absolute; left: 0; right: 0; bottom: calc(50% + var(--ws) * 0.5 + 1.4rem); display: flex; justify-content: center; gap: clamp(0.8rem, 2vw, 1.6rem); }
 .ic-g { width: clamp(1.8rem, 3.6vw, 3rem); height: auto; fill: currentColor; }
 
+/* ---------- Contact form page ---------- */
+.cf { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: 3rem 6vw; align-items: start; padding: 8svh 4vw 14svh; }
+.cf-side { position: sticky; top: calc(var(--bar, 68px) + 6svh); display: grid; gap: 1.6rem; }
+.cf-back { justify-self: start; font-weight: 600; color: var(--mute); }
+.cf-back:hover { color: var(--ink); }
+.cf-h { margin: 0; font: 600 clamp(2.8rem, 6vw, 6rem)/0.95 var(--font-clash); letter-spacing: -0.05em; text-wrap: balance; }
+.cf-h em { color: var(--red); }
+.cf-lead { margin: 0; max-width: 32rem; font-size: clamp(1.05rem, 1.4vw, 1.25rem); line-height: 1.5; }
+.cf-side .talk-promises { flex-direction: column; gap: 0.7rem; }
+.cf-alt { margin: 0; color: var(--mute); }
+.cf-alt a { color: var(--ink); }
+/* The form is a postcard: a raised card with a stamp in the corner. */
+.cf-card { position: relative; display: grid; gap: 1.8rem; padding: clamp(1.6rem, 3.4vw, 3rem); border: 1.5px solid var(--line); border-radius: 0.6rem; background: var(--card); box-shadow: 0.7rem 0.7rem 0 var(--ink); transition: background-color 0.5s; }
+.stamp { position: absolute; right: clamp(1.2rem, 2.4vw, 2.2rem); top: clamp(1.2rem, 2.4vw, 2.2rem); width: clamp(4.4rem, 6vw, 5.6rem); aspect-ratio: 4 / 5; display: grid; place-items: center; align-content: center; gap: 0.35rem; padding: 0.5rem; background: var(--red); color: #fff; border: 0.4rem dotted var(--card); outline: 1.5px solid var(--red); outline-offset: -0.55rem; rotate: 4deg; }
+.stamp-star { width: 60%; height: auto; }
+.stamp-star .sh { fill: #fff; }
+.stamp span { font: 600 0.6rem var(--font-hanken); letter-spacing: 0.08em; text-transform: uppercase; }
+.cf-to { margin: 0; padding-right: 6.5rem; font: italic 400 clamp(1.8rem, 2.6vw, 2.4rem)/1 var(--font-instrument); }
+.cf-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.8rem; }
+.field { display: grid; gap: 0.45rem; }
+.field > span, .cf-topics legend { font-weight: 600; font-size: 0.95rem; }
+.field small { font-weight: 500; color: var(--mute); }
+.field input, .field textarea { width: 100%; padding: 0.55rem 0 0.6rem; border: 0; border-bottom: 1.5px solid var(--line); border-radius: 0; background: none; color: var(--ink); font: 500 1.15rem/1.4 var(--font-hanken); }
+.field textarea { min-height: 9rem; resize: vertical; }
+.field input:focus, .field textarea:focus { outline: none; border-bottom-color: var(--red); box-shadow: 0 1.5px 0 var(--red); }
+.field input::placeholder, .field textarea::placeholder { color: var(--mute); opacity: 0.7; }
+.cf-topics { margin: 0; padding: 0; border: 0; display: flex; flex-wrap: wrap; gap: 0.55rem; }
+.cf-topics legend { margin-bottom: 0.8rem; padding: 0; }
+.chip { position: relative; }
+.chip input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.chip span { display: inline-flex; align-items: center; padding: 0.55rem 1rem; border: 1.5px solid var(--line); border-radius: 999px; font-weight: 600; font-size: 0.95rem; transition: background-color 0.2s, color 0.2s; }
+.chip input:checked + span { background: var(--ink); color: var(--paper); }
+.chip input:focus-visible + span { outline: 2px solid var(--red); outline-offset: 3px; }
+.trap { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.cf-send { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.6rem; }
+.cf-send .btn { border: 0; font: 600 1rem var(--font-hanken); cursor: pointer; }
+.cf-send .btn:disabled { opacity: 0.6; cursor: progress; }
+.cf-status { margin: 0; font-weight: 600; }
+.cf-status a { text-decoration: underline; text-decoration-color: var(--red); text-underline-offset: 0.3em; }
+/* After sending: the card shows a thank-you and gets a postmark. */
+.cf-done { display: grid; align-content: center; gap: 1.2rem; min-height: 24rem; }
+.cf-done[hidden], .cf-form[hidden] { display: none; }
+.cf-form { display: grid; gap: 1.8rem; }
+.cf-done h2 { margin: 0; font: 600 clamp(2.6rem, 5vw, 4.6rem)/0.95 var(--font-clash); letter-spacing: -0.05em; }
+.cf-done h2 em { color: var(--red); }
+.cf-done p { margin: 0; max-width: 28rem; font-size: 1.15rem; line-height: 1.5; }
+.cf-done .btn { justify-self: start; margin-top: 0.6rem; }
+.postmark { position: absolute; right: clamp(4.6rem, 7vw, 6.6rem); top: clamp(2.6rem, 4vw, 4rem); width: clamp(8rem, 12vw, 11rem); height: auto; fill: none; stroke: var(--ink); stroke-width: 1.6; opacity: 0.55; }
+.cf-card:not(.is-sent) .postmark { display: none; }
+.postmark text { fill: var(--ink); stroke: none; font: 600 9.4px var(--font-hanken); letter-spacing: 1.6px; }
+
 /* ---------- Phones ---------- */
 @media (max-width: 767px) {
   .nav { display: none; }
   .mode { margin-left: auto; }
+  .menu-btn { display: inline-flex; }
+  .bar { gap: 0.6rem; }
+  .cf { grid-template-columns: minmax(0, 1fr); padding-top: 5svh; }
+  .cf-side { position: static; }
+  .cf-row { grid-template-columns: minmax(0, 1fr); }
+  .cf-card { box-shadow: 0.4rem 0.4rem 0 var(--ink); }
     .hero-stage { align-items: end; }
   .hero-star-wrap { top: 30%; right: 6vw; width: 80vw; }
   .hero-h { font-size: 12.5vw; }
@@ -275,10 +356,13 @@ section.svc, section.how { padding: 14svh 4vw; border-bottom: 1.5px solid var(--
   .po-intro { aspect-ratio: auto; }
   /* Same height as the posters beside it (78vw wide at 1 / 1.1), at its own 48vw width. */
   .po-next { aspect-ratio: 0.48 / 0.858; }
+  .cf { grid-template-columns: minmax(0, 1fr); }
+  .cf-side { position: static; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .scroll-cue span, .caret { animation: none; }
+  .menu-ico i { transition: none; }
   .ch, .pill-btn { transition: none; }
   .chore { --strike: 1; }
   /* Without the scroll-driven slide, the posters scroll sideways by hand. */

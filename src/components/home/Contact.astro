@@ -18,6 +18,7 @@ const [user, domain] = site.links.email.split('@');
       {contact.promises.map((p) => <li><Fragment set:html={glyph(p.glyph, 'pm')} />{p.text}</li>)}
     </ul>
     <div class="talk-actions">
+      <a class="btn btn-red" href="/contact/">{site.formCta} <span aria-hidden="true">→</span></a>
       <button class="pill-btn" type="button" data-copy={site.links.email} data-copied={contact.copied}><span data-copy-label>{contact.copy}</span></button>
       <a class="pill-btn" href={site.links.linkedin} rel="me">LinkedIn ↗</a>
     </div>

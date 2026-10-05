@@ -1,0 +1,64 @@
+---
+// The contact form: a postcard with a stamp. It posts to /api/contact, which emails Shainy.
+import Site from '../layouts/Site.astro';
+import { site, contact, form } from '../data/site';
+import { star, glyph } from '../lib/marks';
+---
+
+<Site title={form.title}>
+  <section class="cf">
+    <div class="cf-side">
+      <a class="cf-back" href="/#contact">← Back to the site</a>
+      <h1 class="cf-h" set:html={form.html} />
+      <p class="cf-lead">{form.lead}</p>
+      <ul class="talk-promises">
+        {contact.promises.map((p) => <li><Fragment set:html={glyph(p.glyph, 'pm')} />{p.text}</li>)}
+      </ul>
+      <p class="cf-alt">Rather email? <a class="link" href={`mailto:${site.links.email}`}>{site.links.email}</a></p>
+    </div>
+
+    <div class="cf-card" data-cf-card>
+      <div class="stamp" aria-hidden="true"><Fragment set:html={star('stamp-star')} /><span>48h reply</span></div>
+      <svg class="postmark" data-postmark viewBox="0 0 200 120" aria-hidden="true">
+        <defs><path id="pm-arc" d="M60 60 m-38 0 a38 38 0 1 1 76 0 a38 38 0 1 1 -76 0" /></defs>
+        <circle cx="60" cy="60" r="48" /><circle cx="60" cy="60" r="30" />
+        <text><textPath href="#pm-arc" startOffset="0">SHAINYDEV · DELIVERED · </textPath></text>
+        <path d="M118 40c10-8 20 8 30 0s20 8 30 0M118 60c10-8 20 8 30 0s20 8 30 0M118 80c10-8 20 8 30 0s20 8 30 0" />
+      </svg>
+
+      <form class="cf-form" action="/api/contact" method="post" data-cf-form>
+        <p class="cf-to">Dear Shainy,</p>
+        <div class="cf-row">
+          <label class="field"><span>Your name</span><input name="name" autocomplete="name" required maxlength="120" /></label>
+          <label class="field"><span>Email</span><input name="email" type="email" autocomplete="email" required maxlength="200" /></label>
+        </div>
+        <label class="field"><span>Business <small>(optional)</small></span><input name="business" autocomplete="organization" maxlength="160" /></label>
+        <fieldset class="cf-topics">
+          <legend>{form.topicsLabel}</legend>
+          {form.topics.map((t) => <label class="chip"><input type="checkbox" name="topics" value={t} /><span>{t}</span></label>)}
+        </fieldset>
+        <label class="field">
+          <span>Your message</span>
+          <textarea name="message" required maxlength="5000" placeholder="What slows your business down, or what would you like to build?"></textarea>
+        </label>
+        <!-- Spam traps: a field people never see, and the time the form was opened. -->
+        <label class="trap" aria-hidden="true">Website<input name="website" tabindex="-1" autocomplete="off" /></label>
+        <input type="hidden" name="started" data-cf-started />
+        <div class="cf-send">
+          <button class="btn btn-red" type="submit" data-cf-submit><span data-cf-submit-label>{form.send}</span> <span aria-hidden="true">→</span></button>
+          <p class="cf-status" role="status" data-cf-status></p>
+        </div>
+      </form>
+
+      <div class="cf-done" data-cf-done tabindex="-1" hidden>
+        <h2 set:html={form.sentHtml} />
+        <p>{form.sentLine}</p>
+        <a class="btn" href="/">Back to the site <span aria-hidden="true">→</span></a>
+      </div>
+    </div>
+  </section>
+</Site>
+
+<script>
+  import '../scripts/contact-form';
+</script>

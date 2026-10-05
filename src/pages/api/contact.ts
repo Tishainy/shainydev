@@ -10,7 +10,7 @@ const MIN_FILL_MS = 2500;
 /**
  * Contact form: validates the message, drops obvious spam quietly, and emails it to Shainy through
  * Resend. Accepts JSON (from the page's script) or a plain form post (no-JS fallback, which is
- * redirected back to the contact section with ?sent=1 or ?sent=0).
+ * redirected back to the contact page with ?sent=1 or ?sent=0).
  */
 export const POST: APIRoute = async ({ request, redirect }) => {
   const isJson = request.headers.get('content-type')?.includes('application/json');
@@ -19,7 +19,9 @@ export const POST: APIRoute = async ({ request, redirect }) => {
     if (isJson) {
       Object.assign(data, await request.json());
     } else {
-      (await request.formData()).forEach((value, key) => (data[key] = String(value)));
+      const fd = await request.formData();
+      fd.forEach((value, key) => (data[key] = String(value)));
+      data.topics = fd.getAll('topics').map(String).join(', ');
     }
   } catch {
     return reply(isJson, redirect, 400, 'bad-request');
@@ -28,6 +30,8 @@ export const POST: APIRoute = async ({ request, redirect }) => {
   const name = (data.name ?? '').trim().slice(0, 120);
   const email = (data.email ?? '').trim().slice(0, 200);
   const message = (data.message ?? '').trim().slice(0, 5000);
+  const business = String(data.business ?? '').trim().slice(0, 160);
+  const topics = String(data.topics ?? '').trim().slice(0, 300);
 
   // Spam: a filled-in trap field, or a form "filled in" impossibly fast. Pretend it worked.
   const started = Number(data.started);
@@ -54,7 +58,7 @@ export const POST: APIRoute = async ({ request, redirect }) => {
       to: [to],
       reply_to: email,
       subject: `New enquiry from ${name}`,
-      text: [`Name: ${name}`, `Email: ${email}`, '', message].join('\n'),
+      text: [`Name: ${name}`, `Email: ${email}`, ...(business ? [`Business: ${business}`] : []), ...(topics ? [`Help with: ${topics}`] : []), '', message].join('\n'),
     }),
   });
 
@@ -66,7 +70,7 @@ export const POST: APIRoute = async ({ request, redirect }) => {
 };
 
 function reply(isJson: boolean | undefined, redirect: (path: string, status?: 300 | 301 | 302 | 303 | 304 | 307 | 308) => Response, status: number, code: string) {
-  if (!isJson) return redirect(`/?sent=${code === 'ok' ? 1 : 0}#contact`, 303);
+  if (!isJson) return redirect(`/contact/?sent=${code === 'ok' ? 1 : 0}`, 303);
   return new Response(JSON.stringify({ ok: code === 'ok', code }), {
     status,
     headers: { 'Content-Type': 'application/json' },
