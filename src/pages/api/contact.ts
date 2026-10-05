@@ -42,7 +42,7 @@ export const POST: APIRoute = async ({ request, redirect }) => {
   if (!EMAIL.test(email)) return reply(isJson, redirect, 400, 'bad-email');
 
   const apiKey = import.meta.env.RESEND_API_KEY ?? process.env.RESEND_API_KEY;
-  const to = import.meta.env.CONTACT_TO ?? process.env.CONTACT_TO ?? 'shainydev@gmail.com';
+  const to = import.meta.env.CONTACT_TO ?? process.env.CONTACT_TO ?? 'info@shainydev.com';
   // Until shainydev.com is verified in Resend, mail can only come from Resend's own test address.
   const from = import.meta.env.CONTACT_FROM ?? process.env.CONTACT_FROM ?? 'ShainyDev website <onboarding@resend.dev>';
   if (!apiKey) {

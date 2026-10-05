@@ -15,7 +15,7 @@ export const site = {
     { label: 'Contact', href: '#contact' },
   ],
   links: {
-    email: 'shainydev@gmail.com',
+    email: 'info@shainydev.com',
     linkedin: 'https://www.linkedin.com/in/shainy-naar-79618b358/',
   },
 
@@ -202,7 +202,7 @@ export const site = {
       missing: 'Please add your name, your email and a short message.',
       badEmail: "That email address doesn't look right. Could you check it?",
       // Shown until email delivery is connected (Resend needs the domain, ticket 15).
-      notConnected: "The form isn't switched on just yet. Please email me at shainydev@gmail.com and I'll reply within 48 hours.",
+      notConnected: "The form isn't switched on just yet. Please email me at info@shainydev.com and I'll reply within 48 hours.",
     },
     altHeading: 'Rather not fill in a form?',
     emailLabel: 'Email me',

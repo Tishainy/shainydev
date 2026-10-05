@@ -17,7 +17,7 @@ export const site = {
     { label: 'Contact', href: '#contact' },
   ],
   links: {
-    email: 'shainydev@gmail.com',
+    email: 'info@shainydev.com',
     linkedin: 'https://www.linkedin.com/in/shainy-naar-79618b358/',
   },
   footer: 'Designed & built by Shainy',
