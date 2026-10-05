@@ -10,6 +10,11 @@ import vercel from '@astrojs/vercel';
 export default defineConfig({
   site: SITE_URL,
 
+  // The Paper prototype became the real homepage; old links to it land on the site itself.
+  redirects: {
+    '/paper-lab': '/',
+  },
+
   // Fonts are downloaded at build time and served from the site itself.
   fonts: [
     {

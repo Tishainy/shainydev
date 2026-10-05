@@ -1,4 +1,4 @@
-// Work projects and their visuals, shared by the paper lab and work lab pages (kept out of .astro frontmatter on purpose).
+// Work projects and their visuals, shared by the homepage and the lab pages (kept out of .astro frontmatter on purpose).
 export { star } from '../lib/marks';
 
 export const projects = [
