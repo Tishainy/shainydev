@@ -27,18 +27,6 @@
   --blend: normal;
   color-scheme: dark;
 }
-/* Accent previews: --red is the accent token, whatever its colour. Light values hold up on cream;
-   dark ones are brighter, with a deeper band and dark text on accent fills so contrast stays readable. */
-:root[data-accent='cobalt'] { --red: #2b4fe0; }
-:root[data-accent='cobalt'][data-mode='dark'] { --red: #7f9fff; --band: #3657e8; --on-red: #10131f; }
-:root[data-accent='tangerine'] { --red: #e2520b; }
-:root[data-accent='tangerine'][data-mode='dark'] { --red: #ff7a2e; --band: #e2520b; --on-red: #1f1d1b; }
-:root[data-accent='pink'] { --red: #d6246a; }
-:root[data-accent='pink'][data-mode='dark'] { --red: #ff5c93; --band: #d6246a; --on-red: #1f1d1b; }
-:root[data-accent='green'] { --red: #17734a; }
-:root[data-accent='green'][data-mode='dark'] { --red: #4cc98a; --band: #17734a; --on-red: #1f1d1b; }
-:root[data-accent='plum'] { --red: #8e2f6b; }
-:root[data-accent='plum'][data-mode='dark'] { --red: #e98bc6; --band: #8e2f6b; --on-red: #1f1d1b; }
 * { box-sizing: border-box; }
 html, body { margin: 0; }
 html { scroll-padding-top: var(--bar, 68px); }
@@ -73,6 +61,13 @@ svg { overflow: visible; }
 .ln { display: block; overflow: clip; padding-bottom: 0.06em; }
 .in { display: inline-block; }
 .hero-h em { color: var(--red); }
+/* Staggered headline (preview): the lines step in and out instead of sharing one left edge. */
+.hero-h.stagger .ln:nth-child(2) { padding-left: 1.5em; }
+.hero-h.stagger .ln:nth-child(3) { padding-left: 0.45em; }
+.hero-h.stagger .ln:nth-child(4) { padding-left: 3.4em; }
+/* The sparkle sits after line 2 on wide screens; on narrower ones the indent leaves no room, so it ends the last line. */
+.inl.inl-end { display: none; }
+@media (max-width: 1099px) { .hero-h.stagger .inl-mid { display: none; } .hero-h.stagger .inl-end { display: inline-block; } }
 .inl { display: inline-block; width: 0.55em; height: auto; vertical-align: 0.06em; }
 .hero-foot { position: relative; z-index: 2; display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 1.5rem 3rem; padding-top: 1.4rem; border-top: 1.5px solid var(--line); }
 .hero-note { margin: 0; max-width: 34rem; font-size: clamp(1.05rem, 1.4vw, 1.3rem); line-height: 1.45; }
@@ -202,7 +197,8 @@ section.svc, section.how { padding: 14svh 4vw; border-bottom: 1.5px solid var(--
 /* ---------- Site intro (preview) ---------- */
 .intro { display: none; position: fixed; inset: 0; z-index: 100; }
 :root[data-intro='a'] .intro-a, :root[data-intro='b'] .intro-b, :root[data-intro='c'] .intro-c { display: block; }
-:root[data-intro] body { overflow: hidden; }
+/* Hold scrolling during the intro, but keep the scrollbar's space so the page measures the same before and after. */
+:root[data-intro] { overflow: hidden; scrollbar-gutter: stable; }
 /* A: paper all round except the star's open centre, which grows to fill the screen. */
 .ia-svg { width: 100%; height: 100%; overflow: visible; }
 .ia-paper, .ia-plug { fill: var(--paper); }
@@ -225,16 +221,11 @@ section.svc, section.how { padding: 14svh 4vw; border-bottom: 1.5px solid var(--
 .ic-ch { display: inline-block; }
 .ic-marks { position: absolute; left: 0; right: 0; bottom: calc(50% + var(--ws) * 0.5 + 1.4rem); display: flex; justify-content: center; gap: clamp(0.8rem, 2vw, 1.6rem); }
 .ic-g { width: clamp(1.8rem, 3.6vw, 3rem); height: auto; fill: currentColor; }
-.ic-tag { position: absolute; left: 1rem; right: 1rem; top: calc(50% + var(--ws) * 0.5 + 1.4rem); text-align: center; font: italic 400 clamp(1.3rem, 2.6vw, 2.2rem)/1.2 var(--font-instrument); }
-.ic-cut { position: absolute; left: 0; right: 0; top: calc(50% - 1px); height: 2px; background: var(--paper); transform-origin: 0 50%; }
 /* Preview switcher for the intros (lab pages only). */
 .lab-switch { position: fixed; left: 1rem; bottom: 1rem; z-index: 60; display: flex; align-items: center; gap: 0.3rem; padding: 0.35rem; border: 1.5px solid var(--line); border-radius: 999px; background: var(--paper); font: 600 0.85rem var(--font-hanken); }
 .lab-switch span { padding: 0 0.5rem; color: var(--mute); }
 .lab-switch a { padding: 0.45rem 0.8rem; border-radius: 999px; }
 .lab-switch a[aria-current] { background: var(--ink); color: var(--paper); }
-.lab-switch { flex-wrap: wrap; max-width: calc(100vw - 2rem); }
-.lab-switch [data-lab-accent] { display: inline-flex; align-items: center; gap: 0.4rem; }
-.lab-switch i { width: 0.85rem; height: 0.85rem; border-radius: 50%; background: var(--sw); }
 
 /* ---------- Phones ---------- */
 @media (max-width: 767px) {
@@ -243,6 +234,9 @@ section.svc, section.how { padding: 14svh 4vw; border-bottom: 1.5px solid var(--
     .hero-stage { align-items: end; }
   .hero-star-wrap { top: 30%; right: 6vw; width: 80vw; }
   .hero-h { font-size: 12.5vw; }
+  .hero-h.stagger .ln:nth-child(2) { padding-left: 0.7em; }
+  .hero-h.stagger .ln:nth-child(3) { padding-left: 0; }
+  .hero-h.stagger .ln:nth-child(4) { padding-left: 2.6em; }
   .hero { padding-bottom: 7.5rem; }
   .hero-foot { grid-template-columns: minmax(0, 1fr); }
   .scroll-cue { display: none; }

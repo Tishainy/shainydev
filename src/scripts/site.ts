@@ -68,7 +68,10 @@ if (!reduce) {
     scrollTo(0, 0);
     lenis.stop();
   }
-  playIntro(() => heroIntro.play()).then(() => lenis.start());
+  playIntro(() => heroIntro.play()).then(() => {
+    lenis.start();
+    ScrollTrigger.refresh();
+  });
   // The star turns slowly on its own; the scroll is handled on its wrapper, so the two never fight.
   gsap.to('.hero-star', { rotation: 360, duration: 80, ease: 'none', repeat: -1 });
   gsap.to('[data-hero-star]', { rotation: 120, scale: 0.88, ease: 'none', scrollTrigger: { trigger: '[data-hero]', start: 'top top', end: 'bottom top', scrub: true } });

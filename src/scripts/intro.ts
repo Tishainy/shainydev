@@ -41,12 +41,9 @@ export function playIntro(reveal: () => void): Promise<void> {
     const marks = n('.ic-g'), chars = n('.ic-ch');
     tl.from(el.querySelectorAll('.ic-g'), { scale: 0, rotation: -120, duration: 0.8, ease: 'back.out(2)', stagger: (i) => (i % marks) * 0.07 }, 0.1)
       .from(el.querySelectorAll('.ic-ch'), { yPercent: 110, duration: 0.8, stagger: (i) => (i % chars) * 0.04 }, 0.25)
-      .from(el.querySelectorAll('.ic-tag'), { autoAlpha: 0, y: -16, duration: 0.6, ease: 'power3.out' }, 0.75)
-      .fromTo(el.querySelector('.ic-cut'), { scaleX: 0 }, { scaleX: 1, duration: 0.45, ease: 'power3.inOut' }, 1.2)
-      .set(el.querySelector('.ic-cut'), { autoAlpha: 0 }, 1.65)
-      .to(el.querySelector('.ic-top'), { yPercent: -100, duration: 1, ease: 'power4.inOut' }, 1.65)
-      .to(el.querySelector('.ic-bot'), { yPercent: 100, duration: 1, ease: 'power4.inOut' }, 1.65)
-      .call(doReveal, [], 1.8);
+      .to(el.querySelector('.ic-top'), { yPercent: -100, duration: 1, ease: 'power4.inOut' }, 1.4)
+      .to(el.querySelector('.ic-bot'), { yPercent: 100, duration: 1, ease: 'power4.inOut' }, 1.4)
+      .call(doReveal, [], 1.55);
   }
 
   const skip = () => tl.progress(1);

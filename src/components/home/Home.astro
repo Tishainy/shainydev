@@ -7,9 +7,15 @@ import Work from './Work.astro';
 import Process from './Process.astro';
 import Chores from './Chores.astro';
 import Contact from './Contact.astro';
+
+interface Props {
+  /** Preview: the staggered hero headline. */
+  stagger?: boolean;
+}
+const { stagger = false } = Astro.props;
 ---
 
-<Hero />
+<Hero stagger={stagger} />
 <Band />
 <Services />
 <Work />

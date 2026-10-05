@@ -13,7 +13,7 @@ const shards = [
   'M100.669 412.326L118.069 262.146L238.748 350.753L100.669 412.326Z',
   'M380.321 412.326L362.922 262.146L242.243 350.753L380.321 412.326Z',
 ];
-// The split: the page's other marks above the seam, the services below, the name cut across it.
+// The split: the page's other marks above the seam, the name cut across it.
 const icMarks: Glyph[] = ['sparkle', 'flower', 'ring', 'plus', 'half'];
 ---
 
@@ -43,9 +43,7 @@ const icMarks: Glyph[] = ['sparkle', 'flower', 'ring', 'plus', 'half'];
       <div class="ic-scene">
         <span class="ic-marks">{icMarks.map((g) => <Fragment set:html={glyph(g, 'ic-g')} />)}</span>
         <span class="ic-word">{[...'ShainyDev'].map((c) => <span class="ic-ch">{c}</span>)}</span>
-        <span class="ic-tag">{band.slice(0, 4).join(' · ')}</span>
       </div>
     </div>
   ))}
-  <span class="ic-cut"></span>
 </div>
