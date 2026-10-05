@@ -85,13 +85,6 @@ svg { overflow: visible; }
 .ln { display: block; overflow: clip; padding-bottom: 0.06em; }
 .in { display: inline-block; }
 .hero-h em { color: var(--red); }
-/* The headline lines step in and out instead of sharing one left edge. */
-.hero-h .ln:nth-child(2) { padding-left: 1.5em; }
-.hero-h .ln:nth-child(3) { padding-left: 0.45em; }
-.hero-h .ln:nth-child(4) { padding-left: 3.4em; }
-/* The sparkle sits after line 2 on wide screens; on narrower ones the indent leaves no room, so it ends the last line. */
-@media (min-width: 1100px) { .inl.inl-end { display: none; } }
-@media (max-width: 1099px) { .inl.inl-mid { display: none; } }
 .inl { display: inline-block; width: 0.55em; height: auto; vertical-align: 0.06em; }
 .hero-foot { position: relative; z-index: 2; display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 1.5rem 3rem; padding-top: 1.4rem; border-top: 1.5px solid var(--line); }
 .hero-note { margin: 0; max-width: 34rem; font-size: clamp(1.05rem, 1.4vw, 1.3rem); line-height: 1.45; }
@@ -300,9 +293,6 @@ section.svc, section.how { padding: 14svh 4vw; border-bottom: 1.5px solid var(--
     .hero-stage { align-items: end; }
   .hero-star-wrap { top: 30%; right: 6vw; width: 80vw; }
   .hero-h { font-size: 12.5vw; }
-  .hero-h .ln:nth-child(2) { padding-left: 0.7em; }
-  .hero-h .ln:nth-child(3) { padding-left: 0; }
-  .hero-h .ln:nth-child(4) { padding-left: 2.6em; }
   .hero { padding-bottom: 7.5rem; }
   .hero-foot { grid-template-columns: minmax(0, 1fr); }
   .scroll-cue { display: none; }
