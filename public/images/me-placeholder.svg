@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500">
+  <!-- Placeholder until Shainy's photo arrives: a soft head-and-shoulders silhouette. -->
+  <rect width="400" height="500" fill="#d9d2c4"/>
+  <circle cx="200" cy="200" r="78" fill="#bdb4a3"/>
+  <path d="M60 500c0-92 63-160 140-160s140 68 140 160Z" fill="#bdb4a3"/>
+</svg>

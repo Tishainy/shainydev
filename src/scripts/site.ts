@@ -124,6 +124,11 @@ if (lenis && document.querySelector('[data-hero]')) {
   });
   gsap.to('.band .spin', { rotation: 360, transformOrigin: '50% 50%', duration: 10, ease: 'none', repeat: -1 });
 
+  // ---------- Tools: the logos drift the other way to the red band ----------
+  if (document.querySelector('[data-tools]')) gsap.fromTo('[data-tools]', { xPercent: -50 }, { xPercent: 0, duration: 40, ease: 'none', repeat: -1 });
+  // The photo drops in like a print being laid down.
+  if (document.querySelector('.snap')) gsap.from('.snap', { y: 60, rotation: 10, autoAlpha: 0, duration: 1, ease: 'power3.out', scrollTrigger: { trigger: '.talk', start: 'top 75%', toggleActions: 'play none none reverse' } });
+
   // Section headings rise in, and sink away again on the way back up.
   gsap.utils.toArray<HTMLElement>('[data-up]').forEach((el) =>
     gsap.from(el, { y: 50, autoAlpha: 0, duration: 1, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none reverse' } }),

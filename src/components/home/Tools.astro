@@ -1,0 +1,14 @@
+---
+// A pause from reading: the tools Shainy works with, drifting the opposite way to the red band.
+import { tools } from '../../data/tools';
+---
+
+<section class="tools" aria-label="Tools I work with">
+  <div class="tools-track" data-tools>
+    {[0, 1].map((copy) => (
+      <ul class="tools-list" aria-hidden={copy === 1 ? 'true' : undefined}>
+        {tools.map((t) => <li class="tool"><Fragment set:html={t.icon} /><span>{t.name}</span></li>)}
+      </ul>
+    ))}
+  </div>
+</section>

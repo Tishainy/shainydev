@@ -7,7 +7,13 @@ import Work from './Work.astro';
 import Process from './Process.astro';
 import Chores from './Chores.astro';
 import Contact from './Contact.astro';
+import Tools from './Tools.astro';
 
+interface Props {
+  /** Preview: the tools logo band and the photo in the contact section. */
+  visuals?: boolean;
+}
+const { visuals = false } = Astro.props;
 ---
 
 <Hero />
@@ -15,5 +21,6 @@ import Contact from './Contact.astro';
 <Services />
 <Work />
 <Process />
+{visuals && <Tools />}
 <Chores />
-<Contact />
+<Contact photo={visuals} />
