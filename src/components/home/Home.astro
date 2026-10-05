@@ -7,13 +7,6 @@ import Work from './Work.astro';
 import Process from './Process.astro';
 import Chores from './Chores.astro';
 import Contact from './Contact.astro';
-import Tools from './Tools.astro';
-
-interface Props {
-  /** Preview: the picture-only section with Shainy's photo and her tools. */
-  visuals?: boolean;
-}
-const { visuals = false } = Astro.props;
 ---
 
 <Hero />
@@ -21,6 +14,5 @@ const { visuals = false } = Astro.props;
 <Services />
 <Work />
 <Process />
-{visuals && <Tools />}
 <Chores />
 <Contact />
