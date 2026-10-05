@@ -26,6 +26,14 @@
   --blend: normal;
   color-scheme: dark;
 }
+/* Cobalt accent (preview): --red is the accent token, whatever its colour.
+   Light: a deep cobalt that holds up on cream; dark: Shainy's original cobalt, with a deeper band
+   and dark text on accent fills so contrast stays readable. */
+:root[data-accent='cobalt'] { --red: #2b4fe0; }
+:root[data-accent='cobalt'][data-mode='dark'] { --red: #7f9fff; --band: #3657e8; }
+:root[data-accent='cobalt'][data-mode='dark'] .chore-tag,
+:root[data-accent='cobalt'][data-mode='dark'] .btn-red,
+:root[data-accent='cobalt'][data-mode='dark'] ::selection { color: #10131f; }
 * { box-sizing: border-box; }
 html, body { margin: 0; }
 html { scroll-padding-top: var(--bar, 68px); }
@@ -72,7 +80,7 @@ svg { overflow: visible; }
 @keyframes cue { 0% { transform: scaleY(0); } 50% { transform: scaleY(1); } 100% { transform: scaleY(0); transform-origin: bottom; } }
 
 /* ---------- Red band ---------- */
-.band { overflow: hidden; background: var(--red); color: #fff; padding: 1.8rem 0; border-bottom: 1.5px solid var(--line); }
+.band { overflow: hidden; background: var(--band, var(--red)); color: #fff; padding: 1.8rem 0; border-bottom: 1.5px solid var(--line); }
 .band-track { display: flex; width: max-content; }
 .band-item { display: inline-flex; align-items: center; gap: 0.6em; padding-right: 0.6em; font: 600 clamp(2rem, 4.5vw, 4rem)/1 var(--font-clash); letter-spacing: -0.04em; white-space: nowrap; }
 .band-item:nth-child(even) { font-family: var(--font-instrument); font-style: italic; font-weight: 400; letter-spacing: -0.01em; }
@@ -185,6 +193,33 @@ section.svc, section.how { padding: 14svh 4vw; border-bottom: 1.5px solid var(--
 .pill-btn:hover { background: var(--ink); color: var(--paper); }
 .link { font-weight: 600; text-decoration: underline; text-decoration-color: var(--red); text-underline-offset: 0.3em; }
 .foot { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 1.6rem 4vw; font-size: 0.9rem; color: var(--mute); }
+
+/* ---------- Site intro (preview) ---------- */
+.intro { display: none; position: fixed; inset: 0; z-index: 100; }
+:root[data-intro='a'] .intro-a, :root[data-intro='b'] .intro-b, :root[data-intro='c'] .intro-c { display: block; }
+:root[data-intro] body { overflow: hidden; }
+/* A: paper all round except the star's open centre, which grows to fill the screen. */
+.ia-svg { width: 100%; height: 100%; overflow: visible; }
+.ia-paper, .ia-plug { fill: var(--paper); }
+/* B: an accent screen with a big counter and the services flicking past. */
+.intro-b { background: var(--band, var(--red)); color: #fff; padding: calc(var(--bar, 68px) + 4vh) 4vw 4vh; }
+.ib-star { position: absolute; right: 4vw; top: 4vh; width: clamp(4rem, 9vw, 8rem); height: auto; }
+.ib-star .sh { fill: #fff; }
+.ib-word { position: absolute; left: 4vw; top: 4vh; margin: 0; font: italic 400 clamp(2.4rem, 6vw, 6rem)/1 var(--font-instrument); }
+.ib-num { position: absolute; left: 4vw; bottom: 2vh; margin: 0; font: 600 clamp(8rem, 30vw, 30rem)/0.8 var(--font-clash); letter-spacing: -0.06em; font-variant-numeric: tabular-nums; }
+/* C: two paper halves that part, with the wordmark in front. */
+.ic-half { position: absolute; left: 0; right: 0; height: 50.5%; background: var(--paper); }
+.ic-top { top: 0; border-bottom: 1.5px solid var(--line); }
+.ic-bot { bottom: 0; border-top: 1.5px solid var(--line); }
+.ic-mark { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 1.6rem; }
+.ic-star { width: clamp(4rem, 10vw, 7rem); height: auto; }
+.ic-word { display: flex; overflow: hidden; padding-bottom: 0.08em; font: 600 clamp(3rem, 11vw, 10rem)/1 var(--font-clash); letter-spacing: -0.05em; color: var(--ink); }
+.ic-ch { display: inline-block; }
+/* Preview switcher for the intros (lab pages only). */
+.lab-switch { position: fixed; left: 1rem; bottom: 1rem; z-index: 60; display: flex; align-items: center; gap: 0.3rem; padding: 0.35rem; border: 1.5px solid var(--line); border-radius: 999px; background: var(--paper); font: 600 0.85rem var(--font-hanken); }
+.lab-switch span { padding: 0 0.5rem; color: var(--mute); }
+.lab-switch a { padding: 0.45rem 0.8rem; border-radius: 999px; }
+.lab-switch a[aria-current] { background: var(--ink); color: var(--paper); }
 
 /* ---------- Phones ---------- */
 @media (max-width: 767px) {

@@ -3,15 +3,26 @@ import '../styles/site.css';
 import { Font } from 'astro:assets';
 import { site } from '../data/site';
 import { star } from '../lib/marks';
+import Intro from '../components/Intro.astro';
 
+interface Props {
+  /** Accent colour: the brand red, or cobalt (preview). */
+  accent?: 'red' | 'cobalt';
+  /** Include the site intro overlays (preview: variant picked by #a, #b or #c). */
+  intro?: boolean;
+  /** A hidden preview page: kept out of search engines, with a small switcher for the intros. */
+  lab?: boolean;
+}
+const { accent = 'red', intro = false, lab = false } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 ---
 
-<html lang="en" data-mode="light">
+<html lang="en" data-mode="light" data-accent={accent}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{site.meta.title}</title>
+    {lab && <meta name="robots" content="noindex, nofollow" />}
     <meta name="description" content={site.meta.description} />
     <link rel="canonical" href={canonical} />
     <meta property="og:type" content="website" />
@@ -32,8 +43,17 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
         document.documentElement.dataset.mode = dark ? 'dark' : 'light';
       } catch {}
     </script>
+    {intro && (
+      <script is:inline>
+        if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          const v = location.hash.slice(1);
+          document.documentElement.dataset.intro = ['a', 'b', 'c'].includes(v) ? v : 'a';
+        }
+      </script>
+    )}
   </head>
   <body>
+    {intro && <Intro />}
     <a class="skip" href="#main">Skip to content</a>
     <header class="bar">
       <a class="brand" href="#main" aria-label={`${site.brand}, back to top`}><Fragment set:html={star('brand-star')} /><span>{site.brand}</span></a>
@@ -51,8 +71,28 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
       <span class="brand"><Fragment set:html={star('brand-star')} /><span>{site.brand}</span></span>
       <span>{site.footer} · © {new Date().getFullYear()}</span>
     </footer>
+    {lab && intro && (
+      <nav class="lab-switch" aria-label="Intro previews">
+        <span>Intro</span>
+        <a href="#a" data-lab-intro>A · Star</a><a href="#b" data-lab-intro>B · Counter</a><a href="#c" data-lab-intro>C · Split</a>
+      </nav>
+    )}
     <script>
       import '../scripts/site';
     </script>
+    {lab && intro && (
+      <script is:inline>
+        // Picking an intro reloads the page from the top so it plays again.
+        document.querySelectorAll('[data-lab-intro]').forEach((a) => {
+          if (a.hash === (location.hash || '#a')) a.setAttribute('aria-current', 'true');
+          a.addEventListener('click', (e) => {
+            e.preventDefault();
+            history.replaceState(null, '', a.hash);
+            scrollTo(0, 0);
+            location.reload();
+          });
+        });
+      </script>
+    )}
   </body>
 </html>

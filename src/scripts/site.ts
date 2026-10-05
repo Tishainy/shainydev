@@ -1,6 +1,7 @@
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
+import { playIntro } from './intro';
 
 gsap.registerPlugin(ScrollTrigger);
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -57,11 +58,17 @@ if (!reduce) {
   const dirs = [[0, -1], [-1, -0.35], [1, -0.35], [-0.7, 0.85], [0.7, 0.85]];
   const parts = gsap.utils.toArray<SVGPathElement>('.hero-star .sh');
   gsap.set(parts, { transformOrigin: '50% 50%' });
-  gsap
-    .timeline({ defaults: { ease: 'expo.out' } })
+  const heroIntro = gsap
+    .timeline({ paused: true, defaults: { ease: 'expo.out' } })
     .from(parts, { x: (i) => dirs[i][0] * 260, y: (i) => dirs[i][1] * 260, scale: 0.5, opacity: 0, duration: 1.4, stagger: 0.1 }, 0.1)
     .from('.hero-h .in', { yPercent: 110, duration: 1.1, stagger: 0.1 }, 0.5)
     .from('.hero-foot > *', { y: 24, autoAlpha: 0, duration: 0.8, stagger: 0.08 }, 0.9);
+  // A site intro (when the page has one) plays first, with scrolling held; the hero starts as it opens up.
+  if (root.dataset.intro) {
+    scrollTo(0, 0);
+    lenis.stop();
+  }
+  playIntro(() => heroIntro.play()).then(() => lenis.start());
   // The star turns slowly on its own; the scroll is handled on its wrapper, so the two never fight.
   gsap.to('.hero-star', { rotation: 360, duration: 80, ease: 'none', repeat: -1 });
   gsap.to('[data-hero-star]', { rotation: 120, scale: 0.88, ease: 'none', scrollTrigger: { trigger: '[data-hero]', start: 'top top', end: 'bottom top', scrub: true } });
