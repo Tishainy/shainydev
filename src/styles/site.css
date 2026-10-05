@@ -193,7 +193,7 @@ section.svc, section.how { padding: 14svh 4vw; border-bottom: 1.5px solid var(--
     .hero-stage { align-items: end; }
   .hero-star-wrap { top: 30%; right: 6vw; width: 80vw; }
   .hero-h { font-size: 12.5vw; }
-  .hero { padding-bottom: 3.5rem; }
+  .hero { padding-bottom: 5rem; }
   .hero-foot { grid-template-columns: minmax(0, 1fr); }
   .scroll-cue { display: none; }
   .sec-head { grid-template-columns: minmax(0, 1fr); }
@@ -227,6 +227,28 @@ section.svc, section.how { padding: 14svh 4vw; border-bottom: 1.5px solid var(--
   .talk-mail { font-size: 8.7vw; letter-spacing: -0.05em; }
   .foot { flex-direction: column; align-items: flex-start; }
 }
+/* ---------- Tablets ---------- */
+/* Process: two by two instead of four narrow columns. */
+@media (min-width: 768px) and (max-width: 1099px) {
+  .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .step, .step + .step { padding: 1.6rem 1.4rem 2rem; }
+  .step:nth-child(odd) { padding-left: 0; }
+  .step:nth-child(2n) { border-right: 0; }
+  .step:nth-child(-n + 2) { border-bottom: 1px solid color-mix(in srgb, var(--line) 25%, transparent); }
+}
+/* Portrait tablets: the hero stacks like on phones, and the posters keep a near-square shape
+   instead of stretching to the full height of a tall screen. */
+@media (min-width: 768px) and (orientation: portrait) {
+  .hero-stage { align-items: end; }
+  .hero-star-wrap { top: 30%; right: 4vw; width: 62vw; }
+  .hero-h { font-size: 11vw; }
+  .poster-track { align-items: center; }
+  .poster { height: auto; aspect-ratio: 1 / 1.1; }
+  .po-intro { aspect-ratio: auto; }
+  /* Same height as the posters beside it (78vw wide at 1 / 1.1), at its own 48vw width. */
+  .po-next { aspect-ratio: 0.48 / 0.858; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .scroll-cue span, .caret { animation: none; }
   .ch, .pill-btn { transition: none; }
