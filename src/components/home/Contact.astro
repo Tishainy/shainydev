@@ -2,12 +2,6 @@
 import { site, contact } from '../../data/site';
 import { glyph } from '../../lib/marks';
 const [user, domain] = site.links.email.split('@');
-
-interface Props {
-  /** Preview: a photo of Shainy beside the heading, printed like a snapshot. */
-  photo?: boolean;
-}
-const { photo = false } = Astro.props;
 ---
 
 <!-- The email address is the centrepiece; each letter is its own span so it can type itself in. -->
@@ -15,12 +9,6 @@ const { photo = false } = Astro.props;
   <div class="talk-top">
     <p class="sec-no">{contact.label}</p>
     <h2 class="talk-h" set:html={contact.html} />
-    {photo && (
-      <figure class="snap">
-        <img src="/images/me-placeholder.svg" alt="Shainy" width="400" height="500" />
-        <figcaption>Shainy</figcaption>
-      </figure>
-    )}
   </div>
   <a class="talk-mail" href={`mailto:${site.links.email}`} data-talk-mail aria-label={`Email ${site.links.email}`}>
     {[...user].map((c) => <span class="ch" aria-hidden="true">{c}</span>)}<span class="ch at" aria-hidden="true">@</span>{[...domain].map((c) => <span class="ch" aria-hidden="true">{c}</span>)}

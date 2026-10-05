@@ -124,10 +124,11 @@ if (lenis && document.querySelector('[data-hero]')) {
   });
   gsap.to('.band .spin', { rotation: 360, transformOrigin: '50% 50%', duration: 10, ease: 'none', repeat: -1 });
 
-  // ---------- Tools: the logos drift the other way to the red band ----------
-  if (document.querySelector('[data-tools]')) gsap.fromTo('[data-tools]', { xPercent: -50 }, { xPercent: 0, duration: 40, ease: 'none', repeat: -1 });
-  // The photo drops in like a print being laid down.
-  if (document.querySelector('.snap')) gsap.from('.snap', { y: 60, rotation: 10, autoAlpha: 0, duration: 1, ease: 'power3.out', scrollTrigger: { trigger: '.talk', start: 'top 75%', toggleActions: 'play none none reverse' } });
+  // ---------- Studio: the photo eases in from a slight zoom; the tool logos pop in one by one ----------
+  if (document.querySelector('.studio')) {
+    gsap.from('.studio-photo img', { scale: 1.15, ease: 'none', scrollTrigger: { trigger: '.studio', start: 'top bottom', end: 'bottom top', scrub: true } });
+    gsap.from('[data-tile] .tool-ico', { scale: 0, rotation: -60, duration: 0.8, stagger: 0.07, ease: 'back.out(2)', scrollTrigger: { trigger: '.studio-tools', start: 'top 75%', toggleActions: 'play none none reverse' } });
+  }
 
   // Section headings rise in, and sink away again on the way back up.
   gsap.utils.toArray<HTMLElement>('[data-up]').forEach((el) =>

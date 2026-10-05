@@ -10,7 +10,7 @@ import Contact from './Contact.astro';
 import Tools from './Tools.astro';
 
 interface Props {
-  /** Preview: the tools logo band and the photo in the contact section. */
+  /** Preview: the picture-only section with Shainy's photo and her tools. */
   visuals?: boolean;
 }
 const { visuals = false } = Astro.props;
@@ -23,4 +23,4 @@ const { visuals = false } = Astro.props;
 <Process />
 {visuals && <Tools />}
 <Chores />
-<Contact photo={visuals} />
+<Contact />

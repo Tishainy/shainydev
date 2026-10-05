@@ -1,14 +1,13 @@
 ---
-// A pause from reading: the tools Shainy works with, drifting the opposite way to the red band.
+// A pause from reading: a big photo of Shainy beside her tools as large logo tiles. No sentences.
 import { tools } from '../../data/tools';
 ---
 
-<section class="tools" aria-label="Tools I work with">
-  <div class="tools-track" data-tools>
-    {[0, 1].map((copy) => (
-      <ul class="tools-list" aria-hidden={copy === 1 ? 'true' : undefined}>
-        {tools.map((t) => <li class="tool"><Fragment set:html={t.icon} /><span>{t.name}</span></li>)}
-      </ul>
-    ))}
-  </div>
+<section class="studio" aria-label="Shainy and the tools she works with">
+  <figure class="studio-photo">
+    <img src="/images/me-placeholder.svg" alt="Shainy" width="400" height="500"/>
+  </figure>
+  <ul class="studio-tools">
+    {tools.map((t) => <li class="tile" data-tile><Fragment set:html={t.icon} /><span>{t.name}</span></li>)}
+  </ul>
 </section>
