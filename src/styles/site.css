@@ -6,6 +6,7 @@
   --paper: #f1ede4;
   --ink: #121110;
   --red: #e3342a;
+  --on-red: #fff;
   --mute: #6a655d;
   --line: #121110;
   --soft: rgb(18 17 16 / 0.06);
@@ -26,18 +27,22 @@
   --blend: normal;
   color-scheme: dark;
 }
-/* Cobalt accent (preview): --red is the accent token, whatever its colour.
-   Light: a deep cobalt that holds up on cream; dark: Shainy's original cobalt, with a deeper band
-   and dark text on accent fills so contrast stays readable. */
+/* Accent previews: --red is the accent token, whatever its colour. Light values hold up on cream;
+   dark ones are brighter, with a deeper band and dark text on accent fills so contrast stays readable. */
 :root[data-accent='cobalt'] { --red: #2b4fe0; }
-:root[data-accent='cobalt'][data-mode='dark'] { --red: #7f9fff; --band: #3657e8; }
-:root[data-accent='cobalt'][data-mode='dark'] .chore-tag,
-:root[data-accent='cobalt'][data-mode='dark'] .btn-red,
-:root[data-accent='cobalt'][data-mode='dark'] ::selection { color: #10131f; }
+:root[data-accent='cobalt'][data-mode='dark'] { --red: #7f9fff; --band: #3657e8; --on-red: #10131f; }
+:root[data-accent='tangerine'] { --red: #e2520b; }
+:root[data-accent='tangerine'][data-mode='dark'] { --red: #ff7a2e; --band: #e2520b; --on-red: #1f1d1b; }
+:root[data-accent='pink'] { --red: #d6246a; }
+:root[data-accent='pink'][data-mode='dark'] { --red: #ff5c93; --band: #d6246a; --on-red: #1f1d1b; }
+:root[data-accent='green'] { --red: #17734a; }
+:root[data-accent='green'][data-mode='dark'] { --red: #4cc98a; --band: #17734a; --on-red: #1f1d1b; }
+:root[data-accent='plum'] { --red: #8e2f6b; }
+:root[data-accent='plum'][data-mode='dark'] { --red: #e98bc6; --band: #8e2f6b; --on-red: #1f1d1b; }
 * { box-sizing: border-box; }
 html, body { margin: 0; }
 html { scroll-padding-top: var(--bar, 68px); }
-::selection { background: var(--red); color: #fff; }
+::selection { background: var(--red); color: var(--on-red); }
 .skip { position: fixed; left: 1rem; top: -4rem; z-index: 50; padding: 0.7rem 1.1rem; border-radius: 999px; background: var(--ink); color: var(--paper); font-weight: 600; transition: top 0.2s; }
 .skip:focus { top: 1rem; }
 :focus-visible { outline: 2px solid var(--red); outline-offset: 3px; }
@@ -74,7 +79,7 @@ svg { overflow: visible; }
 .hero-note em { color: var(--mute); }
 .btn { display: inline-flex; gap: 0.6rem; align-items: center; padding: 0.95rem 1.8rem; border-radius: 999px; background: var(--ink); color: var(--paper); font-weight: 600; white-space: nowrap; transition: transform 0.25s; }
 .btn:hover { transform: translateY(-2px); }
-.btn-red { background: var(--red); color: #fff; }
+.btn-red { background: var(--red); color: var(--on-red); }
 .scroll-cue { margin: 0; display: flex; align-items: center; gap: 0.6rem; font-size: 0.85rem; color: var(--mute); }
 .scroll-cue span { width: 1px; height: 2.4rem; background: var(--ink); animation: cue 1.8s ease-in-out infinite; transform-origin: top; }
 @keyframes cue { 0% { transform: scaleY(0); } 50% { transform: scaleY(1); } 100% { transform: scaleY(0); transform-origin: bottom; } }
@@ -172,7 +177,7 @@ section.svc, section.how { padding: 14svh 4vw; border-bottom: 1.5px solid var(--
 /* The red line drawn through each chore; one line per row of text. */
 .chore-text { background: linear-gradient(var(--red), var(--red)) no-repeat 0 54% / calc(var(--strike) * 100%) 0.12em; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
 .chore-meta { display: grid; justify-items: end; gap: 0.35rem; }
-.chore-tag { padding: 0.3rem 0.8rem; border-radius: 999px; background: var(--red); color: #fff; font-size: 0.85rem; font-weight: 600; }
+.chore-tag { padding: 0.3rem 0.8rem; border-radius: 999px; background: var(--red); color: var(--on-red); font-size: 0.85rem; font-weight: 600; }
 .chore-time { font-size: 0.85rem; color: var(--mute); white-space: nowrap; }
 
 /* ---------- Contact: the address is the centrepiece ---------- */
@@ -208,18 +213,28 @@ section.svc, section.how { padding: 14svh 4vw; border-bottom: 1.5px solid var(--
 .ib-word { position: absolute; left: 4vw; top: 4vh; margin: 0; font: italic 400 clamp(2.4rem, 6vw, 6rem)/1 var(--font-instrument); }
 .ib-num { position: absolute; left: 4vw; bottom: 2vh; margin: 0; font: 600 clamp(8rem, 30vw, 30rem)/0.8 var(--font-clash); letter-spacing: -0.06em; font-variant-numeric: tabular-nums; }
 /* C: two paper halves that part, with the wordmark in front. */
-.ic-half { position: absolute; left: 0; right: 0; height: 50.5%; background: var(--paper); }
-.ic-top { top: 0; border-bottom: 1.5px solid var(--line); }
-.ic-bot { bottom: 0; border-top: 1.5px solid var(--line); }
-.ic-mark { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 1.6rem; }
-.ic-star { width: clamp(4rem, 10vw, 7rem); height: auto; }
-.ic-word { display: flex; overflow: hidden; padding-bottom: 0.08em; font: 600 clamp(3rem, 11vw, 10rem)/1 var(--font-clash); letter-spacing: -0.05em; color: var(--ink); }
+.intro-c { --ws: clamp(3.6rem, 16vw, 13rem); }
+.ic-half { position: absolute; left: 0; right: 0; height: calc(50% + 1px); overflow: hidden; }
+.ic-top { top: 0; background: var(--band, var(--red)); color: #fff; }
+.ic-bot { bottom: 0; background: var(--ink); color: var(--paper); }
+/* The scene is a full screen, pinned to the outer edge of its half; the name is centred on the seam. */
+.ic-scene { position: absolute; left: 0; right: 0; height: calc(200% - 2px); }
+.ic-top .ic-scene { top: 0; }
+.ic-bot .ic-scene { bottom: 0; }
+.ic-word { position: absolute; left: 0; right: 0; top: 50%; translate: 0 -50%; display: flex; justify-content: center; overflow: hidden; font: 600 var(--ws)/1 var(--font-clash); letter-spacing: -0.055em; }
 .ic-ch { display: inline-block; }
+.ic-marks { position: absolute; left: 0; right: 0; bottom: calc(50% + var(--ws) * 0.5 + 1.4rem); display: flex; justify-content: center; gap: clamp(0.8rem, 2vw, 1.6rem); }
+.ic-g { width: clamp(1.8rem, 3.6vw, 3rem); height: auto; fill: currentColor; }
+.ic-tag { position: absolute; left: 1rem; right: 1rem; top: calc(50% + var(--ws) * 0.5 + 1.4rem); text-align: center; font: italic 400 clamp(1.3rem, 2.6vw, 2.2rem)/1.2 var(--font-instrument); }
+.ic-cut { position: absolute; left: 0; right: 0; top: calc(50% - 1px); height: 2px; background: var(--paper); transform-origin: 0 50%; }
 /* Preview switcher for the intros (lab pages only). */
 .lab-switch { position: fixed; left: 1rem; bottom: 1rem; z-index: 60; display: flex; align-items: center; gap: 0.3rem; padding: 0.35rem; border: 1.5px solid var(--line); border-radius: 999px; background: var(--paper); font: 600 0.85rem var(--font-hanken); }
 .lab-switch span { padding: 0 0.5rem; color: var(--mute); }
 .lab-switch a { padding: 0.45rem 0.8rem; border-radius: 999px; }
 .lab-switch a[aria-current] { background: var(--ink); color: var(--paper); }
+.lab-switch { flex-wrap: wrap; max-width: calc(100vw - 2rem); }
+.lab-switch [data-lab-accent] { display: inline-flex; align-items: center; gap: 0.4rem; }
+.lab-switch i { width: 0.85rem; height: 0.85rem; border-radius: 50%; background: var(--sw); }
 
 /* ---------- Phones ---------- */
 @media (max-width: 767px) {

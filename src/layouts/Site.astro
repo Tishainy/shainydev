@@ -6,14 +6,18 @@ import { star } from '../lib/marks';
 import Intro from '../components/Intro.astro';
 
 interface Props {
-  /** Accent colour: the brand red, or cobalt (preview). */
-  accent?: 'red' | 'cobalt';
+  /** Accent colour: the brand red, or one of the preview colours. */
+  accent?: 'red' | 'cobalt' | 'tangerine' | 'pink' | 'green' | 'plum';
   /** Include the site intro overlays (preview: variant picked by #a, #b or #c). */
   intro?: boolean;
   /** A hidden preview page: kept out of search engines, with a small switcher for the intros. */
   lab?: boolean;
+  /** Preview: a switcher for trying accent colours live (picked by #red, #tangerine, …). */
+  accents?: boolean;
 }
-const { accent = 'red', intro = false, lab = false } = Astro.props;
+const { accent = 'red', intro = false, lab = false, accents = false } = Astro.props;
+// Accent previews, with the swatch shown in the switcher (the light-mode colour).
+const swatches = [['red', '#e3342a'], ['tangerine', '#e2520b'], ['pink', '#d6246a'], ['green', '#17734a'], ['plum', '#8e2f6b']];
 const canonical = new URL(Astro.url.pathname, Astro.site);
 ---
 
@@ -43,6 +47,11 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
         document.documentElement.dataset.mode = dark ? 'dark' : 'light';
       } catch {}
     </script>
+    {accents && (
+      <script is:inline define:vars={{ names: swatches.map((x) => x[0]) }}>
+        if (names.includes(location.hash.slice(1))) document.documentElement.dataset.accent = location.hash.slice(1);
+      </script>
+    )}
     {intro && (
       <script is:inline>
         if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -76,6 +85,24 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
         <span>Intro</span>
         <a href="#a" data-lab-intro>A · Star</a><a href="#b" data-lab-intro>B · Counter</a><a href="#c" data-lab-intro>C · Split</a>
       </nav>
+    )}
+    {lab && accents && (
+      <nav class="lab-switch" aria-label="Accent colour previews">
+        <span>Colour</span>
+        {swatches.map(([name, sw]) => <a href={`#${name}`} data-lab-accent style={`--sw:${sw}`}><i></i>{name[0].toUpperCase() + name.slice(1)}</a>)}
+      </nav>
+      <script is:inline>
+        // Switch the accent in place; the hash keeps the choice on reload and in shared links.
+        const links = document.querySelectorAll('[data-lab-accent]');
+        const mark = () => links.forEach((a) => a.toggleAttribute('aria-current', a.hash.slice(1) === document.documentElement.dataset.accent));
+        mark();
+        links.forEach((a) => a.addEventListener('click', (e) => {
+          e.preventDefault();
+          history.replaceState(null, '', a.hash);
+          document.documentElement.dataset.accent = a.hash.slice(1);
+          mark();
+        }));
+      </script>
     )}
     <script>
       import '../scripts/site';
