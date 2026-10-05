@@ -96,8 +96,9 @@ svg { overflow: visible; }
 .hero-foot { position: relative; z-index: 2; display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 1.5rem 3rem; padding-top: 1.4rem; border-top: 1.5px solid var(--line); }
 .hero-note { margin: 0; max-width: 34rem; font-size: clamp(1.05rem, 1.4vw, 1.3rem); line-height: 1.45; }
 .hero-note em { color: var(--mute); }
-.btn { display: inline-flex; gap: 0.6rem; align-items: center; padding: 0.95rem 1.8rem; border-radius: 999px; background: var(--ink); color: var(--paper); font-weight: 600; white-space: nowrap; transition: transform 0.25s; }
-.btn:hover { transform: translateY(-2px); }
+.btn { display: inline-flex; gap: 0.6rem; align-items: center; padding: 0.95rem 1.8rem; border-radius: 999px; background: var(--ink); color: var(--paper); font-weight: 600; white-space: nowrap; transition: translate 0.25s; }
+/* The hover lift uses `translate`, so it never fights the GSAP reveals, which animate `transform`. */
+.btn:hover { translate: 0 -2px; }
 .btn-red { background: var(--red); color: var(--on-red); }
 .scroll-cue { margin: 0; display: flex; align-items: center; gap: 0.6rem; font-size: 0.85rem; color: var(--mute); }
 .scroll-cue span { width: 1px; height: 2.4rem; background: var(--ink); animation: cue 1.8s ease-in-out infinite; transform-origin: top; }
