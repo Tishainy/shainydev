@@ -22,7 +22,7 @@ export const site = {
   },
   footer: 'Designed & built by Shainy',
   /** The button that leads to the contact form page, used in the menu and the contact section. */
-  formCta: 'Start a project',
+  formCta: 'Fill in the contact form',
 };
 
 export const hero = {
