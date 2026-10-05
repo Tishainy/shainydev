@@ -198,7 +198,8 @@ section.svc, section.how { padding: 14svh 4vw; border-bottom: 1.5px solid var(--
 .talk-top { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2.2fr); gap: 1rem 4vw; align-items: end; }
 .talk-h { margin: 0; font: 600 clamp(2rem, 3.6vw, 3.4rem)/1 var(--font-clash); letter-spacing: -0.04em; }
 .talk-h em { color: var(--red); }
-.talk-mail { display: block; margin: 7svh 0 6svh; padding-bottom: 0.08em; overflow: hidden; white-space: nowrap; font: 600 clamp(2rem, 8.6vw, 12rem)/1.05 var(--font-clash); letter-spacing: -0.055em; border-bottom: 1.5px solid var(--line); }
+/* Sized so the address runs the full width of its underline (tuned for info@shainydev.com). */
+.talk-mail { display: block; margin: 7svh 0 6svh; padding-bottom: 0.08em; overflow: hidden; white-space: nowrap; font: 600 clamp(2rem, 9.6vw, 14rem)/1.05 var(--font-clash); letter-spacing: -0.055em; border-bottom: 1.5px solid var(--line); }
 .ch { display: inline-block; transition: color 0.3s; }
 .talk-mail:hover .ch { color: var(--red); }
 .talk-mail .at { color: var(--red); font: italic 400 1.02em/1 var(--font-instrument); letter-spacing: 0; padding: 0 0.04em; }
@@ -324,7 +325,7 @@ section.svc, section.how { padding: 14svh 4vw; border-bottom: 1.5px solid var(--
   .chore { grid-template-columns: minmax(0, 1fr); gap: 0.8rem; padding: 1.4rem 0; }
   .chore-meta { grid-auto-flow: column; justify-content: start; align-items: center; gap: 0.8rem; }
   .talk-top { grid-template-columns: minmax(0, 1fr); }
-  .talk-mail { font-size: 8.7vw; letter-spacing: -0.05em; }
+  .talk-mail { font-size: 9.3vw; letter-spacing: -0.05em; }
   .foot { flex-direction: column; align-items: flex-start; }
 }
 /* ---------- Tablets ---------- */
