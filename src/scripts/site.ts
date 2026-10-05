@@ -172,5 +172,6 @@ if (lenis && document.querySelector('[data-hero]')) {
 
   // ---------- Contact: the address types itself in; the promises follow ----------
   gsap.from('[data-talk-mail] .ch', { yPercent: 100, autoAlpha: 0, duration: 0.7, stagger: 0.035, ease: 'power3.out', scrollTrigger: { trigger: '[data-talk-mail]', start: 'top 85%', toggleActions: 'play none none reverse' } });
-  gsap.from('.talk-promises li, .talk-actions > *', { y: 20, autoAlpha: 0, duration: 0.6, stagger: 0.07, ease: 'power2.out', scrollTrigger: { trigger: '.talk-foot', start: 'top 90%', toggleActions: 'play none none reverse' } });
+  // The buttons rise as one row: animating each one would fight their own hover lift and could leave one sitting low.
+  gsap.from('.talk-promises li, .talk-actions', { y: 20, autoAlpha: 0, duration: 0.6, stagger: 0.07, ease: 'power2.out', scrollTrigger: { trigger: '.talk-foot', start: 'top 90%', toggleActions: 'play none none reverse' } });
 }
