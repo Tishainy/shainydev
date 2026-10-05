@@ -1,9 +1,15 @@
 ---
-// Preview: the homepage with a site intro. #a, #b or #c picks the variant.
-import Site from '../layouts/Site.astro';
-import Home from '../components/home/Home.astro';
+// The intro preview is now on the real homepage; old links to it are sent there.
 ---
 
-<Site intro lab>
-  <Home stagger />
-</Site>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="robots" content="noindex" />
+    <meta http-equiv="refresh" content="0; url=/" />
+    <link rel="canonical" href="/" />
+    <title>ShainyDev</title>
+    <script is:inline>location.replace('/');</script>
+  </head>
+  <body><a href="/">Go to ShainyDev</a></body>
+</html>

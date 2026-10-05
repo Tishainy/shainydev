@@ -1,47 +1,18 @@
 ---
-// Site intro overlays (prototype: three variants). The layout's pre-paint script picks one by setting
-// data-intro on <html>; scripts/intro.ts plays it and then hands over to the hero animation.
-import { star, glyph, type Glyph } from '../lib/marks';
-import { band } from '../data/site';
+// The site intro: the page's marks and the name sit across a seam between a red half and an ink half,
+// then the two halves pull apart to show the page. The layout decides whether it plays (once per visit);
+// scripts/intro.ts runs it and hands over to the hero animation.
+import { glyph, type Glyph } from '../lib/marks';
 
-// The open pentagon in the middle of the star (its five inner corners), centred near 241,228.
-const hole = 'M169 125.5 L313.4 125.5 L363.8 261.7 L240.5 350.8 L117.5 261.7 Z';
-const shards = [
-  'M241.495 0L313.808 125.25H169.182L241.495 0Z',
-  'M25.887 148.966L168.723 126.283L116.949 261.325L25.887 148.966Z',
-  'M455.819 148.966L312.983 126.283L364.757 261.325L455.819 148.966Z',
-  'M100.669 412.326L118.069 262.146L238.748 350.753L100.669 412.326Z',
-  'M380.321 412.326L362.922 262.146L242.243 350.753L380.321 412.326Z',
-];
-// The split: the page's other marks above the seam, the name cut across it.
-const icMarks: Glyph[] = ['sparkle', 'flower', 'ring', 'plus', 'half'];
+const marks: Glyph[] = ['sparkle', 'flower', 'ring', 'plus', 'half'];
 ---
 
-<!-- A · Through the star: the star assembles, then we zoom through its open centre into the site. -->
-<div class="intro intro-a" data-intro-el="a" aria-hidden="true">
-  <svg class="ia-svg" viewBox="-359 -370 1200 1200" preserveAspectRatio="xMidYMid meet">
-    <g class="ia-zoom">
-      <path class="ia-paper" fill-rule="evenodd" d={`M-60000 -60000H60000V60000H-60000Z ${hole}`} />
-      <path class="ia-plug" d={hole} />
-      {shards.map((d) => <path class="sh ia-sh" d={d} />)}
-    </g>
-  </svg>
-</div>
-
-<!-- B · Counter: an accent screen counts up while the services flick past, then slides away. -->
-<div class="intro intro-b" data-intro-el="b" aria-hidden="true">
-  <Fragment set:html={star('ib-star')} />
-  <p class="ib-word"><span data-ib-word>{band[0]}</span></p>
-  <p class="ib-num"><span data-ib-num>0</span></p>
-</div>
-
-<!-- C · Split: the name sits across a seam between an accent half and an ink half, then the two pull apart.
-     Each half holds the same full-screen scene, clipped to its own side, so the name looks cut in two. -->
-<div class="intro intro-c" data-intro-el="c" aria-hidden="true">
+<!-- Each half holds the same full-screen scene, clipped to its own side, so the name looks cut in two. -->
+<div class="intro" data-intro-el aria-hidden="true">
   {['top', 'bot'].map((h) => (
     <div class={`ic-half ic-${h}`}>
       <div class="ic-scene">
-        <span class="ic-marks">{icMarks.map((g) => <Fragment set:html={glyph(g, 'ic-g')} />)}</span>
+        <span class="ic-marks">{marks.map((g) => <Fragment set:html={glyph(g, 'ic-g')} />)}</span>
         <span class="ic-word">{[...'ShainyDev'].map((c) => <span class="ic-ch">{c}</span>)}</span>
       </div>
     </div>

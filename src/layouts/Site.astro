@@ -6,9 +6,9 @@ import { star } from '../lib/marks';
 import Intro from '../components/Intro.astro';
 
 interface Props {
-  /** Include the site intro overlays (preview: variant picked by #a, #b or #c). */
+  /** Play the site intro (once per visit; skipped for reduced motion and links to a section). */
   intro?: boolean;
-  /** A hidden preview page: kept out of search engines, with a small switcher for the intros. */
+  /** A hidden preview page: kept out of search engines. */
   lab?: boolean;
 }
 const { intro = false, lab = false } = Astro.props;
@@ -43,10 +43,13 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     </script>
     {intro && (
       <script is:inline>
-        if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
-          const v = location.hash.slice(1);
-          document.documentElement.dataset.intro = ['a', 'b', 'c'].includes(v) ? v : 'c';
-        }
+        // The intro plays on the first page view of a visit, unless motion is reduced or the link points at a section.
+        try {
+          if (!location.hash && !sessionStorage.getItem('intro') && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            sessionStorage.setItem('intro', '1');
+            document.documentElement.dataset.intro = 'on';
+          }
+        } catch {}
       </script>
     )}
   </head>
@@ -69,28 +72,8 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
       <span class="brand"><Fragment set:html={star('brand-star')} /><span>{site.brand}</span></span>
       <span>{site.footer} · © {new Date().getFullYear()}</span>
     </footer>
-    {lab && intro && (
-      <nav class="lab-switch" aria-label="Intro previews">
-        <span>Intro</span>
-        <a href="#a" data-lab-intro>A · Star</a><a href="#b" data-lab-intro>B · Counter</a><a href="#c" data-lab-intro>C · Split</a>
-      </nav>
-    )}
     <script>
       import '../scripts/site';
     </script>
-    {lab && intro && (
-      <script is:inline>
-        // Picking an intro reloads the page from the top so it plays again.
-        document.querySelectorAll('[data-lab-intro]').forEach((a) => {
-          if (a.hash === (location.hash || '#c')) a.setAttribute('aria-current', 'true');
-          a.addEventListener('click', (e) => {
-            e.preventDefault();
-            history.replaceState(null, '', a.hash);
-            scrollTo(0, 0);
-            location.reload();
-          });
-        });
-      </script>
-    )}
   </body>
 </html>

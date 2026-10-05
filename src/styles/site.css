@@ -61,13 +61,13 @@ svg { overflow: visible; }
 .ln { display: block; overflow: clip; padding-bottom: 0.06em; }
 .in { display: inline-block; }
 .hero-h em { color: var(--red); }
-/* Staggered headline (preview): the lines step in and out instead of sharing one left edge. */
-.hero-h.stagger .ln:nth-child(2) { padding-left: 1.5em; }
-.hero-h.stagger .ln:nth-child(3) { padding-left: 0.45em; }
-.hero-h.stagger .ln:nth-child(4) { padding-left: 3.4em; }
+/* The headline lines step in and out instead of sharing one left edge. */
+.hero-h .ln:nth-child(2) { padding-left: 1.5em; }
+.hero-h .ln:nth-child(3) { padding-left: 0.45em; }
+.hero-h .ln:nth-child(4) { padding-left: 3.4em; }
 /* The sparkle sits after line 2 on wide screens; on narrower ones the indent leaves no room, so it ends the last line. */
-.inl.inl-end { display: none; }
-@media (max-width: 1099px) { .hero-h.stagger .inl-mid { display: none; } .hero-h.stagger .inl-end { display: inline-block; } }
+@media (min-width: 1100px) { .inl.inl-end { display: none; } }
+@media (max-width: 1099px) { .inl.inl-mid { display: none; } }
 .inl { display: inline-block; width: 0.55em; height: auto; vertical-align: 0.06em; }
 .hero-foot { position: relative; z-index: 2; display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 1.5rem 3rem; padding-top: 1.4rem; border-top: 1.5px solid var(--line); }
 .hero-note { margin: 0; max-width: 34rem; font-size: clamp(1.05rem, 1.4vw, 1.3rem); line-height: 1.45; }
@@ -194,22 +194,11 @@ section.svc, section.how { padding: 14svh 4vw; border-bottom: 1.5px solid var(--
 .link { font-weight: 600; text-decoration: underline; text-decoration-color: var(--red); text-underline-offset: 0.3em; }
 .foot { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 1.6rem 4vw; font-size: 0.9rem; color: var(--mute); }
 
-/* ---------- Site intro (preview) ---------- */
-.intro { display: none; position: fixed; inset: 0; z-index: 100; }
-:root[data-intro='a'] .intro-a, :root[data-intro='b'] .intro-b, :root[data-intro='c'] .intro-c { display: block; }
+/* ---------- Site intro: a red half and an ink half that part (once per visit) ---------- */
+.intro { display: none; position: fixed; inset: 0; z-index: 100; --ws: clamp(3.6rem, 16vw, 13rem); }
+:root[data-intro] .intro { display: block; }
 /* Hold scrolling during the intro, but keep the scrollbar's space so the page measures the same before and after. */
 :root[data-intro] { overflow: hidden; scrollbar-gutter: stable; }
-/* A: paper all round except the star's open centre, which grows to fill the screen. */
-.ia-svg { width: 100%; height: 100%; overflow: visible; }
-.ia-paper, .ia-plug { fill: var(--paper); }
-/* B: an accent screen with a big counter and the services flicking past. */
-.intro-b { background: var(--band, var(--red)); color: #fff; padding: calc(var(--bar, 68px) + 4vh) 4vw 4vh; }
-.ib-star { position: absolute; right: 4vw; top: 4vh; width: clamp(4rem, 9vw, 8rem); height: auto; }
-.ib-star .sh { fill: #fff; }
-.ib-word { position: absolute; left: 4vw; top: 4vh; margin: 0; font: italic 400 clamp(2.4rem, 6vw, 6rem)/1 var(--font-instrument); }
-.ib-num { position: absolute; left: 4vw; bottom: 2vh; margin: 0; font: 600 clamp(8rem, 30vw, 30rem)/0.8 var(--font-clash); letter-spacing: -0.06em; font-variant-numeric: tabular-nums; }
-/* C: two paper halves that part, with the wordmark in front. */
-.intro-c { --ws: clamp(3.6rem, 16vw, 13rem); }
 .ic-half { position: absolute; left: 0; right: 0; height: calc(50% + 1px); overflow: hidden; }
 .ic-top { top: 0; background: var(--band, var(--red)); color: #fff; }
 .ic-bot { bottom: 0; background: var(--ink); color: var(--paper); }
@@ -221,11 +210,6 @@ section.svc, section.how { padding: 14svh 4vw; border-bottom: 1.5px solid var(--
 .ic-ch { display: inline-block; }
 .ic-marks { position: absolute; left: 0; right: 0; bottom: calc(50% + var(--ws) * 0.5 + 1.4rem); display: flex; justify-content: center; gap: clamp(0.8rem, 2vw, 1.6rem); }
 .ic-g { width: clamp(1.8rem, 3.6vw, 3rem); height: auto; fill: currentColor; }
-/* Preview switcher for the intros (lab pages only). */
-.lab-switch { position: fixed; left: 1rem; bottom: 1rem; z-index: 60; display: flex; align-items: center; gap: 0.3rem; padding: 0.35rem; border: 1.5px solid var(--line); border-radius: 999px; background: var(--paper); font: 600 0.85rem var(--font-hanken); }
-.lab-switch span { padding: 0 0.5rem; color: var(--mute); }
-.lab-switch a { padding: 0.45rem 0.8rem; border-radius: 999px; }
-.lab-switch a[aria-current] { background: var(--ink); color: var(--paper); }
 
 /* ---------- Phones ---------- */
 @media (max-width: 767px) {
@@ -234,9 +218,9 @@ section.svc, section.how { padding: 14svh 4vw; border-bottom: 1.5px solid var(--
     .hero-stage { align-items: end; }
   .hero-star-wrap { top: 30%; right: 6vw; width: 80vw; }
   .hero-h { font-size: 12.5vw; }
-  .hero-h.stagger .ln:nth-child(2) { padding-left: 0.7em; }
-  .hero-h.stagger .ln:nth-child(3) { padding-left: 0; }
-  .hero-h.stagger .ln:nth-child(4) { padding-left: 2.6em; }
+  .hero-h .ln:nth-child(2) { padding-left: 0.7em; }
+  .hero-h .ln:nth-child(3) { padding-left: 0; }
+  .hero-h .ln:nth-child(4) { padding-left: 2.6em; }
   .hero { padding-bottom: 7.5rem; }
   .hero-foot { grid-template-columns: minmax(0, 1fr); }
   .scroll-cue { display: none; }

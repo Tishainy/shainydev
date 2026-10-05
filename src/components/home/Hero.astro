@@ -1,21 +1,15 @@
 ---
 import { hero } from '../../data/site';
 import { star, glyph } from '../../lib/marks';
-
-interface Props {
-  /** Preview: the headline lines step in and out instead of sharing one left edge. */
-  stagger?: boolean;
-}
-const { stagger = false } = Astro.props;
 ---
 
 <!-- The star leads: it assembles shard by shard, then the headline rises in line by line. -->
 <section class="hero" data-hero>
   <div class="hero-stage">
     <div class="hero-star-wrap" data-hero-star><Fragment set:html={star('hero-star')} /></div>
-    <h1 class:list={['hero-h', { stagger }]}>
+    <h1 class="hero-h">
       {hero.lines.map((line, i) => (
-        <span class="ln"><span class="in"><Fragment set:html={line} />{i === 1 && <Fragment set:html={' ' + glyph('sparkle', 'inl inl-mid')} />}{stagger && i === hero.lines.length - 1 && <Fragment set:html={' ' + glyph('sparkle', 'inl inl-end')} />}</span></span>
+        <span class="ln"><span class="in"><Fragment set:html={line} />{i === 1 && <Fragment set:html={' ' + glyph('sparkle', 'inl inl-mid')} />}{i === hero.lines.length - 1 && <Fragment set:html={' ' + glyph('sparkle', 'inl inl-end')} />}</span></span>
       ))}
     </h1>
   </div>
