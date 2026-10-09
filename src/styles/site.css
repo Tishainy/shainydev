@@ -87,7 +87,7 @@ svg { overflow: visible; }
 .hero-h em { color: var(--red); }
 .inl { display: inline-block; width: 0.55em; height: auto; vertical-align: 0.06em; }
 .hero-foot { position: relative; z-index: 2; display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 1.5rem 3rem; padding-top: 1.4rem; border-top: 1.5px solid var(--line); }
-.hero-note { margin: 0; max-width: 34rem; font-size: clamp(1.05rem, 1.4vw, 1.3rem); line-height: 1.45; }
+.hero-note { margin: 0; max-width: 27.5em; font-size: clamp(1.05rem, 1.4vw, 1.3rem); line-height: 1.45; }
 .hero-note em { color: var(--mute); }
 .btn { display: inline-flex; gap: 0.6rem; align-items: center; padding: 0.95rem 1.8rem; border-radius: 999px; background: var(--ink); color: var(--paper); font-weight: 600; white-space: nowrap; transition: translate 0.25s; }
 /* The hover lift uses `translate`, so it never fights the GSAP reveals, which animate `transform`. */
@@ -274,6 +274,16 @@ section.svc, section.how { padding: 14svh 4vw; border-bottom: 1.5px solid var(--
 .cf-done[hidden], .cf-form[hidden] { display: none; }
 .cf-form { display: grid; gap: 1.8rem; }
 .cf-done h2 { margin: 0; font: 600 clamp(2.6rem, 5vw, 4.6rem)/0.95 var(--font-clash); letter-spacing: -0.05em; }
+
+/* ---------- Reading comfort ---------- */
+/* Clash is set tight, which can make words run together; a little extra word space keeps headings easy to read.
+   The hero headline keeps its tight set: it's large enough, and split by its comma and colour. */
+.sec-head h2, .svc-col h3, .po-intro h2, .po-text h3, .po-next h3, .step h3, .chores-side h2, .chore-task,
+.talk-h, .cf-h, .cf-done h2, .menu-list a, .band-item { word-spacing: 0.12em; }
+/* No single word left alone on a line: headings balance their lines, running text avoids orphans. */
+h2, h3, .chore-task { text-wrap: balance; }
+p, li { text-wrap: pretty; }
+.hero-note { text-wrap: balance; }
 .cf-done h2 em { color: var(--red); }
 .cf-done p { margin: 0; max-width: 28rem; font-size: 1.15rem; line-height: 1.5; }
 .cf-done .btn { justify-self: start; margin-top: 0.6rem; }

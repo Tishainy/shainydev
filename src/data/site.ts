@@ -1,5 +1,5 @@
 // All copy for the homepage lives here; the section components read from this file.
-// Voice: warm and plain, short sentences, written to small-business owners.
+// Voice: warm and clear, short sentences, written to small-business owners.
 // Headings marked `html` may contain <em> for the italic serif voice.
 import type { Glyph } from '../lib/marks';
 
@@ -8,7 +8,7 @@ export const site = {
   meta: {
     title: 'ShainyDev | Websites, apps & automations for small businesses',
     description:
-      "Freelance developer for small businesses. I build websites, apps, automations and AI tools that do the work for you, and explain every step in plain language.",
+      "Freelance developer for small businesses. I build websites, apps, automations and AI tools that do the work for you, and explain every step in clear language.",
   },
   nav: [
     { label: 'Services', href: '#services' },
@@ -28,7 +28,7 @@ export const site = {
 export const hero = {
   // One line per entry; the sparkle mark follows the second line.
   lines: ['Websites, apps', '<em>&amp;</em> automations', 'that do the work', '<em>for you.</em>'],
-  note: 'Freelance developer for small businesses. I build the tools you wish you had, and explain every step in plain language.',
+  note: 'Freelance developer for small businesses. I build the tools you wish you had, and explain every step in clear language.',
   cta: "Let's talk",
 };
 
@@ -42,7 +42,7 @@ export const services: {
   label: 'What I do',
   html: 'Three ways I make your business <em>shine</em>.',
   items: [
-    { glyph: 'arch', name: 'Build', line: 'Websites and apps that look like you and work on every phone.', list: ['Business websites', 'Landing pages', 'Redesigns', 'Web apps'] },
+    { glyph: 'arch', name: 'Build', line: 'Websites and apps that look and feel like you, and work on every phone.', list: ['Business websites', 'Landing pages', 'Redesigns', 'Web apps'] },
     { glyph: 'ring', name: 'Automate', line: 'The tasks you repeat every week, done by themselves.', list: ['Workflows', 'Data & reports', 'Email design', 'Email flows'] },
     { glyph: 'sparkle', name: 'AI', line: 'Assistants and smart tools that actually help.', list: ['Chatbots', 'AI in your tools', 'Document sorting'] },
   ],
@@ -98,7 +98,7 @@ export const contact: {
   promises: [
     { glyph: 'ring', text: 'Reply within 48 hours' },
     { glyph: 'diamond', text: 'Clear plan and price upfront' },
-    { glyph: 'half', text: 'Plain language, always' },
+    { glyph: 'half', text: 'Straightforward language, always' },
   ],
   copy: 'Copy address',
   copied: 'Copied ✓',
