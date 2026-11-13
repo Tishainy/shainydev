@@ -28,6 +28,9 @@ export function playIntro(reveal: () => void): Promise<void> {
     .to(el.querySelector('.ic-top'), { yPercent: -100, duration: 1, ease: 'power4.inOut' }, 1.4)
     .to(el.querySelector('.ic-bot'), { yPercent: 100, duration: 1, ease: 'power4.inOut' }, 1.4)
     .call(doReveal, [], 1.55);
+  // The CSS keeps the name and marks hidden until now; the from() tweens above have already
+  // moved them to their start positions, so showing them here causes no flash.
+  gsap.set(el.querySelectorAll('.ic-word, .ic-marks'), { visibility: 'visible' });
 
   const skip = () => tl.progress(1);
   addEventListener('pointerdown', skip, { once: true });

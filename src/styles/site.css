@@ -238,6 +238,8 @@ section.svc, section.how { padding: 14svh 4vw; border-bottom: 1.5px solid var(--
 .ic-scene { position: absolute; left: 0; right: 0; height: calc(200% - 2px); }
 .ic-top .ic-scene { top: 0; }
 .ic-bot .ic-scene { bottom: 0; }
+/* Hidden until the intro script sets their start positions, so the name never shows before it animates in. */
+.ic-word, .ic-marks { visibility: hidden; }
 .ic-word { position: absolute; left: 0; right: 0; top: 50%; translate: 0 -50%; display: flex; justify-content: center; overflow: hidden; font: 600 var(--ws)/1 var(--font-clash); letter-spacing: -0.055em; }
 .ic-ch { display: inline-block; }
 .ic-marks { position: absolute; left: 0; right: 0; bottom: calc(50% + var(--ws) * 0.5 + 1.4rem); display: flex; justify-content: center; gap: clamp(0.8rem, 2vw, 1.6rem); }
