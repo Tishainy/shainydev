@@ -4,12 +4,13 @@
 
 **Blocked by:** 14 — Phone pass
 
-**Status:** ready-for-human
+**Status:** done (email sending still open, see ticket 12)
 
-- [ ] Domain purchased
-- [ ] Domain connected in Vercel, with HTTPS working
-- [ ] Site-URL config value updated; share preview shows the new domain
+- [x] Domain purchased
+- [x] Domain connected (Cloudflare Workers instead of Vercel), with HTTPS working
+- [x] Site-URL config value updated; share preview shows the new domain
 
 ## Comments
 
 - 2026-10-02: Also finish ticket 12 here: provision Resend with the domain (`vercel integration add resend/resend-email -m domain=shainydev.com -m region=...`), add its DNS records, set `CONTACT_FROM` (e.g. hello@shainydev.com), and send a test message.
+- 2026-11-13: Live at https://shainydev.com on Cloudflare Workers (Vercel's free plan is non-commercial). www and http:// redirect to https://shainydev.com; Always Use HTTPS on. Resend still to do: add RESEND_API_KEY as a Worker secret, verify shainydev.com in Resend, set CONTACT_FROM; then add a WAF rate-limit rule on /api/contact.
