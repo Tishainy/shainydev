@@ -34,3 +34,7 @@ pnpm-debug.log*
 
 # raw media drops (portrait, Jarvis recording) before they are processed
 assets-raw/
+
+# cloudflare local dev secrets and state
+.dev.vars*
+.wrangler/

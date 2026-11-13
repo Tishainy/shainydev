@@ -4,7 +4,7 @@ import { defineConfig, fontProviders } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 import { SITE_URL } from './site.config.mjs';
 
-import vercel from '@astrojs/vercel';
+import cloudflare from '@astrojs/cloudflare';
 
 // https://astro.build/config
 export default defineConfig({
@@ -56,5 +56,9 @@ export default defineConfig({
     plugins: [tailwindcss()]
   },
 
-  adapter: vercel()
+  // Cloudflare Workers: pages are static files; only /api/contact runs on demand.
+  // Images are optimised at build time, so no Cloudflare Images binding is needed.
+  adapter: cloudflare({ imageService: 'compile' }),
+  // No sessions on this site, so no KV namespace to provision.
+  session: false,
 });

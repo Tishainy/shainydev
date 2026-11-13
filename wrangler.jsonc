@@ -1,0 +1,8 @@
+// Cloudflare Workers config. The Astro adapter fills in the entry point and the
+// static-assets binding at build time; `npx wrangler deploy` uploads dist/.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "shainydev",
+  "compatibility_date": "2026-11-10",
+  "observability": { "enabled": true }
+}

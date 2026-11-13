@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
+import { env } from 'cloudflare:workers';
 
-// This route runs as a Vercel Function; the rest of the site stays static.
+// This route runs in the Cloudflare Worker; the rest of the site stays static.
 export const prerender = false;
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -41,10 +42,10 @@ export const POST: APIRoute = async ({ request, redirect }) => {
   if (!name || !email || !message) return reply(isJson, redirect, 400, 'missing');
   if (!EMAIL.test(email)) return reply(isJson, redirect, 400, 'bad-email');
 
-  const apiKey = import.meta.env.RESEND_API_KEY ?? process.env.RESEND_API_KEY;
-  const to = import.meta.env.CONTACT_TO ?? process.env.CONTACT_TO ?? 'info@shainydev.com';
+  const apiKey = env.RESEND_API_KEY;
+  const to = env.CONTACT_TO || 'info@shainydev.com';
   // Until shainydev.com is verified in Resend, mail can only come from Resend's own test address.
-  const from = import.meta.env.CONTACT_FROM ?? process.env.CONTACT_FROM ?? 'ShainyDev website <onboarding@resend.dev>';
+  const from = env.CONTACT_FROM || 'ShainyDev website <onboarding@resend.dev>';
   if (!apiKey) {
     console.error('Contact form: RESEND_API_KEY is not set');
     return reply(isJson, redirect, 500, 'not-configured');
