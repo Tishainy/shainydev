@@ -17,10 +17,13 @@ import { star } from '../../lib/marks';
         <article class={`poster po-${p.id}`}>
           <div class="po-media"><Fragment set:html={media(p.id)} /></div>
           <div class="po-text">
+            {p.wip && <p class="po-wip"><span aria-hidden="true"></span>In progress · not finished yet</p>}
             <p class="po-kind">0{i + 1} · {p.kind} · {p.who}</p>
             <h3>{p.name}</h3>
             <p class="po-line">{p.line}</p>
+            {p.url && <span class="po-visit" aria-hidden="true">{p.wip ? 'Preview the site' : 'Visit the site'} <span>↗</span></span>}
           </div>
+          {p.url && <a class="po-cover" href={p.url} target="_blank" rel="noopener" aria-label={p.wip ? `${p.name}: preview the site, still in progress (opens in a new tab)` : `${p.name}: visit the live site (opens in a new tab)`}></a>}
         </article>
       ))}
       <article class="poster po-next">

@@ -125,8 +125,11 @@ section.svc, section.how { padding: 14svh 4vw; border-bottom: 1.5px solid var(--
 /* ---------- Work: posters ---------- */
 .work { border-bottom: 1.5px solid var(--line); }
 .posters { position: relative; height: calc(100svh - var(--bar, 68px)); overflow: hidden; }
-.poster-track { display: flex; gap: 1.5rem; height: 100%; padding: 2rem 4vw; width: max-content; }
-.poster { position: relative; flex: none; width: min(78vw, 72rem); height: 100%; border-radius: 1.4rem; overflow: hidden; }
+/* Project posters are 16:10 like the screenshots, as wide as the screen height allows. */
+.poster-track { --pw: min(78vw, 72rem, (100svh - var(--bar, 68px) - 4rem) * 1.6); display: flex; align-items: center; gap: 1.5rem; height: 100%; padding: 2rem 4vw; width: max-content; }
+.poster { position: relative; flex: none; width: var(--pw); height: calc(var(--pw) / 1.6); border-radius: 1.4rem; overflow: hidden; }
+/* Luna and Jarvis have no wide screenshot to show, so they can be narrower at the same height. */
+.po-luna, .po-jarvis { width: calc(var(--pw) * 0.8); }
 .po-intro { width: min(40vw, 34rem); display: grid; align-content: center; gap: 1.4rem; padding: 0 3vw 0 0; overflow: visible; }
 .po-intro h2 { margin: 0; font: 600 clamp(2.4rem, 5.2vw, 5rem)/0.98 var(--font-clash); letter-spacing: -0.045em; }
 .po-intro em { color: var(--red); }
@@ -136,7 +139,17 @@ section.svc, section.how { padding: 14svh 4vw; border-bottom: 1.5px solid var(--
 .po-kind { margin: 0; font-size: 0.95rem; font-weight: 600; }
 .po-text h3 { margin: 0; font: 600 clamp(3rem, 8vw, 8rem)/0.9 var(--font-clash); letter-spacing: -0.05em; }
 .po-line { margin: 0; max-width: 40ch; line-height: 1.5; }
-.po-elsewhere .po-text { color: #fbf8ef; background: linear-gradient(transparent, rgb(20 24 18 / 0.55)); padding-top: 8rem; }
+/* A project with a live site: the whole poster is the link, with a pill that lifts on hover. */
+.po-cover { position: absolute; inset: 0; z-index: 2; border-radius: inherit; }
+.po-cover:focus-visible { outline: 3px solid var(--red); outline-offset: 4px; }
+.po-visit { display: inline-flex; gap: 0.4rem; margin-top: 0.6rem; padding: 0.75rem 1.25rem; border-radius: 999px; background: #fbf8ef; color: #121110; font-weight: 600; transition: transform 0.25s; }
+.poster:has(.po-cover:hover) .po-visit, .poster:has(.po-cover:focus-visible) .po-visit { transform: translateY(-2px); }
+/* Not finished yet: a small pill with a softly pulsing dot above the project label. */
+.po-wip { display: inline-flex; align-items: center; gap: 0.55rem; margin: 0 0 0.4rem; padding: 0.4rem 0.85rem; border-radius: 999px; background: rgb(18 17 16 / 0.55); backdrop-filter: blur(6px); color: #fbf8ef; font-size: 0.85rem; font-weight: 600; }
+.po-wip span { width: 0.5rem; height: 0.5rem; border-radius: 50%; background: #f5b54a; animation: wip-pulse 2s ease-in-out infinite; }
+@keyframes wip-pulse { 50% { opacity: 0.35; } }
+@media (prefers-reduced-motion: reduce) { .po-wip span { animation: none; } }
+.po-southbound .po-text { color: #fbf8ef; background: linear-gradient(transparent, rgb(20 24 18 / 0.55)); padding-top: 8rem; }
 .po-luna .m-luna { place-items: center end; padding-right: 9%; }
 .po-luna .po-text { top: 0; right: 45%; align-content: end; color: var(--sage-ink); }
 .po-jarvis .m-term { padding: 3.5% 4% 0; font-size: clamp(0.8rem, 1.15vw, 1.1rem); }
